@@ -13,7 +13,10 @@ jobs:
           dotnet-version: '6.x'
       - name: Install dependencies
         run: dotnet restore
+        working-directory: ./backend/DevUp/
       - name: Build
         run: dotnet build
+        working-directory: ./backend/DevUp/
       - name: Test
         run: dotnet test
+        working-directory: ./backend/DevUp/
