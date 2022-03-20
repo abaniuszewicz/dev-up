@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DevUp.Persistence.UnitOfWork
+namespace DevUp.Infrastructure.Persistence
 {
     public interface IUnitOfWork
     {

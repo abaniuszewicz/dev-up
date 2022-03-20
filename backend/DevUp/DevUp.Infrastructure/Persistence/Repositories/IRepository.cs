@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DevUp.Persistence.Repositories
+namespace DevUp.Infrastructure.Persistence.Repositories
 {
     public interface IRepository<TEntity, TEntityId> where TEntity : Entity<TEntityId>
     {
