@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using DevUp.Infrastructure.Logging;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ namespace DevUp.Api
 
         public void ConfigureServices(IServiceCollection services) 
         {
+            services.AddLogger();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
