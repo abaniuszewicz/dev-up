@@ -1,0 +1,12 @@
+name: Check branch name
+
+on:
+  pull_request:
+  types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    name: Check branch name
+    steps:
+      - uses: knawat/github-actions-gitflow@v1
