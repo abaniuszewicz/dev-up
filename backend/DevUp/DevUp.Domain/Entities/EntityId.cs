@@ -2,28 +2,33 @@
 
 namespace DevUp.Domain.Entities
 {
-    public abstract class EntityId<TId> : IEquatable<EntityId<TId>>
+    public abstract class EntityId : IEquatable<EntityId>
     {
-        public TId Id { get; }
-
-        protected EntityId(TId id)
-        {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
-        }
-
-        public virtual bool Equals(EntityId<TId> other)
-        {
-            return other is not null && Equals(Id, other.Id);
-        }
+        public abstract bool Equals(EntityId other);
+        public abstract override int GetHashCode();
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as EntityId<TId>);
+            if (ReferenceEquals(null, obj)) 
+                return false;
+
+            if (ReferenceEquals(this, obj)) 
+                return true;
+
+            if (obj.GetType() != GetType()) 
+                return false;
+
+            return Equals((EntityId)obj);
         }
 
-        public override int GetHashCode()
+        public static bool operator ==(EntityId left, object right)
         {
-            return Id.GetHashCode();
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(EntityId left, object right)
+        {
+            return !(left == right);
         }
     }
 }

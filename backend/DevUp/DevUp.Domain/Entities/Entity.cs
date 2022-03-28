@@ -3,11 +3,13 @@
 namespace DevUp.Domain.Entities
 {
     public abstract class Entity<TId> : IEquatable<Entity<TId>>
+        where TId : EntityId
     {
-        public EntityId<TId> Id { get; }
-        public Entity(EntityId<TId> id)
+        public TId Id { get; }
+
+        public Entity(TId id)
         {
-            Id = id;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
         }
 
         public bool Equals(Entity<TId> other)
