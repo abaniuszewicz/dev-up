@@ -12,11 +12,11 @@ jobs:
         with:
           dotnet-version: '6.x'
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore ./DevUp.sln
         working-directory: ./backend/DevUp/
       - name: Build
-        run: dotnet build
+        run: dotnet build ./DevUp.sln
         working-directory: ./backend/DevUp/
       - name: Test
-        run: dotnet test
+        run: dotnet test ./DevUp.sln
         working-directory: ./backend/DevUp/
