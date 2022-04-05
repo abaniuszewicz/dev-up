@@ -1,4 +1,5 @@
-﻿using DevUp.Infrastructure.Logging;
+﻿using DevUp.Infrastructure;
+using DevUp.Infrastructure.Persistence.MongoDb;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,8 @@ namespace DevUp.Api
 
         public void ConfigureServices(IServiceCollection services) 
         {
-            services.AddLogger();
+            services.AddDefaultInfrastructure();
+            services.AddMongoDb();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();

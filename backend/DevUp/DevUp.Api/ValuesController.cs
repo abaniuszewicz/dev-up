@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using DevUp.Infrastructure.Persistence;
+using DevUp.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,6 +11,11 @@ namespace DevUp.Api
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        public ValuesController(IUnitOfWork unitOfWork)
+        {
+
+        }
+
         // GET: api/<ValuesController>
         [HttpGet]
         public IEnumerable<string> Get()
