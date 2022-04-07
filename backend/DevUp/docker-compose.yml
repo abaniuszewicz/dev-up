@@ -9,3 +9,19 @@ services:
     build:
       context: .
       dockerfile: DevUp.Api/Dockerfile
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: pass
+
+  adminer:
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
