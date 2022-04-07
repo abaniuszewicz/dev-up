@@ -1,4 +1,5 @@
 ﻿using DevUp.Infrastructure.Logging;
+using DevUp.Infrastructure.Postgres.Migrations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,7 @@ namespace DevUp.Api
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+            services.AddDatabaseMigrator();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

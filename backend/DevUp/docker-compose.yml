@@ -9,13 +9,19 @@ services:
     build:
       context: .
       dockerfile: DevUp.Api/Dockerfile
+    environment:
+      DB_CONNECTION_STRING: "host=postgres;port=5432;database=postgres;username=postgres;password=pass"
     depends_on:
       - postgres
 
   postgres:
     image: postgres:latest
     restart: always
+    ports:
+      - 5432:5432
     environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
 
   adminer:
