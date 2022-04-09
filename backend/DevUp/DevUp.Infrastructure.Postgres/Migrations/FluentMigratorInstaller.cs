@@ -20,7 +20,7 @@ namespace DevUp.Infrastructure.Postgres.Migrations
 
         public static IHost MigrateUp(this IHost host)
         {
-            var scope = host.Services.CreateScope();
+            using var scope = host.Services.CreateScope();
             var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
             runner.MigrateUp();
             return host;
@@ -28,14 +28,16 @@ namespace DevUp.Infrastructure.Postgres.Migrations
 
         public static IHost MigrateUp(this IHost host, long version)
         {
-            var runner = host.Services.GetRequiredService<IMigrationRunner>();
+            using var scope = host.Services.CreateScope();
+            var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
             runner.MigrateUp(version);
             return host;
         }
 
         public static IHost MigrateDown(this IHost host, long version)
         {
-            var runner = host.Services.GetRequiredService<IMigrationRunner>();
+            using var scope = host.Services.CreateScope();
+            var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
             runner.MigrateDown(version);
             return host;
         }
