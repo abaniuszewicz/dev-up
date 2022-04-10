@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using DevUp.Domain.Identity;
@@ -30,7 +31,7 @@ namespace DevUp.Infrastructure.Identity
             var user = new User() { Username = username };
             var createdUser = await _userManager.CreateAsync(user, password);
             if (!createdUser.Succeeded)
-                throw new RegistrationFailedException(createdUser.Errors);
+                throw new RegistrationFailedException(createdUser.Errors.Select(e => e.Description));
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor()
