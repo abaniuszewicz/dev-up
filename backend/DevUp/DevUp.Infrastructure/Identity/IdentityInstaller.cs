@@ -40,9 +40,9 @@ namespace DevUp.Infrastructure.Identity
 
         private static IServiceCollection AddUserManager(this IServiceCollection services)
         {
-            services.AddScoped<IUserStore<User>, UserStore>();
-            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
+            services.AddSingleton<IUserStore<User>, InMemoryUserStore>();
+            services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddSingleton<ILookupNormalizer, UpperInvariantLookupNormalizer>();
             services.AddScoped<IdentityErrorDescriber>();
             services.AddScoped<UserManager<User>>();
             return services;
