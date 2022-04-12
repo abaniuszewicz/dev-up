@@ -41,7 +41,6 @@ namespace DevUp.Infrastructure.Identity
         private static IServiceCollection AddUserManager(this IServiceCollection services)
         {
             services.AddScoped<IUserStore<User>, UserStore>();
-            services.AddScoped<IRoleStore<Role>, RoleStore>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
             services.AddScoped<IdentityErrorDescriber>();
