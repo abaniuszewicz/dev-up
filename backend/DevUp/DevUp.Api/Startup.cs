@@ -1,3 +1,4 @@
+﻿using DevUp.Infrastructure.Documentation;
 using DevUp.Infrastructure.Identity;
 using DevUp.Infrastructure.Logging;
 using DevUp.Infrastructure.Postgres.Migrations;
@@ -24,7 +25,7 @@ namespace DevUp.Api
             services.AddJwtAuthentication();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwagger();
             services.AddDatabaseMigrator();
         }
 

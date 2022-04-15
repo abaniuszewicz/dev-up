@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace DevUp.Domain.Identity
 {
-    public class RegistrationFailedException : Exception
+    public class LoginFailedException : Exception
     {
         public IEnumerable<string> Errors { get; }
 
-        public RegistrationFailedException(IEnumerable<string> errors)
+        public LoginFailedException(IEnumerable<string> errors)
         {
             Errors = errors;
         }

@@ -33,10 +33,30 @@ namespace DevUp.Infrastructure.Identity
             if (!createdUser.Succeeded)
                 throw new RegistrationFailedException(createdUser.Errors.Select(e => e.Description));
 
+            var token = GenerateJwtToken(user);
+            return token;
+        }
+
+        public async Task<string> LoginAsync(string username, string password)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user is null)
+                throw new LoginFailedException(new[] { "User with this username does not exist." });
+
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
+            if (!isPasswordValid)
+                throw new LoginFailedException(new[] { "Invalid password." });
+
+            var token = GenerateJwtToken(user);
+            return token;
+        }
+
+        private string GenerateJwtToken(User user)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
-                Subject = new ClaimsIdentity(GetClaims(username)),
+                Subject = new ClaimsIdentity(GetClaims(user.Username)),
                 Expires = DateTime.UtcNow.AddMinutes(5),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_jwtSettings.Secret), SecurityAlgorithms.HmacSha256Signature)
             };

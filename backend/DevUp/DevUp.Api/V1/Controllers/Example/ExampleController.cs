@@ -3,12 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using DevUp.Api.V1.Controllers.Example.Requests;
 using DevUp.Api.V1.Controllers.Example.Responses;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevUp.Api.V1.Controllers.Example
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ExampleController : ControllerBase
     {
         [HttpGet]

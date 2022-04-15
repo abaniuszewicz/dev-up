@@ -40,5 +40,28 @@ namespace DevUp.Api.V1.Controllers.Identity
                 return Problem();
             }
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var token = await _identityService.LoginAsync(request.Username, request.Password);
+                var response = new LoginSucceededResponse() { Token = token };
+                return Ok(response);
+            }
+            catch (LoginFailedException exception)
+            {
+                var response = new LoginFailedResponse() { Errors = exception.Errors };
+                return BadRequest(response);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
     }
 }
