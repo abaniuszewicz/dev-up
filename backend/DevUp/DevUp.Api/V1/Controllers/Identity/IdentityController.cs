@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using DevUp.Api.V1.Controllers.Identity.Requests;
 using DevUp.Api.V1.Controllers.Identity.Responses;
 using DevUp.Domain.Identity;
+using DevUp.Domain.Identity.Exceptions;
+using DevUp.Infrastructure.JwtIdentity.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevUp.Api.V1.Controllers.Identity
@@ -26,8 +28,8 @@ namespace DevUp.Api.V1.Controllers.Identity
 
             try
             {
-                var token = await _identityService.RegisterAsync(request.Username, request.Password);
-                var response = new RegistrationSucceededResponse() { Token = token };
+                var result = await _identityService.RegisterAsync(request.Username, request.Password) as JwtRegistrationResult;
+                var response = new RegistrationSucceededResponse() { Token = result.Token };
                 return Ok(response);
             }
             catch (RegistrationFailedException exception)
@@ -49,8 +51,8 @@ namespace DevUp.Api.V1.Controllers.Identity
 
             try
             {
-                var token = await _identityService.LoginAsync(request.Username, request.Password);
-                var response = new LoginSucceededResponse() { Token = token };
+                var result = await _identityService.LoginAsync(request.Username, request.Password) as JwtLoginResult;
+                var response = new LoginSucceededResponse() { Token = result.Token };
                 return Ok(response);
             }
             catch (LoginFailedException exception)

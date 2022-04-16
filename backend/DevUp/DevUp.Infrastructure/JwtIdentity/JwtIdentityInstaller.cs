@@ -7,13 +7,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DevUp.Infrastructure.Identity
 {
-    public static class IdentityInstaller
+    public static class JwtIdentityInstaller
     {
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services)
         {
             var jwtSettings = new JwtSettings();
             services.AddSingleton(jwtSettings);
-            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IIdentityService, JwtIdentityService>();
             services.AddUserManager();
 
             services.AddAuthentication(opts =>

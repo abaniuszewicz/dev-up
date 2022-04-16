@@ -5,24 +5,27 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using DevUp.Domain.Identity;
+using DevUp.Domain.Identity.Exceptions;
+using DevUp.Domain.Identity.Results;
 using DevUp.Infrastructure.Identity.Stores;
+using DevUp.Infrastructure.JwtIdentity.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DevUp.Infrastructure.Identity
 {
-    internal class IdentityService : IIdentityService
+    internal class JwtIdentityService : IIdentityService
     {
         private readonly UserManager<User> _userManager;
         private readonly JwtSettings _jwtSettings;
 
-        public IdentityService(UserManager<User> userManager, JwtSettings jwtSettings)
+        public JwtIdentityService(UserManager<User> userManager, JwtSettings jwtSettings)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _jwtSettings = jwtSettings;
         }
 
-        public async Task<string> RegisterAsync(string username, string password)
+        public async Task<RegistrationResult> RegisterAsync(string username, string password)
         {
             var existingUser = await _userManager.FindByNameAsync(username);
             if (existingUser is not null)
@@ -34,10 +37,10 @@ namespace DevUp.Infrastructure.Identity
                 throw new RegistrationFailedException(createdUser.Errors.Select(e => e.Description));
 
             var token = GenerateJwtToken(user);
-            return token;
+            return new JwtRegistrationResult() { Token = token };
         }
 
-        public async Task<string> LoginAsync(string username, string password)
+        public async Task<LoginResult> LoginAsync(string username, string password)
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user is null)
@@ -48,7 +51,7 @@ namespace DevUp.Infrastructure.Identity
                 throw new LoginFailedException(new[] { "Invalid password." });
 
             var token = GenerateJwtToken(user);
-            return token;
+            return new JwtLoginResult() { Token = token };
         }
 
         private string GenerateJwtToken(User user)
