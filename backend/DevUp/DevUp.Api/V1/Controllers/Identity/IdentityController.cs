@@ -4,7 +4,7 @@ using DevUp.Api.V1.Controllers.Identity.Requests;
 using DevUp.Api.V1.Controllers.Identity.Responses;
 using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Exceptions;
-using DevUp.Infrastructure.JwtIdentity.Results;
+using DevUp.Infrastructure.Postgres.JwtIdentity.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevUp.Api.V1.Controllers.Identity
@@ -37,7 +37,7 @@ namespace DevUp.Api.V1.Controllers.Identity
                 var response = new RegistrationFailedResponse() { Errors = exception.Errors };
                 return BadRequest(response);
             }
-            catch
+            catch (Exception exception)
             {
                 return Problem();
             }
@@ -60,7 +60,7 @@ namespace DevUp.Api.V1.Controllers.Identity
                 var response = new LoginFailedResponse() { Errors = exception.Errors };
                 return BadRequest(response);
             }
-            catch
+            catch (Exception exception)
             {
                 return Problem();
             }

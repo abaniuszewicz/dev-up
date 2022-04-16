@@ -1,7 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
-namespace DevUp.Infrastructure.JwtIdentity
+namespace DevUp.Infrastructure.Postgres.JwtIdentity
 {
     internal class JwtSettings
     {

@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace DevUp.Infrastructure.Identity.Stores
+namespace DevUp.Infrastructure.JwtIdentity.Stores
 {
     internal class InMemoryUserStore : IUserStore<User>, IUserPasswordStore<User>
-    { 
+    {
         private readonly Dictionary<string, User> _store = new();
 
         #region IUserStore

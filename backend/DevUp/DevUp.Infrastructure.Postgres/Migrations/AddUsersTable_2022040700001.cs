@@ -7,8 +7,10 @@ namespace DevUp.Infrastructure.Postgres.Migrations
     {
         public override void Up()
         {
-            Create.Table("Users")
-                .WithColumn("Username").AsAnsiString().NotNullable();
+            Create.Table("users")
+                .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
+                .WithColumn("UserName").AsAnsiString().NotNullable()
+                .WithColumn("PasswordHash").AsAnsiString();
         }
 
         public override void Down()

@@ -1,11 +1,12 @@
 ﻿using DevUp.Domain.Identity;
-using DevUp.Infrastructure.JwtIdentity.Stores;
+using DevUp.Infrastructure.Postgres.JwtIdentity.Dtos;
+using DevUp.Infrastructure.Postgres.JwtIdentity.Stores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DevUp.Infrastructure.JwtIdentity
+namespace DevUp.Infrastructure.Postgres.JwtIdentity
 {
     public static class JwtIdentityInstaller
     {
@@ -38,13 +39,13 @@ namespace DevUp.Infrastructure.JwtIdentity
             return services;
         }
 
-        private static IServiceCollection AddUserManager(this IServiceCollection services)
+        public static IServiceCollection AddPostgresUserManager(this IServiceCollection services)
         {
-            services.AddSingleton<IUserStore<User>, InMemoryUserStore>();
-            services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddSingleton<IUserStore<UserDto>, UserSTore>();
+            services.AddSingleton<IPasswordHasher<UserDto>, PasswordHasher<UserDto>>();
             services.AddSingleton<ILookupNormalizer, UpperInvariantLookupNormalizer>();
             services.AddScoped<IdentityErrorDescriber>();
-            services.AddScoped<UserManager<User>>();
+            services.AddScoped<UserManager<UserDto>>();
             return services;
         }
     }

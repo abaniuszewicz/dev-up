@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DevUp.Infrastructure.Identity.Stores
+namespace DevUp.Infrastructure.JwtIdentity.Stores
 {
     internal class User
     {
