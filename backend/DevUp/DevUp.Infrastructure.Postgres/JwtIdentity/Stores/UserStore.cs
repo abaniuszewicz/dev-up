@@ -16,10 +16,10 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
 
         public async Task<IdentityResult> CreateAsync(UserDto user, CancellationToken cancellationToken)
         {
-            var sql = @"INSERT INTO users (Id, UserName, PasswordHash)
-                        VALUES (@Id, @Name, @Hash)";
+            var sql = @"INSERT INTO users (id, username, passwordhash)
+                        VALUES (@Id, @UserName, @PasswordHash)";
 
-            await _connection.ExecuteAsync(sql, new { Id = user.Id, Name = user.UserName, Hash = user.PasswordHash });
+            await _connection.ExecuteAsync(sql, new { Id = user.Id, UserName = user.UserName, PasswordHash = user.PasswordHash });
             return IdentityResult.Success;
         }
 
@@ -30,7 +30,8 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _connection.Close();
+            _connection.Dispose();
         }
 
         public Task<UserDto> FindByIdAsync(string userId, CancellationToken cancellationToken)
@@ -43,48 +44,52 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
             var sql = @"SELECT *
                         FROM users
                         WHERE UserName = @UserName";
-            return await _connection.QuerySingleAsync<UserDto>(sql,
+
+            return await _connection.QuerySingleOrDefaultAsync<UserDto>(sql,
                 new { UserName = normalizedUserName });
         }
 
         public Task<string> GetNormalizedUserNameAsync(UserDto user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.UserName);
         }
 
         public Task<string> GetPasswordHashAsync(UserDto user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.PasswordHash);
         }
 
         public Task<string> GetUserIdAsync(UserDto user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.Id.ToString());
         }
 
         public Task<string> GetUserNameAsync(UserDto user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.UserName);
         }
 
         public Task<bool> HasPasswordAsync(UserDto user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.PasswordHash is not null);
         }
 
         public Task SetNormalizedUserNameAsync(UserDto user, string normalizedName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            user.UserName = normalizedName;
+            return Task.CompletedTask;
         }
 
         public Task SetPasswordHashAsync(UserDto user, string passwordHash, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            user.PasswordHash = passwordHash;
+            return Task.CompletedTask;
         }
 
         public Task SetUserNameAsync(UserDto user, string userName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            user.UserName = userName;
+            return Task.CompletedTask;
         }
 
         public Task<IdentityResult> UpdateAsync(UserDto user, CancellationToken cancellationToken)

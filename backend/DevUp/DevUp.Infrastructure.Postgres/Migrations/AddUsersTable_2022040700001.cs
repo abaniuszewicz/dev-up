@@ -8,14 +8,14 @@ namespace DevUp.Infrastructure.Postgres.Migrations
         public override void Up()
         {
             Create.Table("users")
-                .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
-                .WithColumn("UserName").AsAnsiString().NotNullable()
-                .WithColumn("PasswordHash").AsAnsiString();
+                .WithColumn("id").AsGuid().NotNullable().PrimaryKey()
+                .WithColumn("userName").AsAnsiString().NotNullable()
+                .WithColumn("passwordHash").AsAnsiString();
         }
 
         public override void Down()
         {
-            Delete.Table("Users");
+            Delete.Table("users");
         }
     }
 }
