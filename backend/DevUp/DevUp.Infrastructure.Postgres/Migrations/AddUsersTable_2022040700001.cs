@@ -10,6 +10,7 @@ namespace DevUp.Infrastructure.Postgres.Migrations
             Create.Table("users")
                 .WithColumn("id").AsGuid().NotNullable().PrimaryKey()
                 .WithColumn("username").AsAnsiString().NotNullable()
+                .WithColumn("normalized_username").AsAnsiString().NotNullable()
                 .WithColumn("password_hash").AsAnsiString();
         }
 
