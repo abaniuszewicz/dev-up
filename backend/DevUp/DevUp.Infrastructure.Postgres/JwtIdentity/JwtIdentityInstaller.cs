@@ -14,8 +14,8 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
         {
             var jwtSettings = new JwtSettings();
             services.AddSingleton(jwtSettings);
-            services.AddScoped<IIdentityService, JwtIdentityService>();
-            // services.AddUserManager();
+            services.AddTransient<IIdentityService, JwtIdentityService>();
+            services.AddPostgresUserManager();
 
             services.AddAuthentication(opts =>
             {
@@ -39,13 +39,13 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
             return services;
         }
 
-        public static IServiceCollection AddPostgresUserManager(this IServiceCollection services)
+        private static IServiceCollection AddPostgresUserManager(this IServiceCollection services)
         {
-            services.AddSingleton<IUserStore<UserDto>, UserSTore>();
+            services.AddTransient<IUserStore<UserDto>, UserStore>();
             services.AddSingleton<IPasswordHasher<UserDto>, PasswordHasher<UserDto>>();
             services.AddSingleton<ILookupNormalizer, UpperInvariantLookupNormalizer>();
-            services.AddScoped<IdentityErrorDescriber>();
-            services.AddScoped<UserManager<UserDto>>();
+            services.AddSingleton<IdentityErrorDescriber>();
+            services.AddTransient<UserManager<UserDto>>();
             return services;
         }
     }

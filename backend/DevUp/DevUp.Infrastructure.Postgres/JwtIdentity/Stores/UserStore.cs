@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
 {
-    internal class UserSTore : IUserStore<UserDto>, IUserPasswordStore<UserDto>
+    internal class UserStore : IUserStore<UserDto>, IUserPasswordStore<UserDto>
     {
         private readonly IDbConnection _connection;
 
-        public UserSTore(IDbConnection connection)
+        public UserStore(IDbConnection connection)
         {
             _connection = connection;
         }
@@ -19,6 +19,9 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             if (user is null)
                 throw new ArgumentNullException(nameof(user));
+
+            if (user.Id == Guid.Empty)
+                user.Id = Guid.NewGuid();
 
             var sql = @"INSERT INTO users (id, username, normalized_username, password_hash)
                         VALUES (@Id, @UserName, @NormalizedUserName, @PasswordHash)";
@@ -50,7 +53,7 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
             if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentNullException(nameof(userId));
 
-            var sql = @"SELECT *
+            var sql = @"SELECT id Id, username UserName, normalized_username NormalizedUserName, password_hash PasswordHash
                         FROM users
                         WHERE id=@Id";
             return await _connection.QuerySingleOrDefaultAsync<UserDto>(sql, new { Id = userId });
@@ -62,7 +65,7 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
             if (string.IsNullOrWhiteSpace(normalizedUserName))
                 throw new ArgumentNullException(nameof(normalizedUserName));
 
-            var sql = @"SELECT *
+            var sql = @"SELECT id Id, username UserName, normalized_username NormalizedUserName, password_hash PasswordHash
                         FROM users
                         WHERE normalized_username = @NormalizedUserName";
 

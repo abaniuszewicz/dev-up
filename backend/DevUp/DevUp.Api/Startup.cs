@@ -29,7 +29,6 @@ namespace DevUp.Api
             services.AddSwagger();
             services.AddDatabaseMigrator();
             services.AddPostgresInfrastructure();
-            services.AddPostgresUserManager();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
