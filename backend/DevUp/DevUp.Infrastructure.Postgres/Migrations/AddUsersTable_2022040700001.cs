@@ -9,8 +9,8 @@ namespace DevUp.Infrastructure.Postgres.Migrations
         {
             Create.Table("users")
                 .WithColumn("id").AsGuid().NotNullable().PrimaryKey()
-                .WithColumn("userName").AsAnsiString().NotNullable()
-                .WithColumn("passwordHash").AsAnsiString();
+                .WithColumn("username").AsAnsiString().NotNullable()
+                .WithColumn("password_hash").AsAnsiString();
         }
 
         public override void Down()

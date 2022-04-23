@@ -16,10 +16,10 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
 
         public async Task<IdentityResult> CreateAsync(UserDto user, CancellationToken cancellationToken)
         {
-            var sql = @"INSERT INTO users (id, username, passwordhash)
+            var sql = @"INSERT INTO users (id, username, password_hash)
                         VALUES (@Id, @UserName, @PasswordHash)";
 
-            await _connection.ExecuteAsync(sql, new { Id = user.Id, UserName = user.UserName, PasswordHash = user.PasswordHash });
+            await _connection.ExecuteAsync(sql, new { user.Id, user.UserName, user.PasswordHash });
             return IdentityResult.Success;
         }
 
@@ -43,7 +43,7 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
         {
             var sql = @"SELECT *
                         FROM users
-                        WHERE UserName = @UserName";
+                        WHERE username = @UserName";
 
             return await _connection.QuerySingleOrDefaultAsync<UserDto>(sql,
                 new { UserName = normalizedUserName });
