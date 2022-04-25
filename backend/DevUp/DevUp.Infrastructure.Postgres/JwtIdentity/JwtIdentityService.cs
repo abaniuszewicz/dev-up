@@ -56,7 +56,7 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(GetClaims(user.UserName)),
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddMilliseconds(_jwtSettings.ExpiryMs),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_jwtSettings.Secret), SecurityAlgorithms.HmacSha256Signature)
             };
 
