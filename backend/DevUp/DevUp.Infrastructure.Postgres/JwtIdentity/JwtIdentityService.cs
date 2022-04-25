@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Results;
-using DevUp.Infrastructure.Identity.Stores;
-using DevUp.Infrastructure.JwtIdentity.Results;
+using DevUp.Infrastructure.Postgres.JwtIdentity.Dtos;
+using DevUp.Infrastructure.Postgres.JwtIdentity.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DevUp.Infrastructure.Identity
+namespace DevUp.Infrastructure.Postgres.JwtIdentity
 {
     internal class JwtIdentityService : IIdentityService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<UserDto> _userManager;
         private readonly JwtSettings _jwtSettings;
 
-        public JwtIdentityService(UserManager<User> userManager, JwtSettings jwtSettings)
+        public JwtIdentityService(UserManager<UserDto> userManager, JwtSettings jwtSettings)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _jwtSettings = jwtSettings;
@@ -31,7 +27,7 @@ namespace DevUp.Infrastructure.Identity
             if (existingUser is not null)
                 throw new RegistrationFailedException(new[] { "User with this username already exists." });
 
-            var user = new User() { Username = username };
+            var user = new UserDto() { UserName = username };
             var createdUser = await _userManager.CreateAsync(user, password);
             if (!createdUser.Succeeded)
                 throw new RegistrationFailedException(createdUser.Errors.Select(e => e.Description));
@@ -54,13 +50,13 @@ namespace DevUp.Infrastructure.Identity
             return new JwtLoginResult() { Token = token };
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateJwtToken(UserDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
-                Subject = new ClaimsIdentity(GetClaims(user.Username)),
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Subject = new ClaimsIdentity(GetClaims(user.UserName)),
+                Expires = DateTime.UtcNow.AddMilliseconds(_jwtSettings.ExpiryMs),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_jwtSettings.Secret), SecurityAlgorithms.HmacSha256Signature)
             };
 

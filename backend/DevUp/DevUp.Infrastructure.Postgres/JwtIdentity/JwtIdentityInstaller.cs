@@ -1,11 +1,13 @@
 ﻿using DevUp.Domain.Identity;
-using DevUp.Infrastructure.Identity.Stores;
+using DevUp.Infrastructure.Postgres.JwtIdentity.Dtos;
+using DevUp.Infrastructure.Postgres.JwtIdentity.Stores;
+using DevUp.Infrastructure.Postgres.JwtIdentity.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DevUp.Infrastructure.Identity
+namespace DevUp.Infrastructure.Postgres.JwtIdentity
 {
     public static class JwtIdentityInstaller
     {
@@ -13,8 +15,8 @@ namespace DevUp.Infrastructure.Identity
         {
             var jwtSettings = new JwtSettings();
             services.AddSingleton(jwtSettings);
-            services.AddScoped<IIdentityService, JwtIdentityService>();
-            services.AddUserManager();
+            services.AddTransient<IIdentityService, JwtIdentityService>();
+            services.AddPostgresUserManager();
 
             services.AddAuthentication(opts =>
             {
@@ -38,13 +40,16 @@ namespace DevUp.Infrastructure.Identity
             return services;
         }
 
-        private static IServiceCollection AddUserManager(this IServiceCollection services)
+        private static IServiceCollection AddPostgresUserManager(this IServiceCollection services)
         {
-            services.AddSingleton<IUserStore<User>, InMemoryUserStore>();
-            services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddTransient<IUserStore<UserDto>, UserStore>();
+            services.AddSingleton<IPasswordHasher<UserDto>, PasswordHasher<UserDto>>();
             services.AddSingleton<ILookupNormalizer, UpperInvariantLookupNormalizer>();
-            services.AddScoped<IdentityErrorDescriber>();
-            services.AddScoped<UserManager<User>>();
+            services.AddSingleton<IUserValidator<UserDto>, UsernameValidator>();
+            services.AddSingleton<IUserValidator<UserDto>, UserValidator<UserDto>>();
+            services.AddSingleton<IPasswordValidator<UserDto>, PasswordValidator<UserDto>>();
+            services.AddSingleton<IdentityErrorDescriber>();
+            services.AddTransient<UserManager<UserDto>>();
             return services;
         }
     }
