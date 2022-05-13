@@ -10,6 +10,8 @@ services:
       context: .
       dockerfile: DevUp.Api/Dockerfile
     environment:
+      JWT_SECRET: 2r5u8x/A?D(G-KaPdSgVkYp3s6v9y$B&
+      JWT_EXPIRY_MS: 300000
       DB_CONNECTION_STRING: "host=postgres;port=5432;database=postgres;username=postgres;password=pass"
     depends_on:
       - postgres

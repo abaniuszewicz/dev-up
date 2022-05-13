@@ -1,4 +1,7 @@
-﻿using DevUp.Infrastructure.Logging;
+﻿using DevUp.Infrastructure.Documentation;
+using DevUp.Infrastructure.Logging;
+using DevUp.Infrastructure.Postgres;
+using DevUp.Infrastructure.Postgres.JwtIdentity;
 using DevUp.Infrastructure.Postgres.Migrations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,10 +23,12 @@ namespace DevUp.Api
         public void ConfigureServices(IServiceCollection services) 
         {
             services.AddLogger();
+            services.AddJwtAuthentication();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwagger();
             services.AddDatabaseMigrator();
+            services.AddPostgresInfrastructure();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
