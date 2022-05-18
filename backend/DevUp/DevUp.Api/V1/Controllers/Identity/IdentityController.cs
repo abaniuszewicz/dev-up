@@ -4,6 +4,7 @@ using DevUp.Api.V1.Controllers.Identity.Requests;
 using DevUp.Api.V1.Controllers.Identity.Responses;
 using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Exceptions;
+using DevUp.Domain.Machine.Entities;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Results;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,8 +29,9 @@ namespace DevUp.Api.V1.Controllers.Identity
 
             try
             {
-                var result = await _identityService.RegisterAsync(request.Username, request.Password) as JwtRegistrationResult;
-                var response = new RegistrationSucceededResponse() { Token = result.Token };
+                var device = new Device(new DeviceId(request.Device.Id), request.Device.Name);
+                var result = await _identityService.RegisterAsync(request.Username, request.Password, device) as JwtRegistrationResult;
+                var response = new RegistrationSucceededResponse() { Token = result.Token, RefreshToken = result.RefreshToken };
                 return Ok(response);
             }
             catch (RegistrationFailedException exception)
@@ -51,13 +53,38 @@ namespace DevUp.Api.V1.Controllers.Identity
 
             try
             {
-                var result = await _identityService.LoginAsync(request.Username, request.Password) as JwtLoginResult;
-                var response = new LoginSucceededResponse() { Token = result.Token };
+                var device = new Device(new DeviceId(request.Device.Id), request.Device.Name);
+                var result = await _identityService.LoginAsync(request.Username, request.Password, device) as JwtLoginResult;
+                var response = new LoginSucceededResponse() { Token = result.Token, RefreshToken = result.RefreshToken };
                 return Ok(response);
             }
             catch (LoginFailedException exception)
             {
                 var response = new LoginFailedResponse() { Errors = exception.Errors };
+                return BadRequest(response);
+            }
+            catch (Exception exception)
+            {
+                return Problem();
+            }
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshUserRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var device = new Device(new DeviceId(request.Device.Id), request.Device.Name);
+                var result = await _identityService.RefreshAsync(request.Token, request.RefreshToken, device) as JwtRefreshResult;
+                var response = new RefreshSucceededResponse() { Token = result.Token, RefreshToken = result.RefreshToken };
+                return Ok(response);
+            }
+            catch (RefreshFailedException exception)
+            {
+                var response = new RefreshFailedResponse() { Errors = exception.Errors };
                 return BadRequest(response);
             }
             catch (Exception exception)

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
@@ -10,6 +13,10 @@ namespace DevUp.Infrastructure.Documentation
         {
             services.AddSwaggerGen(options =>
             {
+                var docName = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
+                var docPath = Path.Combine(AppContext.BaseDirectory, docName);
+                options.IncludeXmlComments(docPath);
+
                 options.AddSecurityDefinition("Bearer", new()
                 {
                     Name = "Authorization",

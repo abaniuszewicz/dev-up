@@ -1,7 +1,6 @@
 ﻿namespace DevUp.Api.V1.Controllers.Identity.Responses
 {
-    public class RegistrationSucceededResponse
+    public class RegistrationSucceededResponse : SucceededResponse
     {
-        public string Token { get; init; }
     }
 }

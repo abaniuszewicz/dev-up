@@ -1,6 +1,6 @@
 ﻿namespace DevUp.Api.V1.Controllers.Identity.Responses
 {
-    public class LoginFailedResponse : FailedResponse
+    public class RefreshSucceededResponse : SucceededResponse
     {
     }
 }
