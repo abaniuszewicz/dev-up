@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
+using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Results;
-using DevUp.Domain.Machine.Entities;
 
 namespace DevUp.Domain.Identity
 {

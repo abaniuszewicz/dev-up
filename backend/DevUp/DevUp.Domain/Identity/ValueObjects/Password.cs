@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DevUp.Common.Extensions;
 using DevUp.Domain.Seedwork;
 using DevUp.Domain.Seedwork.Exceptions;
@@ -21,7 +18,7 @@ namespace DevUp.Domain.Identity.ValueObjects
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            throw new NotImplementedException();
+            yield return Value;
         }
 
         private static void Validate(string password)

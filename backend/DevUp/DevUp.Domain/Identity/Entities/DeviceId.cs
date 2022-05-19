@@ -1,6 +1,6 @@
 ﻿using DevUp.Domain.Seedwork;
 
-namespace DevUp.Domain.Machine.Entities
+namespace DevUp.Domain.Identity.Entities
 {
     public class DeviceId : EntityId
     {
