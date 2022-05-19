@@ -2,7 +2,7 @@
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Exceptions;
 
-namespace DevUp.Domain.Identity
+namespace DevUp.Domain.Identity.Services
 {
     public interface IIdentityService
     {

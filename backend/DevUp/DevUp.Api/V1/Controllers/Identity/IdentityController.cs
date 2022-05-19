@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using DevUp.Api.V1.Controllers.Identity.Requests;
 using DevUp.Api.V1.Controllers.Identity.Responses;
-using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Exceptions;
+using DevUp.Domain.Identity.Services;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Results;
 using Microsoft.AspNetCore.Mvc;
 

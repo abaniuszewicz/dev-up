@@ -1,9 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Exceptions;
+using DevUp.Domain.Identity.Services;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Dtos;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Results;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Stores;

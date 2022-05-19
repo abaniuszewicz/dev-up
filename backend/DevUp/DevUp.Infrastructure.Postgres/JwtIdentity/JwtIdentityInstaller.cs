@@ -1,4 +1,4 @@
-﻿using DevUp.Domain.Identity;
+﻿using DevUp.Domain.Identity.Services;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Dtos;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Stores;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Validators;
