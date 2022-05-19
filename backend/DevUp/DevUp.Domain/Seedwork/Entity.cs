@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DevUp.Domain.Entities
+namespace DevUp.Domain.Seedwork
 {
     public abstract class Entity<TId> : IEquatable<Entity<TId>>
         where TId : EntityId

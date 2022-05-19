@@ -1,4 +1,4 @@
-﻿using DevUp.Domain.Entities;
+﻿using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Machine.Entities
 {

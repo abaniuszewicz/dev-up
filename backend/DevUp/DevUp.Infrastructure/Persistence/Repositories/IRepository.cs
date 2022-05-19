@@ -1,4 +1,4 @@
-﻿using DevUp.Domain.Entities;
+﻿using DevUp.Domain.Seedwork;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

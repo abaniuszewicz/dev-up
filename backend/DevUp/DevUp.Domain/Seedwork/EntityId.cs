@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DevUp.Domain.Entities
+namespace DevUp.Domain.Seedwork
 {
     public abstract class EntityId : IEquatable<EntityId>
     {
@@ -9,13 +9,13 @@ namespace DevUp.Domain.Entities
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) 
+            if (ReferenceEquals(null, obj))
                 return false;
 
-            if (ReferenceEquals(this, obj)) 
+            if (ReferenceEquals(this, obj))
                 return true;
 
-            if (obj.GetType() != GetType()) 
+            if (obj.GetType() != GetType())
                 return false;
 
             return Equals((EntityId)obj);

@@ -1,5 +1,5 @@
 ﻿using System;
-using DevUp.Domain.Entities;
+using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
