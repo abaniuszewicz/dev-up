@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using DevUp.Api.V1.Controllers.Identity.Requests;
 using DevUp.Api.V1.Controllers.Identity.Responses;
+using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Services;
 using DevUp.Infrastructure.Postgres.JwtIdentity.Results;
@@ -33,7 +34,7 @@ namespace DevUp.Api.V1.Controllers.Identity
                 var response = new RegistrationSucceededResponse() { Token = result.Token, RefreshToken = result.RefreshToken };
                 return Ok(response);
             }
-            catch (RegistrationFailedException exception)
+            catch (IdentityException exception)
             {
                 var response = new RegistrationFailedResponse() { Errors = exception.Errors };
                 return BadRequest(response);
@@ -57,7 +58,7 @@ namespace DevUp.Api.V1.Controllers.Identity
                 var response = new LoginSucceededResponse() { Token = result.Token, RefreshToken = result.RefreshToken };
                 return Ok(response);
             }
-            catch (LoginFailedException exception)
+            catch (IdentityException exception)
             {
                 var response = new LoginFailedResponse() { Errors = exception.Errors };
                 return BadRequest(response);
@@ -81,7 +82,7 @@ namespace DevUp.Api.V1.Controllers.Identity
                 var response = new RefreshSucceededResponse() { Token = result.Token, RefreshToken = result.RefreshToken };
                 return Ok(response);
             }
-            catch (RefreshFailedException exception)
+            catch (IdentityException exception)
             {
                 var response = new RefreshFailedResponse() { Errors = exception.Errors };
                 return BadRequest(response);

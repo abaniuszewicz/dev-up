@@ -33,19 +33,19 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
         {
             var existingUser = await _userManager.FindByNameAsync(username);
             if (existingUser is not null)
-                throw new RegistrationFailedException(new[] { "User with this username already exists." });
+                throw new IdentityException(new[] { "User with this username already exists." });
 
             var user = new UserDto() { UserName = username };
             var createdUser = await _userManager.CreateAsync(user, password);
             if (!createdUser.Succeeded)
-                throw new RegistrationFailedException(createdUser.Errors.Select(e => e.Description));
+                throw new IdentityException(createdUser.Errors.Select(e => e.Description));
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = GenerateToken(tokenHandler, user);
             var refreshTokenDto = GenerateRefreshTokenDto(token, user, device);
             var createdRefreshToken = await _refreshTokenStore.CreateAsync(refreshTokenDto, CancellationToken.None);
             if (!createdRefreshToken.Succeeded)
-                throw new RegistrationFailedException(createdRefreshToken.Errors.Select(e => e.Description));
+                throw new IdentityException(createdRefreshToken.Errors.Select(e => e.Description));
 
             return new JwtRegistrationResult() { Token = tokenHandler.WriteToken(token), RefreshToken = refreshTokenDto.Token };
         }
@@ -54,18 +54,18 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user is null)
-                throw new LoginFailedException(new[] { "User with this username does not exist." });
+                throw new IdentityException(new[] { "User with this username does not exist." });
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
             if (!isPasswordValid)
-                throw new LoginFailedException(new[] { "Invalid password." });
+                throw new IdentityException(new[] { "Invalid password." });
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = GenerateToken(tokenHandler, user);
             var refreshTokenDto = GenerateRefreshTokenDto(token, user, device);
             var createdRefreshToken = await _refreshTokenStore.CreateAsync(refreshTokenDto, CancellationToken.None);
             if (!createdRefreshToken.Succeeded)
-                throw new LoginFailedException(createdRefreshToken.Errors.Select(e => e.Description));
+                throw new IdentityException(createdRefreshToken.Errors.Select(e => e.Description));
 
             return new JwtLoginResult() { Token = tokenHandler.WriteToken(token), RefreshToken = refreshTokenDto.Token };
         }
@@ -74,29 +74,29 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
         {
             var principal = GetPrincipal(token);
             if (principal is null)
-                throw new RefreshFailedException(new[] { "Token is invalid." });
+                throw new IdentityException(new[] { "Token is invalid." });
 
             var refreshTokenDto = await _refreshTokenStore.GetAsync(refreshToken, CancellationToken.None);
             if (refreshTokenDto is null)
-                throw new RefreshFailedException(new[] { "Refresh token does not exist." });
+                throw new IdentityException(new[] { "Refresh token does not exist." });
 
             var username = principal.FindFirstValue("username");
             var user = await _userManager.FindByNameAsync(username);
             if (user is null)
-                throw new RefreshFailedException(new[] { "Token did not contain username of an existing user." });
+                throw new IdentityException(new[] { "Token did not contain username of an existing user." });
 
             ValidateTokens(user, principal, refreshTokenDto, device);
 
             var markedAsUsed = await _refreshTokenStore.MarkAsUsed(refreshTokenDto, CancellationToken.None);
             if (!markedAsUsed.Succeeded)
-                throw new RefreshFailedException(markedAsUsed.Errors.Select(e => e.Description));
+                throw new IdentityException(markedAsUsed.Errors.Select(e => e.Description));
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var newToken = GenerateToken(tokenHandler, user);
             var newRefreshTokenDto = GenerateRefreshTokenDto(newToken, user, device);
             var createdRefreshToken = await _refreshTokenStore.CreateAsync(newRefreshTokenDto, CancellationToken.None);
             if (!createdRefreshToken.Succeeded)
-                throw new LoginFailedException(createdRefreshToken.Errors.Select(e => e.Description));
+                throw new IdentityException(createdRefreshToken.Errors.Select(e => e.Description));
 
             return new JwtRefreshResult() { Token = tokenHandler.WriteToken(newToken), RefreshToken = newRefreshTokenDto.Token };
         }
@@ -174,26 +174,26 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
             var expiryDateUnix = long.Parse(principal.FindFirstValue(JwtRegisteredClaimNames.Exp));
             var expiryDate = DateTimeOffset.FromUnixTimeSeconds(expiryDateUnix).UtcDateTime;
             if (expiryDate > DateTime.UtcNow)
-                throw new RefreshFailedException(new[] { "Token has not expired yet." });
+                throw new IdentityException(new[] { "Token has not expired yet." });
 
             if (refreshToken.ExpiryDate < DateTime.UtcNow)
-                throw new RefreshFailedException(new[] { "Refresh token has expired." });
+                throw new IdentityException(new[] { "Refresh token has expired." });
 
             if (refreshToken.Invalidated)
-                throw new RefreshFailedException(new[] { "Refresh token has been invalidated." });
+                throw new IdentityException(new[] { "Refresh token has been invalidated." });
 
             if (refreshToken.Used)
-                throw new RefreshFailedException(new[] { "Refresh token has been used already." });
+                throw new IdentityException(new[] { "Refresh token has been used already." });
 
             var jti = principal.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Jti).Value;
             if (!Equals(jti, refreshToken.Jti))
-                throw new RefreshFailedException(new[] { "Refresh token does not belong to this token." });
+                throw new IdentityException(new[] { "Refresh token does not belong to this token." });
 
             if (refreshToken.UserId != user.Id)
-                throw new RefreshFailedException(new[] { "Refresh token does not belong to this user." });
+                throw new IdentityException(new[] { "Refresh token does not belong to this user." });
 
             if (!Equals(refreshToken.Device.Id, device.Id.Id))
-                throw new RefreshFailedException(new[] { "Refresh token does not belong to this device." });
+                throw new IdentityException(new[] { "Refresh token does not belong to this device." });
         }
     }
 }
