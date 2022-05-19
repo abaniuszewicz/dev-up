@@ -1,5 +1,5 @@
 ﻿using DevUp.Domain.Identity.Entities;
-using DevUp.Infrastructure.Persistence.Repositories;
+using DevUp.Domain.Identity.Repositories;
 
 namespace DevUp.Infrastructure.Postgres.Repositories
 {

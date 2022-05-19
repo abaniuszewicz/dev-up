@@ -1,11 +1,10 @@
-﻿using DevUp.Domain.Seedwork;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DevUp.Infrastructure.Persistence.Repositories
+namespace DevUp.Domain.Seedwork
 {
-    public interface IRepository<TEntity, TEntityId> 
-        where TEntity : Entity<TEntityId> 
+    public interface IRepository<TEntity, TEntityId>
+        where TEntity : Entity<TEntityId>
         where TEntityId : EntityId
     {
         Task<TEntity> GetByIdAsync(TEntityId id);

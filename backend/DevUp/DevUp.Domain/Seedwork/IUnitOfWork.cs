@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DevUp.Infrastructure.Persistence
+namespace DevUp.Domain.Seedwork
 {
     public interface IUnitOfWork
     {
