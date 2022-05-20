@@ -3,7 +3,7 @@ using DevUp.Domain.Identity.Repositories;
 
 namespace DevUp.Infrastructure.Postgres.Repositories
 {
-    internal class PostgresUserRepository : IUserRepository
+    internal class PostgresUserRepository : IUserStore
     {
         public PostgresUserRepository()
         {
