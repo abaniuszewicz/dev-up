@@ -1,18 +1,13 @@
 ﻿using System.Threading.Tasks;
 using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.Exceptions;
+using DevUp.Domain.Identity.ValueObjects;
 
 namespace DevUp.Domain.Identity.Services
 {
     public interface IIdentityService
     {
-        /// <exception cref="RegistrationFailedException"/>
-        public Task<IRegistrationResult> RegisterAsync(string username, string password, Device device);
-
-        /// <exception cref="LoginFailedException"/>
-        public Task<ILoginResult> LoginAsync(string username, string password, Device device);
-
-        /// <exception cref="RefreshFailedException"/>
-        public Task<IRefreshResult> RefreshAsync(string token, string refreshToken, Device device);
+        public Task<IdentityResult> RegisterAsync(Username username, Password password, Device device);
+        public Task<IdentityResult> LoginAsync(Username username, Password password, Device device);
+        public Task<IdentityResult> RefreshAsync(Username token, Password refreshToken, Device device);
     }
 }
