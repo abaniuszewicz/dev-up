@@ -8,6 +8,11 @@ namespace DevUp.Domain.Identity.ValueObjects
     {
         public string Value { get; }
 
+        public Token()
+        {
+
+        }
+
         public Token(string token)
         {
             Validate(token);
