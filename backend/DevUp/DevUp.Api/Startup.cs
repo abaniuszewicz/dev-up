@@ -1,4 +1,5 @@
-﻿using DevUp.Infrastructure.Documentation;
+﻿using DevUp.Domain.Identity;
+using DevUp.Infrastructure.Documentation;
 using DevUp.Infrastructure.Logging;
 using DevUp.Infrastructure.Postgres;
 using DevUp.Infrastructure.Postgres.JwtIdentity;
@@ -22,6 +23,7 @@ namespace DevUp.Api
 
         public void ConfigureServices(IServiceCollection services) 
         {
+            services.AddIdentity();
             services.AddLogger();
             services.AddJwtAuthentication();
             services.AddControllers();

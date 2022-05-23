@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace DevUp.Infrastructure.Postgres.JwtIdentity
+namespace DevUp.Domain.Identity
 {
     internal class JwtSettings
     {
