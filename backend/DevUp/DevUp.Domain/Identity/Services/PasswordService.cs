@@ -13,7 +13,7 @@ namespace DevUp.Domain.Identity.Services
             throw new NotImplementedException();
         }
 
-        public Task<PasswordVerifyResult> VerifyAsync(Password password, PasswordHash passwordHash)
+        public Task<PasswordVerifyResult> VerifyAsync(Password password, PasswordHash passwordHash, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

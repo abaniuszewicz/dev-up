@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using DevUp.Domain.Identity.Entities;
+using DevUp.Domain.Identity.Enums;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.ValueObjects;
@@ -45,7 +46,7 @@ namespace DevUp.Domain.Identity.Services
                 throw new IdentityException(new[] { $"Failed to retrieve password hash for user {username}" });
 
             var verificationResult = await _passwordService.VerifyAsync(password, passwordHash, cancellationToken);
-            if (verificationResult == Enums.PasswordVerifyResult.Failed)
+            if (verificationResult == PasswordVerifyResult.Failed)
                 throw new IdentityException(new[] { $"Invalid password" });
 
             var token = new Token();
