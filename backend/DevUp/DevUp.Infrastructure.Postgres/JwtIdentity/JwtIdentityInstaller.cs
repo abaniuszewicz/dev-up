@@ -5,7 +5,6 @@ using DevUp.Infrastructure.Postgres.JwtIdentity.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DevUp.Infrastructure.Postgres.JwtIdentity
 {
