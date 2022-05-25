@@ -1,6 +1,6 @@
 ﻿namespace DevUp.Common
 {
-    public struct DateTimeRange
+    public class DateTimeRange
     {
         public DateTime Start { get; init; }
         public DateTime End { get; init; }
@@ -17,6 +17,16 @@
         public bool IsWithinRange(DateTime date)
         {
             return Start <= date && End <= date;
+        }
+
+        public override string ToString()
+        {
+            return $"{Start}÷{End}";
+        }
+
+        public string ToString(string format)
+        {
+            return $"{Start.ToString(format)}÷{End.ToString(format)}";
         }
     }
 }

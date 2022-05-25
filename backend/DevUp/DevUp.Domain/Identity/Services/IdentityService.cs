@@ -1,5 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using DevUp.Common;
+using DevUp.Domain.Identity.Creation;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Enums;
 using DevUp.Domain.Identity.Exceptions;
@@ -10,13 +12,17 @@ namespace DevUp.Domain.Identity.Services
 {
     internal class IdentityService : IIdentityService
     {
+        private readonly JwtSettings _jwtSettings;
         private readonly IUserRepository _userRepository;
         private readonly IPasswordService _passwordService;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public IdentityService(JwtSettings jwtSettings, IUserRepository userRepository, IPasswordService passwordService)
+        public IdentityService(JwtSettings jwtSettings, IUserRepository userRepository, IPasswordService passwordService, IDateTimeProvider dateTimeProvider)
         {
+            _jwtSettings = jwtSettings;
             _userRepository = userRepository;
             _passwordService = passwordService;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<IdentityResult> RegisterAsync(Username username, Password password, Device device, CancellationToken cancellationToken)
@@ -31,7 +37,8 @@ namespace DevUp.Domain.Identity.Services
                 throw new IdentityException(new[] { $"Failed to create user {username}" });
 
             var token = new Token();
-            var refreshToken = new RefreshToken();
+            var refreshToken = new RefreshTokenBuilder().FromToken(token).ForUser(createdUser)
+                .WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider).Build();
             return new IdentityResult(token, refreshToken);
         }
 
@@ -50,7 +57,8 @@ namespace DevUp.Domain.Identity.Services
                 throw new IdentityException(new[] { $"Invalid password" });
 
             var token = new Token();
-            var refreshToken = new RefreshToken();
+            var refreshToken = new RefreshTokenBuilder().FromToken(token).ForUser(user)
+                .WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider).Build();
             return new IdentityResult(token, refreshToken);
         }
 

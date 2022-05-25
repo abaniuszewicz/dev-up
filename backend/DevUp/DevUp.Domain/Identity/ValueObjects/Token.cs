@@ -7,10 +7,10 @@ namespace DevUp.Domain.Identity.ValueObjects
     public class Token : ValueObject
     {
         public string Value { get; }
+        public string Jti { get; }
 
         public Token()
         {
-
         }
 
         public Token(string token)
@@ -29,7 +29,7 @@ namespace DevUp.Domain.Identity.ValueObjects
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Value;
+            yield return Jti;
         }
     }
 }

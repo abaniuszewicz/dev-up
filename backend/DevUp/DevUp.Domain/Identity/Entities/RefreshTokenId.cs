@@ -8,7 +8,7 @@ namespace DevUp.Domain.Identity.Entities
     {
         public string Token { get; }
 
-        public RefreshTokenId() : this(GetRandomToken())
+        internal RefreshTokenId() : this(GetRandomToken())
         {
 
         }
