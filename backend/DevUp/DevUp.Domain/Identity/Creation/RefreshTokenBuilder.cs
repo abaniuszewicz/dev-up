@@ -9,6 +9,7 @@ namespace DevUp.Domain.Identity.Creation
     {
         private Token _token;
         private User _user;
+        private Device _device;
         private IDateTimeProvider _dateTimeProvider;
         private JwtSettings _settings;
 
@@ -21,6 +22,12 @@ namespace DevUp.Domain.Identity.Creation
         public RefreshTokenBuilder ForUser(User user)
         {
             _user = user;
+            return this;
+        }
+
+        public RefreshTokenBuilder ForDevice(Device device)
+        {
+            _device = device;
             return this;
         }
 
@@ -42,6 +49,8 @@ namespace DevUp.Domain.Identity.Creation
                 throw new ArgumentNullException(nameof(_token));
             if (_user is null)
                 throw new ArgumentNullException(nameof(_user));
+            if (_device is null)
+                throw new ArgumentNullException(nameof(_device));
             if (_settings is null)
                 throw new ArgumentNullException(nameof(_settings));
             if (_dateTimeProvider is null)
@@ -51,7 +60,7 @@ namespace DevUp.Domain.Identity.Creation
             var from = _dateTimeProvider.UtcNow;
             var to = _dateTimeProvider.UtcNow.AddMilliseconds(_settings.JwtRefreshExpiryMs);
             var lifespan = new DateTimeRange(from, to);
-            return new RefreshToken(id, _token, _user.Id, lifespan);
+            return new RefreshToken(id, _token, _user.Id, _device.Id, lifespan);
         }
     }
 }

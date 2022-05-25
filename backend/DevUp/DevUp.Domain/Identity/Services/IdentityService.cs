@@ -38,7 +38,8 @@ namespace DevUp.Domain.Identity.Services
 
             var token = new Token();
             var refreshToken = new RefreshTokenBuilder().FromToken(token).ForUser(createdUser)
-                .WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider).Build();
+                .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
+                .Build();
             return new IdentityResult(token, refreshToken);
         }
 
@@ -58,7 +59,8 @@ namespace DevUp.Domain.Identity.Services
 
             var token = new Token();
             var refreshToken = new RefreshTokenBuilder().FromToken(token).ForUser(user)
-                .WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider).Build();
+                .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
+                .Build();
             return new IdentityResult(token, refreshToken);
         }
 

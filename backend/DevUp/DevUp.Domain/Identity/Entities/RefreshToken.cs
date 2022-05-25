@@ -8,14 +8,16 @@ namespace DevUp.Domain.Identity.ValueObjects
     {
         public string Jti { get; }
         public UserId UserId { get; }
+        public DeviceId DeviceId { get; }
         public DateTimeRange Lifespan { get; }
         public bool Used { get; set; }
         public bool Invalidated { get; set; }
 
-        public RefreshToken(RefreshTokenId id, Token token, UserId userId, DateTimeRange lifespan) : base(id)
+        public RefreshToken(RefreshTokenId id, Token token, UserId userId, DeviceId deviceId, DateTimeRange lifespan) : base(id)
         {
             Jti = token.Jti;
             UserId = userId;
+            DeviceId = deviceId;
             Lifespan = lifespan;
         }
 
