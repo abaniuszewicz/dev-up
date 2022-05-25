@@ -14,13 +14,15 @@ namespace DevUp.Domain.Identity.Services
     {
         private readonly JwtSettings _jwtSettings;
         private readonly IUserRepository _userRepository;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IPasswordService _passwordService;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public IdentityService(JwtSettings jwtSettings, IUserRepository userRepository, IPasswordService passwordService, IDateTimeProvider dateTimeProvider)
+        public IdentityService(JwtSettings jwtSettings, IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IPasswordService passwordService, IDateTimeProvider dateTimeProvider)
         {
             _jwtSettings = jwtSettings;
             _userRepository = userRepository;
+            _refreshTokenRepository = refreshTokenRepository;
             _passwordService = passwordService;
             _dateTimeProvider = dateTimeProvider;
         }
@@ -64,9 +66,12 @@ namespace DevUp.Domain.Identity.Services
             return new IdentityResult(token, refreshToken);
         }
 
-        public Task<IdentityResult> RefreshAsync(Token token, RefreshToken refreshToken, Device device, CancellationToken cancellationToken)
+        public async Task<IdentityResult> RefreshAsync(Token token, RefreshTokenId refreshTokenId, Device device, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var refreshToken = await _refreshTokenRepository.GetByIdAsync(refreshTokenId, cancellationToken);
+            if (refreshToken is null)
+                throw new IdentityException(new[] { "Refresh token does not exist." });
+
         }
     }
 }

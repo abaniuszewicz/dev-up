@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using DevUp.Common;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.ValueObjects;
@@ -43,6 +44,14 @@ namespace DevUp.Domain.Identity.Creation
             return this;
         }
 
+        private static string GetRandomString()
+        {
+            var randomNumber = new byte[64];
+            using var generator = RandomNumberGenerator.Create();
+            generator.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+
         public RefreshToken Build()
         {
             if (_token is null)
@@ -56,7 +65,8 @@ namespace DevUp.Domain.Identity.Creation
             if (_dateTimeProvider is null)
                 throw new ArgumentNullException(nameof(_dateTimeProvider));
 
-            var id = new RefreshTokenId();
+            var randomString = GetRandomString();
+            var id = new RefreshTokenId(randomString);
             var from = _dateTimeProvider.UtcNow;
             var to = _dateTimeProvider.UtcNow.AddMilliseconds(_settings.JwtRefreshExpiryMs);
             var lifespan = new DateTimeRange(from, to);

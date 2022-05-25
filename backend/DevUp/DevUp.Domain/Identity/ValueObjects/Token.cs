@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Seedwork;
 using DevUp.Domain.Seedwork.Exceptions;
 
@@ -8,6 +9,7 @@ namespace DevUp.Domain.Identity.ValueObjects
     {
         public string Value { get; }
         public string Jti { get; }
+        public UserId UserId { get; }
 
         public Token()
         {

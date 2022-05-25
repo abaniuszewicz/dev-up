@@ -1,8 +1,8 @@
 ﻿using DevUp.Common;
-using DevUp.Domain.Identity.Entities;
+using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Seedwork;
 
-namespace DevUp.Domain.Identity.ValueObjects
+namespace DevUp.Domain.Identity.Entities
 {
     public class RefreshToken : Entity<RefreshTokenId>
     {
@@ -29,6 +29,11 @@ namespace DevUp.Domain.Identity.ValueObjects
         public bool BelongsTo(Token token)
         {
             return Jti == token.Jti;
+        }
+
+        public bool BelongsTo(Device device)
+        {
+            return DeviceId == device.Id;
         }
 
         public bool IsActive(IDateTimeProvider dateTimeProvider)

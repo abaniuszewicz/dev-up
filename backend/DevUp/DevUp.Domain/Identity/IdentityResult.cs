@@ -1,4 +1,6 @@
-﻿namespace DevUp.Domain.Identity.ValueObjects
+﻿using DevUp.Domain.Identity.Entities;
+
+namespace DevUp.Domain.Identity.ValueObjects
 {
     public class IdentityResult
     {

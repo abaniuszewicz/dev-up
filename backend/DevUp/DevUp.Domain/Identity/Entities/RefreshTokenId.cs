@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
@@ -7,11 +6,6 @@ namespace DevUp.Domain.Identity.Entities
     public class RefreshTokenId : EntityId
     {
         public string Token { get; }
-
-        internal RefreshTokenId() : this(GetRandomToken())
-        {
-
-        }
 
         public RefreshTokenId(string token)
         {
@@ -26,14 +20,6 @@ namespace DevUp.Domain.Identity.Entities
         public override int GetHashCode()
         {
             return Token.GetHashCode();
-        }
-
-        private static string GetRandomToken()
-        {
-            var randomNumber = new byte[64];
-            using var generator = RandomNumberGenerator.Create();
-            generator.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
         }
     }
 }
