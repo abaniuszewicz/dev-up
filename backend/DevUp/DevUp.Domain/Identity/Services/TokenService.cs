@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DevUp.Common;
@@ -30,19 +28,22 @@ namespace DevUp.Domain.Identity.Services
             var user = await _userRepository.GetByIdAsync(token.UserId, cancellationToken);
             if (user is null)
                 errors.Add("Token did not contain id of an existing user");
+            if (user is not null && !refreshToken.BelongsTo(user))
+                errors.Add("Refresh token does not belong to this user");
 
+            if (!token.IsActive(_dateTimeProvider))
+                errors.Add("Token is no longer active");
+
+            if (!refreshToken.IsActive(_dateTimeProvider))
+                errors.Add("Refresh token is no longer active");
             if (refreshToken.Invalidated)
                 errors.Add("Refresh token has been invalidated");
             if (refreshToken.Used)
                 errors.Add("Refresh token has been already used");
-            if (!refreshToken.IsActive(_dateTimeProvider))
-                errors.Add("Refresh token is no longer active");
             if (!refreshToken.BelongsTo(token))
                 errors.Add("Refresh token does not belong to this token");
             if (!refreshToken.BelongsTo(device))
                 errors.Add("Refresh token does not belong to this device");
-            if (user is not null && !refreshToken.BelongsTo(user))
-                errors.Add("Refresh token does not belong to this user");
 
             if (errors.Any())
                 throw new IdentityException(errors);

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using DevUp.Common;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Seedwork;
 using DevUp.Domain.Seedwork.Exceptions;
@@ -10,6 +12,7 @@ namespace DevUp.Domain.Identity.ValueObjects
         public string Value { get; }
         public string Jti { get; }
         public UserId UserId { get; }
+        public DateTime ExpiryDate { get; }
 
         public Token()
         {
@@ -19,6 +22,11 @@ namespace DevUp.Domain.Identity.ValueObjects
         {
             Validate(token);
             Value = token;
+        }
+
+        public bool IsActive(IDateTimeProvider dateTimeProvider)
+        {
+            return dateTimeProvider.UtcNow <= ExpiryDate;
         }
 
         private static void Validate(string token)
