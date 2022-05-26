@@ -13,9 +13,9 @@ namespace DevUp.Domain.Identity.Entities
         public bool Used { get; set; }
         public bool Invalidated { get; set; }
 
-        public RefreshToken(RefreshTokenId id, Token token, UserId userId, DeviceId deviceId, DateTimeRange lifespan) : base(id)
+        public RefreshToken(RefreshTokenId id, string jti, UserId userId, DeviceId deviceId, DateTimeRange lifespan) : base(id)
         {
-            Jti = token.Jti;
+            Jti = jti;
             UserId = userId;
             DeviceId = deviceId;
             Lifespan = lifespan;

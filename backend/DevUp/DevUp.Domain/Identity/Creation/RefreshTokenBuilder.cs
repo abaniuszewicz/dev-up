@@ -70,7 +70,7 @@ namespace DevUp.Domain.Identity.Creation
             var from = _dateTimeProvider.UtcNow;
             var to = _dateTimeProvider.UtcNow.AddMilliseconds(_settings.JwtRefreshExpiryMs);
             var lifespan = new DateTimeRange(from, to);
-            return new RefreshToken(id, _token, _user.Id, _device.Id, lifespan);
+            return new RefreshToken(id, _token.Jti, _user.Id, _device.Id, lifespan);
         }
     }
 }
