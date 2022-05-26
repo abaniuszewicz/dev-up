@@ -14,10 +14,6 @@ namespace DevUp.Domain.Identity.ValueObjects
         public UserId UserId { get; }
         public DateTime ExpiryDate { get; }
 
-        public Token()
-        {
-        }
-
         public Token(string token)
         {
             Validate(token);
