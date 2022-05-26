@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Infrastructure.Postgres.Identity.Dtos;
