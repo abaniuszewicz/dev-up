@@ -5,10 +5,11 @@ namespace DevUp.Domain.Identity.Entities
 {
     public class User : Entity<UserId>
     {
-        public Username Username { get; init; }
+        public Username Username { get; }
 
-        public User(UserId id) : base(id)
+        public User(UserId id, Username username) : base(id)
         {
+            Username = username;
         }
     }
 }

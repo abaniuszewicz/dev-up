@@ -16,14 +16,22 @@ namespace DevUp.Domain.Identity.Services
         private readonly IUserRepository _userRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IPasswordService _passwordService;
+        private readonly ITokenService _tokenService;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public IdentityService(JwtSettings jwtSettings, IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IPasswordService passwordService, IDateTimeProvider dateTimeProvider)
+        public IdentityService(
+            JwtSettings jwtSettings,
+            IUserRepository userRepository,
+            IRefreshTokenRepository refreshTokenRepository,
+            IPasswordService passwordService,
+            ITokenService tokenService,
+            IDateTimeProvider dateTimeProvider)
         {
             _jwtSettings = jwtSettings;
             _userRepository = userRepository;
             _refreshTokenRepository = refreshTokenRepository;
             _passwordService = passwordService;
+            _tokenService = tokenService;
             _dateTimeProvider = dateTimeProvider;
         }
 
@@ -72,6 +80,17 @@ namespace DevUp.Domain.Identity.Services
             if (refreshToken is null)
                 throw new IdentityException(new[] { "Refresh token does not exist." });
 
+            await _tokenService.ValidateAsync(token, refreshToken, device, cancellationToken);
+
+            refreshToken.Used = true;
+            await _refreshTokenRepository.UpdateAsync(refreshToken, cancellationToken);
+
+            var user = await _userRepository.GetByIdAsync(token.UserId, cancellationToken);
+            var newToken = new Token();
+            var newRefreshToken = new RefreshTokenBuilder().FromToken(newToken).ForUser(user)
+                .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
+                .Build();
+            return new IdentityResult(newToken, newRefreshToken);
         }
     }
 }

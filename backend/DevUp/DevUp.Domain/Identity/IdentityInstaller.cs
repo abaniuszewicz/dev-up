@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DevUp.Common;
+using DevUp.Domain.Identity.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
@@ -10,6 +12,11 @@ namespace DevUp.Domain.Identity
         {
             var jwtSettings = new JwtSettings();
             services.AddSingleton(jwtSettings);
+
+            services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IPasswordService, PasswordService>();
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IDateTimeProvider, DefaultDateTimeProvider>();
 
             var tokenValidationParameters = GetTokenValidationParameters(jwtSettings);
             services.AddSingleton(tokenValidationParameters);
