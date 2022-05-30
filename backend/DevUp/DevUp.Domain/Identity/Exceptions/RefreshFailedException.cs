@@ -2,9 +2,9 @@
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public class LoginFailedException : IdentityException
+    public class RefreshFailedException : IdentityException
     {
-        public LoginFailedException(IEnumerable<string> errors) 
+        public RefreshFailedException(IEnumerable<string> errors) 
             : base(errors)
         {
         }

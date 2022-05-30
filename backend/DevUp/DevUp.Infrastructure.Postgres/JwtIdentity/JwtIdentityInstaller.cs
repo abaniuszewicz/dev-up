@@ -16,7 +16,20 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
             var jwtSettings = new JwtSettings();
             services.AddSingleton(jwtSettings);
             services.AddTransient<IIdentityService, JwtIdentityService>();
+            services.AddTransient<IRefreshTokenStore, RefreshTokenStore>();
             services.AddPostgresUserManager();
+
+            var tokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(jwtSettings.Secret),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireExpirationTime = false,
+                ValidateLifetime = true,
+            };
+
+            services.AddSingleton(tokenValidationParameters);
 
             services.AddAuthentication(opts =>
             {
@@ -26,15 +39,7 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity
             }).AddJwtBearer(opts =>
             {
                 opts.SaveToken = true;
-                opts.TokenValidationParameters = new()
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(jwtSettings.Secret),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RequireExpirationTime = false,
-                    ValidateLifetime = true,
-                };
+                opts.TokenValidationParameters = tokenValidationParameters;
             });
 
             return services;

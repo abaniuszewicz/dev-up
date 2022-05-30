@@ -2,8 +2,7 @@
 
 namespace DevUp.Infrastructure.Postgres.JwtIdentity.Results
 {
-    public class JwtLoginResult : LoginResult
+    public class JwtLoginResult : JwtResult, ILoginResult
     {
-        public string Token { get; init; }
     }
 }

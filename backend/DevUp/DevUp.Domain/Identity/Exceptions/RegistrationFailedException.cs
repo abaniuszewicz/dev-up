@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public class RegistrationFailedException : Exception
+    public class RegistrationFailedException
+        : IdentityException
     {
-        public IEnumerable<string> Errors { get; }
-
-        public RegistrationFailedException(IEnumerable<string> errors)
+        public RegistrationFailedException(IEnumerable<string> errors) 
+            : base(errors)
         {
-            Errors = errors;
         }
     }
 }

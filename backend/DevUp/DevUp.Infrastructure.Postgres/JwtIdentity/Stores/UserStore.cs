@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
 {
-    internal class UserStore : IUserStore<UserDto>, IUserPasswordStore<UserDto>
+    internal class UserStore : IUserStore<UserDto>, IUserPasswordStore<UserDto>, IUserAuthenticationTokenStore<UserDto>
     {
         private readonly IDbConnection _connection;
 
@@ -167,6 +167,21 @@ namespace DevUp.Infrastructure.Postgres.JwtIdentity.Stores
         {
             _connection.Close();
             _connection.Dispose();
+        }
+
+        public Task SetTokenAsync(UserDto user, string loginProvider, string name, string value, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveTokenAsync(UserDto user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetTokenAsync(UserDto user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }
