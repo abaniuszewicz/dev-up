@@ -46,10 +46,14 @@ namespace DevUp.Domain.Identity.Services
             if (createdUser is null)
                 throw new IdentityException(new[] { $"Failed to create user {username}" });
 
-            var token = new Token();
+            var token = new TokenBuilder().ForUser(createdUser).WithSettings(_jwtSettings)
+                .WithTimeProvider(_dateTimeProvider)
+                .Build();
             var refreshToken = new RefreshTokenBuilder().FromToken(token).ForUser(createdUser)
                 .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
                 .Build();
+
+            await _refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
             return new IdentityResult(token, refreshToken);
         }
 
@@ -67,10 +71,14 @@ namespace DevUp.Domain.Identity.Services
             if (verificationResult == PasswordVerifyResult.Failed)
                 throw new IdentityException(new[] { $"Invalid password" });
 
-            var token = new Token();
+            var token = new TokenBuilder().ForUser(user).WithSettings(_jwtSettings)
+                .WithTimeProvider(_dateTimeProvider)
+                .Build();
             var refreshToken = new RefreshTokenBuilder().FromToken(token).ForUser(user)
                 .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
                 .Build();
+
+            await _refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
             return new IdentityResult(token, refreshToken);
         }
 
@@ -86,10 +94,14 @@ namespace DevUp.Domain.Identity.Services
             await _refreshTokenRepository.UpdateAsync(refreshToken, cancellationToken);
 
             var user = await _userRepository.GetByIdAsync(token.UserId, cancellationToken);
-            var newToken = new Token();
+            var newToken = new TokenBuilder().ForUser(user).WithSettings(_jwtSettings)
+                .WithTimeProvider(_dateTimeProvider)
+                .Build();
             var newRefreshToken = new RefreshTokenBuilder().FromToken(newToken).ForUser(user)
                 .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
                 .Build();
+
+            await _refreshTokenRepository.AddAsync(newRefreshToken, cancellationToken);
             return new IdentityResult(newToken, newRefreshToken);
         }
     }
