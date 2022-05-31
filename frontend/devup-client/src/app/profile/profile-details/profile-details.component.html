@@ -1,0 +1,12 @@
+<body class="text-center">
+  <main class="w-100 m-auto" *ngIf="user$ | async as user">
+    <div
+      class="feature-icon d-inline-flex align-items-center justify-content-center bg-primary bg-gradient text-white fs-2 mb-3 rounded"
+    >
+      <i class="bi bi-person p-2 px-3"></i>
+    </div>
+    <h1>Welcome</h1>
+    <p>Token: {{ user.token }}</p>
+    <p>Refresh token: {{ user.refreshToken }}</p>
+  </main>
+</body>

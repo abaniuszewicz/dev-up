@@ -29,6 +29,13 @@ namespace DevUp.Api
             services.AddSwagger();
             services.AddDatabaseMigrator();
             services.AddPostgresInfrastructure();
+            services.AddCors(policy => policy.AddPolicy("corsapp", builder =>
+            {
+                builder.WithOrigins("*")
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            }));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -38,6 +45,8 @@ namespace DevUp.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("corsapp");
 
             app.UseHttpsRedirection();
             app.UseRouting();

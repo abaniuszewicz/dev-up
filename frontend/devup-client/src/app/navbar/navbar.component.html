@@ -31,11 +31,23 @@
           <li class="nav-item">
             <a class="nav-link color-toggle" [routerLink]="['/']"> Projects </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link color-toggle" [routerLink]="['/']"> Login </a>
+          <li class="nav-item" *ngIf="!isLoggedIn()">
+            <a class="nav-link color-toggle" [routerLink]="['auth/login']">
+              Login
+            </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link color-toggle" [routerLink]="['/']"> Register </a>
+          <li class="nav-item" *ngIf="!isLoggedIn()">
+            <a class="nav-link color-toggle" [routerLink]="['auth/register']">
+              Register
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="isLoggedIn()">
+            <a class="nav-link color-toggle" [routerLink]="['/profile']">
+              Profile
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="isLoggedIn()" style="cursor: pointer">
+            <a class="nav-link color-toggle" (click)="logout()"> Logout </a>
           </li>
         </ul>
       </div>
