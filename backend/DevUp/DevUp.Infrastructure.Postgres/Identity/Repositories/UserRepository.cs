@@ -7,7 +7,7 @@ using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Infrastructure.Postgres.Identity.Dtos;
 
-namespace DevUp.Infrastructure.Postgres.Identity
+namespace DevUp.Infrastructure.Postgres.Identity.Repositories
 {
     internal class UserRepository : IUserRepository
     {

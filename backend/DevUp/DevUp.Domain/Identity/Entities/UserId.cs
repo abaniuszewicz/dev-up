@@ -16,6 +16,11 @@ namespace DevUp.Domain.Identity.Entities
             Id = id;
         }
 
+        public override string ToString()
+        {
+            return Id.ToString();
+        }
+
         public override bool Equals(EntityId other)
         {
             return other is UserId otherUserId && otherUserId.Id == Id;

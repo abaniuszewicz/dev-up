@@ -2,7 +2,6 @@
 using DevUp.Domain.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DevUp.Domain.Identity
 {
@@ -18,9 +17,6 @@ namespace DevUp.Domain.Identity
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IDateTimeProvider, DefaultDateTimeProvider>();
 
-            var tokenValidationParameters = GetTokenValidationParameters(jwtSettings);
-            services.AddSingleton(tokenValidationParameters);
-
             services.AddAuthentication(opts =>
             {
                 opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -29,23 +25,10 @@ namespace DevUp.Domain.Identity
             }).AddJwtBearer(opts =>
             {
                 opts.SaveToken = true;
-                opts.TokenValidationParameters = tokenValidationParameters;
+                opts.TokenValidationParameters = jwtSettings.TokenValidationParameters;
             });
 
             return services;
-        }
-
-        private static TokenValidationParameters GetTokenValidationParameters(JwtSettings jwtSettings)
-        {
-            return new TokenValidationParameters()
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(jwtSettings.Secret),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                RequireExpirationTime = false,
-                ValidateLifetime = true,
-            };
         }
     }
 }

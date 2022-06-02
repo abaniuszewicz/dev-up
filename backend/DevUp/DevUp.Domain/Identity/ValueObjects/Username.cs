@@ -15,6 +15,11 @@ namespace DevUp.Domain.Identity.ValueObjects
             Value = username;
         }
 
+        public override string ToString()
+        {
+            return Value;
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Value;

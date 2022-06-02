@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Exceptions;
-using DevUp.Domain.Identity.ValueObjects;
 
 namespace DevUp.Api.V1.Controllers.Identity.Responses
 {
@@ -14,7 +14,7 @@ namespace DevUp.Api.V1.Controllers.Identity.Responses
 
         internal static IdentityResponse Succeeded(IdentityResult result)
         {
-            return new(true, Enumerable.Empty<string>(), result.Token.Value, result.RefreshToken.Id.Token);
+            return new(true, Enumerable.Empty<string>(), result.Token.Value, result.RefreshToken.Value);
         }
 
         internal static IdentityResponse Failed(IdentityException exception)

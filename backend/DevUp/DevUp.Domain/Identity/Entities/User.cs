@@ -11,5 +11,10 @@ namespace DevUp.Domain.Identity.Entities
         {
             Username = username;
         }
+
+        public override string ToString()
+        {
+            return Username.ToString();
+        }
     }
 }

@@ -105,10 +105,10 @@ namespace DevUp.Api.V1.Controllers.Identity
             try
             {
                 var token = new Token(request.Token);
-                var refreshTokenId = new RefreshTokenId(request.RefreshToken);
+                var refreshToken = new RefreshToken(request.RefreshToken);
                 var device = new Device(new DeviceId(request.Device.Id), request.Device.Name);
 
-                var result = await _identityService.RefreshAsync(token, refreshTokenId, device, cancellationToken);
+                var result = await _identityService.RefreshAsync(token, refreshToken, device, cancellationToken);
                 var response = IdentityResponse.Succeeded(result);
                 return Ok(response);
             }

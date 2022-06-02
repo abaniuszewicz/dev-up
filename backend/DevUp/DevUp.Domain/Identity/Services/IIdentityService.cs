@@ -9,6 +9,6 @@ namespace DevUp.Domain.Identity.Services
     {
         public Task<IdentityResult> RegisterAsync(Username username, Password password, Device device, CancellationToken cancellationToken);
         public Task<IdentityResult> LoginAsync(Username username, Password password, Device device, CancellationToken cancellationToken);
-        public Task<IdentityResult> RefreshAsync(Token token, RefreshTokenId refreshTokenId, Device device, CancellationToken cancellationToken);
+        public Task<IdentityResult> RefreshAsync(Token token, RefreshToken refreshToken, Device device, CancellationToken cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DevUp.Domain.Identity.Repositories;
+using DevUp.Infrastructure.Postgres.Identity.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DevUp.Infrastructure.Postgres.Identity
@@ -9,6 +10,7 @@ namespace DevUp.Infrastructure.Postgres.Identity
         {
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddTransient<IDeviceRepository, DeviceRepository>();
             return services;
         }
     }

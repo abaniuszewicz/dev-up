@@ -8,13 +8,13 @@ namespace DevUp.Domain.Identity.Creation
 {
     internal class RefreshTokenBuilder
     {
-        private Token _token;
+        private TokenInfo _token;
         private User _user;
         private Device _device;
         private IDateTimeProvider _dateTimeProvider;
         private JwtSettings _settings;
 
-        public RefreshTokenBuilder FromToken(Token token)
+        public RefreshTokenBuilder FromTokenInfo(TokenInfo token)
         {
             _token = token;
             return this;
@@ -52,7 +52,7 @@ namespace DevUp.Domain.Identity.Creation
             return Convert.ToBase64String(randomNumber);
         }
 
-        public RefreshToken Build()
+        public RefreshTokenInfo Build()
         {
             if (_token is null)
                 throw new ArgumentNullException(nameof(_token));
@@ -66,11 +66,11 @@ namespace DevUp.Domain.Identity.Creation
                 throw new ArgumentNullException(nameof(_dateTimeProvider));
 
             var randomString = GetRandomString();
-            var id = new RefreshTokenId(randomString);
+            var id = new RefreshToken(randomString);
             var from = _dateTimeProvider.UtcNow;
             var to = _dateTimeProvider.UtcNow.AddMilliseconds(_settings.JwtRefreshExpiryMs);
             var lifespan = new DateTimeRange(from, to);
-            return new RefreshToken(id, _token.Jti, _user.Id, _device.Id, lifespan);
+            return new RefreshTokenInfo(id, _token.Jti, _user.Id, _device.Id, lifespan);
         }
     }
 }

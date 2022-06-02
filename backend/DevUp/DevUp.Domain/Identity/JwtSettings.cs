@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DevUp.Domain.Identity
 {
@@ -9,6 +10,7 @@ namespace DevUp.Domain.Identity
         public byte[] Secret { get; }
         public int JwtExpiryMs { get; }
         public int JwtRefreshExpiryMs { get; }
+        public TokenValidationParameters TokenValidationParameters { get; }
 
         public JwtSettings()
         {
@@ -26,6 +28,15 @@ namespace DevUp.Domain.Identity
             JwtRefreshExpiryMs = int.TryParse(jwtRefreshExpiry, NumberStyles.Integer, CultureInfo.InvariantCulture, out var jwtRefreshExpiryMs) && jwtRefreshExpiryMs > 0
                 ? jwtRefreshExpiryMs
                 : throw new InvalidOperationException("Invalid value for JWT_REFRESH_EXPIRY_MS. Value has to be positive integer.");
+            TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Secret),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireExpirationTime = false,
+                ValidateLifetime = true,
+            };
         }
     }
 }

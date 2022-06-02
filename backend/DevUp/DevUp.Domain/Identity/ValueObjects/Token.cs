@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DevUp.Common;
-using DevUp.Domain.Identity.Entities;
+﻿using System.Collections.Generic;
 using DevUp.Domain.Seedwork;
 using DevUp.Domain.Seedwork.Exceptions;
 
@@ -10,9 +7,6 @@ namespace DevUp.Domain.Identity.ValueObjects
     public class Token : ValueObject
     {
         public string Value { get; }
-        public string Jti { get; }
-        public UserId UserId { get; }
-        public DateTime ExpiryDate { get; }
 
         public Token(string token)
         {
@@ -20,9 +14,9 @@ namespace DevUp.Domain.Identity.ValueObjects
             Value = token;
         }
 
-        public bool IsActive(IDateTimeProvider dateTimeProvider)
+        public override string ToString()
         {
-            return dateTimeProvider.UtcNow <= ExpiryDate;
+            return Value;
         }
 
         private static void Validate(string token)
@@ -35,7 +29,7 @@ namespace DevUp.Domain.Identity.ValueObjects
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Jti;
+            yield return Value;
         }
     }
 }

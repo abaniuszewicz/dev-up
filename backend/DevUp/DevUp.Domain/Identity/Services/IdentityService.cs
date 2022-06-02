@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using DevUp.Common;
-using DevUp.Domain.Identity.Creation;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Enums;
 using DevUp.Domain.Identity.Exceptions;
@@ -12,48 +11,35 @@ namespace DevUp.Domain.Identity.Services
 {
     internal class IdentityService : IIdentityService
     {
-        private readonly JwtSettings _jwtSettings;
         private readonly IUserRepository _userRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IPasswordService _passwordService;
         private readonly ITokenService _tokenService;
-        private readonly IDateTimeProvider _dateTimeProvider;
 
         public IdentityService(
-            JwtSettings jwtSettings,
             IUserRepository userRepository,
             IRefreshTokenRepository refreshTokenRepository,
             IPasswordService passwordService,
-            ITokenService tokenService,
-            IDateTimeProvider dateTimeProvider)
+            ITokenService tokenService)
         {
-            _jwtSettings = jwtSettings;
             _userRepository = userRepository;
             _refreshTokenRepository = refreshTokenRepository;
             _passwordService = passwordService;
             _tokenService = tokenService;
-            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<IdentityResult> RegisterAsync(Username username, Password password, Device device, CancellationToken cancellationToken)
         {
             var existingUser = await _userRepository.GetByUsernameAsync(username, cancellationToken);
             if (existingUser is not null)
-                throw new IdentityException(new[] { "User with this username already exists." });
+                throw new IdentityException(new[] { "User with this username already exists" });
 
             var passwordHash = await _passwordService.HashAsync(password, cancellationToken);
             var createdUser = await _userRepository.CreateAsync(username, passwordHash, cancellationToken);
             if (createdUser is null)
                 throw new IdentityException(new[] { $"Failed to create user {username}" });
 
-            var token = new TokenBuilder().ForUser(createdUser).WithSettings(_jwtSettings)
-                .WithTimeProvider(_dateTimeProvider)
-                .Build();
-            var refreshToken = new RefreshTokenBuilder().FromToken(token).ForUser(createdUser)
-                .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
-                .Build();
-
-            await _refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
+            (var token, var refreshToken) = await _tokenService.CreateAsync(createdUser, device, cancellationToken);
             return new IdentityResult(token, refreshToken);
         }
 
@@ -71,37 +57,25 @@ namespace DevUp.Domain.Identity.Services
             if (verificationResult == PasswordVerifyResult.Failed)
                 throw new IdentityException(new[] { $"Invalid password" });
 
-            var token = new TokenBuilder().ForUser(user).WithSettings(_jwtSettings)
-                .WithTimeProvider(_dateTimeProvider)
-                .Build();
-            var refreshToken = new RefreshTokenBuilder().FromToken(token).ForUser(user)
-                .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
-                .Build();
-
-            await _refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
+            (var token, var refreshToken) = await _tokenService.CreateAsync(user, device, cancellationToken);
             return new IdentityResult(token, refreshToken);
         }
 
-        public async Task<IdentityResult> RefreshAsync(Token token, RefreshTokenId refreshTokenId, Device device, CancellationToken cancellationToken)
+        public async Task<IdentityResult> RefreshAsync(Token token, RefreshToken refreshToken, Device device, CancellationToken cancellationToken)
         {
-            var refreshToken = await _refreshTokenRepository.GetByIdAsync(refreshTokenId, cancellationToken);
-            if (refreshToken is null)
-                throw new IdentityException(new[] { "Refresh token does not exist." });
+            var tokenInfo = await _tokenService.DescribeAsync(token, cancellationToken);
+            if (tokenInfo is null)
+                throw new IdentityException(new[] { "Invalid token" });
 
-            await _tokenService.ValidateAsync(token, refreshToken, device, cancellationToken);
+            var refreshTokenInfo = await _tokenService.DescribeAsync(refreshToken, cancellationToken);
+            if (refreshTokenInfo is null)
+                throw new IdentityException(new[] { "Invalid refresh token" });
 
-            refreshToken.Used = true;
-            await _refreshTokenRepository.UpdateAsync(refreshToken, cancellationToken);
+            await _tokenService.ValidateAsync(tokenInfo, refreshTokenInfo, device, cancellationToken);
+            await _refreshTokenRepository.MarkAsUsedAsync(refreshTokenInfo, cancellationToken);
+            var user = await _userRepository.GetByIdAsync(tokenInfo.UserId, cancellationToken);
 
-            var user = await _userRepository.GetByIdAsync(token.UserId, cancellationToken);
-            var newToken = new TokenBuilder().ForUser(user).WithSettings(_jwtSettings)
-                .WithTimeProvider(_dateTimeProvider)
-                .Build();
-            var newRefreshToken = new RefreshTokenBuilder().FromToken(newToken).ForUser(user)
-                .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
-                .Build();
-
-            await _refreshTokenRepository.AddAsync(newRefreshToken, cancellationToken);
+            (var newToken, var newRefreshToken) = await _tokenService.CreateAsync(user, device, cancellationToken);
             return new IdentityResult(newToken, newRefreshToken);
         }
     }

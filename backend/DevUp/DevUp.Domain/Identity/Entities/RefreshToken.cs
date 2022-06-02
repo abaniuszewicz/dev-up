@@ -1,44 +1,30 @@
-﻿using DevUp.Common;
-using DevUp.Domain.Identity.ValueObjects;
+﻿using System;
 using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
-    public class RefreshToken : Entity<RefreshTokenId>
+    public class RefreshToken : EntityId
     {
-        public string Jti { get; }
-        public UserId UserId { get; }
-        public DeviceId DeviceId { get; }
-        public DateTimeRange Lifespan { get; }
-        public bool Used { get; set; }
-        public bool Invalidated { get; set; }
+        public string Value { get; }
 
-        public RefreshToken(RefreshTokenId id, string jti, UserId userId, DeviceId deviceId, DateTimeRange lifespan) : base(id)
+        public RefreshToken(string token)
         {
-            Jti = jti;
-            UserId = userId;
-            DeviceId = deviceId;
-            Lifespan = lifespan;
+            Value = token ?? throw new ArgumentNullException(nameof(token));
         }
 
-        public bool BelongsTo(User user)
+        public override string ToString()
         {
-            return UserId == user.Id;
+            return Value;
         }
 
-        public bool BelongsTo(Token token)
+        public override bool Equals(EntityId other)
         {
-            return Jti == token.Jti;
+            return other is RefreshToken refreshTokenId && Value == refreshTokenId.Value;
         }
 
-        public bool BelongsTo(Device device)
+        public override int GetHashCode()
         {
-            return DeviceId == device.Id;
-        }
-
-        public bool IsActive(IDateTimeProvider dateTimeProvider)
-        {
-            return Lifespan.IsWithinRange(dateTimeProvider.UtcNow);
+            return Value.GetHashCode();
         }
     }
 }

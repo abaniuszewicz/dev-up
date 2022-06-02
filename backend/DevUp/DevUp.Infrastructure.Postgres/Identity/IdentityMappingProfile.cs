@@ -13,8 +13,8 @@ namespace DevUp.Infrastructure.Postgres.Identity
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id.Id))
                 .ForMember(d => d.Username, opt => opt.MapFrom(s => s.Username.Value))
                 .ForMember(d => d.PasswordHash, opt => opt.Ignore());
-            CreateMap<RefreshToken, RefreshTokenDto>()
-                .ForMember(d => d.Token, opt => opt.MapFrom(s => s.Id.Token))
+            CreateMap<RefreshTokenInfo, RefreshTokenDto>()
+                .ForMember(d => d.Token, opt => opt.MapFrom(s => s.Id.Value))
                 .ForMember(d => d.Jti, opt => opt.MapFrom(s => s.Jti))
                 .ForMember(d => d.UserId, opt => opt.MapFrom(s => s.UserId.Id))
                 .ForMember(d => d.CreationDate, opt => opt.MapFrom(s => s.Lifespan.Start))
@@ -22,11 +22,15 @@ namespace DevUp.Infrastructure.Postgres.Identity
                 .ForMember(d => d.DeviceId, opt => opt.MapFrom(s => s.DeviceId.Id))
                 .ForMember(d => d.Used, opt => opt.MapFrom(s => s.Used))
                 .ForMember(d => d.Invalidated, opt => opt.MapFrom(s => s.Invalidated));
+            CreateMap<Device, DeviceDto>()
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id.Id))
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name));
 
-            CreateMap<UserDto, User>().ConvertUsing(d => new User(new(d.Id), new(d.Username)));
-            CreateMap<RefreshTokenDto, RefreshToken>()
-                .ConvertUsing(d => new RefreshToken(new(d.Token), d.Jti, new(d.UserId), new(d.DeviceId), new(d.CreationDate, d.ExpiryDate)));
-            CreateMap<UserDto, PasswordHash>().ForMember(d => d.Value, opt => opt.MapFrom(s => s.PasswordHash));
+            CreateMap<UserDto, User>().ConvertUsing(s => new User(new(s.Id), new(s.Username)));
+            CreateMap<RefreshTokenDto, RefreshTokenInfo>()
+                .ConvertUsing(s => new RefreshTokenInfo(new(s.Token), s.Jti, new(s.UserId), new(s.DeviceId), new(s.CreationDate, s.ExpiryDate)));
+            CreateMap<UserDto, PasswordHash>().ConvertUsing(s => new PasswordHash(s.PasswordHash));
+            CreateMap<DeviceDto, Device>().ConvertUsing(s => new Device(new(s.Id), s.Name));
         }
     }
 }
