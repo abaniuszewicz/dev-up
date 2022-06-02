@@ -93,14 +93,14 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
             var dto = _mapper.Map<RefreshTokenDto>(refreshToken);
             var sql = @$"UPDATE refresh_tokens
                         SET 
-                            token @{nameof(RefreshTokenDto.Token)}, 
-                            jti @{nameof(RefreshTokenDto.Jti)}, 
-                            user_id @{nameof(RefreshTokenDto.UserId)}, 
-                            creation_date @{nameof(RefreshTokenDto.CreationDate)}, 
-                            expiry_date @{nameof(RefreshTokenDto.ExpiryDate)}, 
-                            device_id @{nameof(RefreshTokenDto.DeviceId)}, 
-                            used @{nameof(RefreshTokenDto.Used)}, 
-                            invalidated @{nameof(RefreshTokenDto.Invalidated)}
+                            token = @{nameof(RefreshTokenDto.Token)}, 
+                            jti = @{nameof(RefreshTokenDto.Jti)}, 
+                            user_id = @{nameof(RefreshTokenDto.UserId)}, 
+                            creation_date = @{nameof(RefreshTokenDto.CreationDate)}, 
+                            expiry_date = @{nameof(RefreshTokenDto.ExpiryDate)}, 
+                            device_id = @{nameof(RefreshTokenDto.DeviceId)}, 
+                            used = @{nameof(RefreshTokenDto.Used)}, 
+                            invalidated = @{nameof(RefreshTokenDto.Invalidated)}
                         WHERE token = @{nameof(RefreshTokenDto.Token)}";
 
             var affectedRows = await _connection.ExecuteAsync(sql, dto);
@@ -116,7 +116,7 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
             refreshToken.Used = true;
             var dto = _mapper.Map<RefreshTokenDto>(refreshToken);
             var sql = @$"UPDATE refresh_tokens
-                        SET used @{nameof(RefreshTokenDto.Used)}
+                        SET used = @{nameof(RefreshTokenDto.Used)}
                         WHERE token = @{nameof(RefreshTokenDto.Token)}";
 
             var affectedRows = await _connection.ExecuteAsync(sql, dto);

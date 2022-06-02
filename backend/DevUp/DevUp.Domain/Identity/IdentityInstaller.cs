@@ -1,6 +1,7 @@
 ﻿using DevUp.Common;
 using DevUp.Domain.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DevUp.Domain.Identity
@@ -16,6 +17,7 @@ namespace DevUp.Domain.Identity
             services.AddTransient<IPasswordService, PasswordService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IDateTimeProvider, DefaultDateTimeProvider>();
+            services.AddTransient(typeof(IPasswordHasher<>), typeof(PasswordHasher<>));
 
             services.AddAuthentication(opts =>
             {

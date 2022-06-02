@@ -7,6 +7,6 @@ namespace DevUp.Domain.Identity.Repositories
 {
     public interface IRefreshTokenRepository : IRepository<RefreshTokenInfo, RefreshToken>
     {
-        public Task MarkAsUsedAsync(RefreshTokenInfo refreshToken, CancellationToken cancellationToken);
+        public Task<RefreshTokenInfo> MarkAsUsedAsync(RefreshTokenInfo refreshToken, CancellationToken cancellationToken);
     }
 }

@@ -16,7 +16,7 @@
 
         public bool IsWithinRange(DateTime date)
         {
-            return Start <= date && End <= date;
+            return Start <= date && date <= End;
         }
 
         public override string ToString()
