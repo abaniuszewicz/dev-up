@@ -34,12 +34,12 @@ namespace DevUp.Api.V1.Controllers.Identity
 
             try
             {
-                var username = new Username(request.Username);
-                var password = new Password(request.Password);
-                var device = new Device(new DeviceId(request.Device.Id), request.Device.Name);
+                var username = _mapper.Map<Username>(request);
+                var password = _mapper.Map<Password>(request);
+                var device = _mapper.Map<Device>(request.Device);
 
                 var result = await _identityService.RegisterAsync(username, password, device, cancellationToken);
-                var response = IdentityResponse.Succeeded(result);
+                var response = _mapper.Map<IdentityResponse>(result);
                 return Ok(response);
             }
             catch (ValidationException exception)
@@ -52,7 +52,7 @@ namespace DevUp.Api.V1.Controllers.Identity
             }
             catch (IdentityException exception)
             {
-                var response = IdentityResponse.Failed(exception);
+                var response = _mapper.Map<IdentityResponse>(exception);
                 return BadRequest(response);
             }
             catch (Exception exception)
@@ -69,12 +69,12 @@ namespace DevUp.Api.V1.Controllers.Identity
 
             try
             {
-                var username = new Username(request.Username);
-                var password = new Password(request.Password);
-                var device = new Device(new DeviceId(request.Device.Id), request.Device.Name);
+                var username = _mapper.Map<Username>(request);
+                var password = _mapper.Map<Password>(request);
+                var device = _mapper.Map<Device>(request.Device);
 
                 var result = await _identityService.LoginAsync(username, password, device, cancellationToken);
-                var response = IdentityResponse.Succeeded(result);
+                var response = _mapper.Map<IdentityResponse>(result);
                 return Ok(response);
             }
             catch (ValidationException exception)
@@ -87,7 +87,7 @@ namespace DevUp.Api.V1.Controllers.Identity
             }
             catch (IdentityException exception)
             {
-                var response = IdentityResponse.Failed(exception);
+                var response = _mapper.Map<IdentityResponse>(exception);
                 return BadRequest(response);
             }
             catch (Exception exception)
@@ -104,12 +104,12 @@ namespace DevUp.Api.V1.Controllers.Identity
 
             try
             {
-                var token = new Token(request.Token);
-                var refreshToken = new RefreshToken(request.RefreshToken);
-                var device = new Device(new DeviceId(request.Device.Id), request.Device.Name);
+                var token = _mapper.Map<Token>(request);
+                var refreshToken = _mapper.Map<RefreshToken>(request);
+                var device = _mapper.Map<Device>(request.Device);
 
                 var result = await _identityService.RefreshAsync(token, refreshToken, device, cancellationToken);
-                var response = IdentityResponse.Succeeded(result);
+                var response = _mapper.Map<IdentityResponse>(result);
                 return Ok(response);
             }
             catch (ValidationException exception)
@@ -122,7 +122,7 @@ namespace DevUp.Api.V1.Controllers.Identity
             }
             catch (IdentityException exception)
             {
-                var response = IdentityResponse.Failed(exception);
+                var response = _mapper.Map<IdentityResponse>(exception);
                 return BadRequest(response);
             }
             catch (Exception exception)
