@@ -27,12 +27,21 @@ namespace DevUp.Infrastructure.Postgres.Identity
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name));
 
             CreateMap<UserDto, User>().ConvertUsing(s => new User(new(s.Id), new(s.Username)));
-            CreateMap<RefreshTokenDto, RefreshTokenInfo>()
-                .AfterMap((s, d) => d.Used = s.Used)
-                .AfterMap((s, d) => d.Invalidated = s.Invalidated)
-                .ConvertUsing(s => new RefreshTokenInfo(new(s.Token), s.Jti, new(s.UserId), new(s.DeviceId), new(s.CreationDate, s.ExpiryDate)));
+            CreateMap<RefreshTokenDto, RefreshTokenInfo>().ConvertUsing<RefreshTokenMapper>();
             CreateMap<UserDto, PasswordHash>().ConvertUsing(s => new PasswordHash(s.PasswordHash));
             CreateMap<DeviceDto, Device>().ConvertUsing(s => new Device(new(s.Id), s.Name));
+        }
+
+        private class RefreshTokenMapper : ITypeConverter<RefreshTokenDto, RefreshTokenInfo>
+        {
+            public RefreshTokenInfo Convert(RefreshTokenDto dto, RefreshTokenInfo refreshToken, ResolutionContext context)
+            {
+                return new RefreshTokenInfo(new(dto.Token), dto.Jti, new(dto.UserId), new(dto.DeviceId), new(dto.CreationDate, dto.ExpiryDate))
+                {
+                    Used = dto.Used,
+                    Invalidated = dto.Invalidated
+                };
+            }
         }
     }
 }

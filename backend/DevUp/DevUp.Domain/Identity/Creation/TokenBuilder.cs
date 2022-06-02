@@ -63,7 +63,7 @@ namespace DevUp.Domain.Identity.Creation
                 }),
                 NotBefore = lifespan.Start,
                 Expires = lifespan.End,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_settings.Secret), SecurityAlghoritm)
+                SigningCredentials = new SigningCredentials(_settings.TokenValidationParameters.IssuerSigningKey, SecurityAlghoritm)
             };
 
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
