@@ -23,12 +23,9 @@ namespace DevUp.Domain.Tests.Unit.Seedwork
         [Test]
         public void Equality_WhenCompared_ChecksByValue()
         {
-            var dummy = 
-                new Dummy() { Int = 420, String = "everyday", ValueObject = new Dummy() { Int = 69, String = "me_gusta" } };
-            var sameDummy = 
-                new Dummy() { Int = 420, String = "everyday", ValueObject = new Dummy() { Int = 69, String = "me_gusta" } };
-            var differentDummy =
-                new Dummy() { Int = 2137, String = "yellow", ValueObject = new Dummy() { Int = 1337, String = "l33t" } };
+            var dummy =          new Dummy() { Int = 420, String = "everyday", ValueObject = new Dummy() { Int = 69, String = "me_gusta" } };
+            var sameDummy =      new Dummy() { Int = 420, String = "everyday", ValueObject = new Dummy() { Int = 69, String = "me_gusta" } };
+            var differentDummy = new Dummy() { Int = 2137, String = "yellow", ValueObject = new Dummy() { Int = 1337, String = "l33t" } };
 
             Assert.IsTrue(object.Equals(dummy, sameDummy));
             Assert.IsTrue(dummy.Equals(sameDummy));

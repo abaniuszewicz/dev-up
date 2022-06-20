@@ -23,12 +23,9 @@ namespace DevUp.Domain.Tests.Unit.Seedwork
         [Test]
         public void Equality_WhenCompared_ChecksById()
         {
-            var dummy = 
-                new Dummy(new DummyId() { Value = 420 }) { String = "doesn't matter" };
-            var sameDummy = 
-                new Dummy(new DummyId() { Value = 420 }) { String = "matters not" };
-            var differentDummy = 
-                new Dummy(new DummyId() { Value = 1337 }) { String = "doesn't matter" };
+            var dummy =          new Dummy(new DummyId() { Value = 420 }) { String = "doesn't matter" };
+            var sameDummy =      new Dummy(new DummyId() { Value = 420 }) { String = "matters not" };
+            var differentDummy = new Dummy(new DummyId() { Value = 1337 }) { String = "doesn't matter" };
 
             Assert.IsTrue(object.Equals(dummy, sameDummy));
             Assert.IsTrue(dummy.Equals(sameDummy));
