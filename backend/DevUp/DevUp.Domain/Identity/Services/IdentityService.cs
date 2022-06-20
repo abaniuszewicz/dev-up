@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using DevUp.Common;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Enums;
 using DevUp.Domain.Identity.Exceptions;

@@ -14,4 +14,12 @@
     <PackageReference Include="coverlet.collector" Version="3.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Identity\Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevUp.Domain\DevUp.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

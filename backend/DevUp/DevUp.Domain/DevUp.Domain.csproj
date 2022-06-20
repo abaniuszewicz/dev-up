@@ -17,4 +17,11 @@
     <ProjectReference Include="..\DevUp.Common\DevUp.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>DevUp.Domain.Tests.Unit</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+
 </Project>
