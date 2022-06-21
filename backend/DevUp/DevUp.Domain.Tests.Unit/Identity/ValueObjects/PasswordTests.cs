@@ -1,4 +1,5 @@
-﻿using DevUp.Domain.Identity.Exceptions;
+﻿using System.Collections.Generic;
+using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.ValueObjects;
 using NUnit.Framework;
 
@@ -6,6 +7,15 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
 {
     public class PasswordTests
     {
+        private class Dummy : Password
+        {
+            public Dummy(string password) : base(password)
+            {
+            }
+
+            public new IEnumerable<object> GetEqualityComponents() => base.GetEqualityComponents();
+        }
+
         [Test]
         [TestCase(null, PasswordValidationException.NullMessage)]
         [TestCase("lU#1", PasswordValidationException.TooShortMessage)]
@@ -25,7 +35,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         public void Constructor_WhenMultipleConstraintsFail_ThrowsExceptionWithAllErrors(string password, string[] errors)
         {
             var exception = Assert.Throws<PasswordValidationException>(() => new Password(password));
-            CollectionAssert.AreEqual(exception!.Errors, errors);
+            CollectionAssert.AreEquivalent(exception!.Errors, errors);
         }
 
         [Test]
@@ -37,14 +47,14 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        public void Equality_WhenCompared_ChecksByValue()
+        public void GetEqualityComponents_WhenCalled_ReturnsPasswordValue()
         {
-            var password1 = new Password("lowercaseUPPERCASE#1");
-            var password2 = new Password("lowercaseUPPERCASE#1");
+            const string value = "lowercaseUPPERCASE#1";
+            var password = new Dummy(value);
 
-            Assert.IsTrue(object.Equals(password1, password2));
-            Assert.IsTrue(password1.Equals(password2));
-            Assert.IsTrue(password1 == password2);
+            var result = password.GetEqualityComponents();
+
+            Assert.That(result, Has.One.EqualTo(value));
         }
     }
 }

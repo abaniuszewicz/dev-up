@@ -18,12 +18,16 @@ namespace DevUp.Domain.Identity.Services
 
         public Task<PasswordHash> HashAsync(Password password, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var hash = _passwordHasher.HashPassword(user: null, password.Value);
             return Task.FromResult(new PasswordHash(hash));
         }
 
         public Task<PasswordVerifyResult> VerifyAsync(Password password, PasswordHash passwordHash, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var result = _passwordHasher.VerifyHashedPassword(user: null, passwordHash.Value, password.Value) switch
             {
                 PasswordVerificationResult.Failed => PasswordVerifyResult.Failed,

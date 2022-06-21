@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Seedwork;
-using DevUp.Domain.Seedwork.Exceptions;
+
+using static DevUp.Domain.Identity.Exceptions.UsernameValidationException;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
@@ -28,18 +30,18 @@ namespace DevUp.Domain.Identity.ValueObjects
         private static void Validate(string username)
         {
             if (username is null)
-                throw new ValidationException("Username cannot be null.");
+                throw new UsernameValidationException(NullMessage);
 
             var errors = new List<string>();
             if (username.Length < 6 || username.Length > 30)
-                errors.Add("Username must be 6-30 characters long.");
+                errors.Add(InvalidLengthMessage);
             if (username.Any(c => !IsValidCharacter(c)))
-                errors.Add("Username may only contain alphanumeric characters or hyphens.");
+                errors.Add(InvalidCharactersMessage);
             if (username.StartsWith('-') || username.EndsWith('-'))
-                errors.Add("Username cannot begin or end with a hyphen.");
+                errors.Add(InvalidFirstOrLastCharacterMessage);
 
             if (errors.Any())
-                throw new ValidationException(errors);
+                throw new UsernameValidationException(errors);
         }
 
         private static bool IsValidCharacter(char c)
