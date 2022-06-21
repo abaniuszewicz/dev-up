@@ -33,7 +33,7 @@ namespace DevUp.Domain.Tests.Unit.Seedwork
             Assert.IsFalse(dummy != sameDummy);
 
             Assert.IsFalse(object.Equals(dummy, differentDummy));
-            Assert.True(dummy.Equals(differentDummy));
+            Assert.IsFalse(dummy.Equals(differentDummy));
             Assert.IsFalse(dummy == differentDummy);
             Assert.IsTrue(dummy != differentDummy);
         }
