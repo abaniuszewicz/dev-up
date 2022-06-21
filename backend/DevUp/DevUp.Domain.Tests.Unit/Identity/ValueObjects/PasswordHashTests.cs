@@ -23,7 +23,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
 
             var result = hash.GetEqualityComponents();
 
-            Assert.That(result, Has.One.EqualTo(value));
+            Assert.That(result, Has.Exactly(2).EqualTo(value));
         }
     }
 }

@@ -67,7 +67,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
             var dateProvider = new Mock<IDateTimeProvider>();
             dateProvider.Setup(dp => dp.UtcNow).Returns(date);
 
-            Assert.IsFalse(_tokenInfo.IsActive(dateProvider.Object));
+            Assert.IsTrue(_tokenInfo.IsActive(dateProvider.Object));
         }
 
         [Test]
