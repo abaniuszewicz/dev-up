@@ -27,7 +27,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         [TestCase("WRONG-CHARACTER", UsernameValidationException.InvalidCharactersMessage)]
         [TestCase("-wrong-start", UsernameValidationException.InvalidFirstOrLastCharacterMessage)]
         [TestCase("wrong-end-", UsernameValidationException.InvalidFirstOrLastCharacterMessage)]
-        public void Constructor_WhenGivenInvalidUsername_ThrowsUsernameValidationExeptionWithErrorDescription(string username, string error)
+        public void Constructor_WhenGivenInvalidUsername_ThrowsUsernameValidationExeption(string username, string error)
         {
             var exception = Assert.Throws<UsernameValidationException>(() => new Username(username));
             Assert.That(exception!.Errors, Has.One.EqualTo(error));

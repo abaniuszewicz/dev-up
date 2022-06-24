@@ -23,7 +23,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         [TestCase("lowercase#1", PasswordValidationException.NoUppercaseLetterMessage)]
         [TestCase("lowercaseUPPERCASE1", PasswordValidationException.NoSpecialCharacterMessage)]
         [TestCase("lowercaseUPPERCASE#", PasswordValidationException.NoDigitMessage)]
-        public void Constructor_WhenGivenInvalidPassword_ThrowsPasswordValidationExeptionWithErrorDescription(string password, string error)
+        public void Constructor_WhenGivenInvalidPassword_ThrowsPasswordValidationExeption(string password, string error)
         {
             var exception = Assert.Throws<PasswordValidationException>(() => new Password(password));
             Assert.That(exception!.Errors, Has.One.EqualTo(error));

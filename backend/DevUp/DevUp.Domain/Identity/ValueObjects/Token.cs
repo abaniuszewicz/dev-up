@@ -24,9 +24,9 @@ namespace DevUp.Domain.Identity.ValueObjects
         private static void Validate(string token)
         {
             if (token is null)
-                throw new TokenValidationException(NullMessage);
+                throw new TokenValidationException(TokenNullMessage);
             if (string.IsNullOrWhiteSpace(token))
-                throw new TokenValidationException(EmptyMessage);
+                throw new TokenValidationException(TokenEmptyMessage);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

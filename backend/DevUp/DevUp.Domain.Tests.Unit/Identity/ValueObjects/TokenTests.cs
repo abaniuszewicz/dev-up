@@ -17,10 +17,10 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        [TestCase(null, TokenValidationException.NullMessage)]
-        [TestCase("", TokenValidationException.EmptyMessage)]
-        [TestCase(" ", TokenValidationException.EmptyMessage)]
-        public void Constructor_WhenGivenInvalidToken_ThrowsTokenValidationExeptionWithErrorDescription(string token, string error)
+        [TestCase(null, TokenValidationException.TokenNullMessage)]
+        [TestCase("", TokenValidationException.TokenEmptyMessage)]
+        [TestCase(" ", TokenValidationException.TokenEmptyMessage)]
+        public void Constructor_WhenGivenInvalidToken_ThrowsTokenValidationExeption(string token, string error)
         {
             var exception = Assert.Throws<TokenValidationException>(() => new Token(token));
             Assert.That(exception!.Errors, Has.One.EqualTo(error));

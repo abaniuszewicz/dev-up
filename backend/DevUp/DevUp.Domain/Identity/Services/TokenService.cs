@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using DevUp.Common;
-using DevUp.Domain.Identity.Creation;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.ValueObjects;
+using Microsoft.IdentityModel.Tokens;
+
+using static DevUp.Domain.Identity.Exceptions.TokenValidationException;
 
 namespace DevUp.Domain.Identity.Services
 {
     internal class TokenService : ITokenService
     {
+        private const string SecurityAlghoritm = SecurityAlgorithms.HmacSha256;
+
         private readonly IUserRepository _userRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IDeviceRepository _deviceRepository;
@@ -36,12 +41,31 @@ namespace DevUp.Domain.Identity.Services
 
         public async Task<(Token, RefreshToken)> CreateAsync(User user, Device device, CancellationToken cancellationToken)
         {
-            var tokenInfo = new TokenBuilder().ForUser(user).ForDevice(device).WithSettings(_jwtSettings)
-                .WithTimeProvider(_dateTimeProvider)
-                .Build();
-            var refreshTokenInfo = new RefreshTokenBuilder().FromTokenInfo(tokenInfo).ForUser(user)
-                .ForDevice(device).WithSettings(_jwtSettings).WithTimeProvider(_dateTimeProvider)
-                .Build();
+            var now = _dateTimeProvider.UtcNow;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jti = Guid.NewGuid().ToString();
+            var tokenLifespan = new DateTimeRange(now, now.AddMilliseconds(_jwtSettings.JwtExpiryMs));
+            var tokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim("sub", user.Id.ToString()),
+                    new Claim("jti", jti)
+                }),
+                NotBefore = tokenLifespan.Start,
+                Expires = tokenLifespan.End,
+                SigningCredentials = new SigningCredentials(_jwtSettings.TokenValidationParameters.IssuerSigningKey, SecurityAlghoritm)
+            };
+
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+            var jwt = tokenHandler.WriteToken(securityToken);
+            var token = new Token(jwt);
+            var tokenInfo = new TokenInfo(token, jti, user.Id, tokenLifespan);
+
+            var refreshToken = new RefreshToken();
+            var refreshTokenLifespan = new DateTimeRange(now, now.AddMilliseconds(_jwtSettings.JwtRefreshExpiryMs));
+            var refreshTokenInfo = new RefreshTokenInfo(refreshToken, jti, user.Id, device.Id, refreshTokenLifespan);
 
             await _deviceRepository.AddAsync(device, cancellationToken);
             await _refreshTokenRepository.AddAsync(refreshTokenInfo, cancellationToken);
@@ -57,7 +81,7 @@ namespace DevUp.Domain.Identity.Services
             
             if (result.SecurityToken is not JwtSecurityToken jwtSecurityToken)
                 return null;
-            if (!TokenBuilder.SecurityAlghoritm.Equals(jwtSecurityToken.Header.Alg, StringComparison.InvariantCulture))
+            if (!SecurityAlghoritm.Equals(jwtSecurityToken.Header.Alg, StringComparison.InvariantCulture))
                 return null;
             if (!Guid.TryParse(jwtSecurityToken.Subject, out var userGuid))
                 return null;
@@ -79,23 +103,23 @@ namespace DevUp.Domain.Identity.Services
 
             var user = await _userRepository.GetByIdAsync(token.UserId, cancellationToken);
             if (user is null)
-                errors.Add("Token did not contain id of an existing user");
+                errors.Add(TokenInvalidUserIdMessage);
             if (user is not null && !refreshToken.BelongsTo(user))
-                errors.Add("Refresh token does not belong to this user");
+                errors.Add(RefreshTokenWrongUserMessage);
 
             if (!token.IsActive(_dateTimeProvider))
-                errors.Add("Token is no longer active");
+                errors.Add(TokenNotActiveMessage);
 
             if (!refreshToken.IsActive(_dateTimeProvider))
-                errors.Add("Refresh token is no longer active");
+                errors.Add(RefreshTokenNotActiveMessage);
             if (refreshToken.Invalidated)
-                errors.Add("Refresh token has been invalidated");
+                errors.Add(RefreshTokenInvalidatedMessage);
             if (refreshToken.Used)
-                errors.Add("Refresh token has been already used");
+                errors.Add(RefreshTokenUsedMessage);
             if (!refreshToken.BelongsTo(token))
-                errors.Add("Refresh token does not belong to this token");
+                errors.Add(RefreshTokenWrongTokenMessage);
             if (!refreshToken.BelongsTo(device))
-                errors.Add("Refresh token does not belong to this device");
+                errors.Add(RefreshTokenWrongDeviceMessage);
 
             if (errors.Any())
                 throw new IdentityException(errors);
