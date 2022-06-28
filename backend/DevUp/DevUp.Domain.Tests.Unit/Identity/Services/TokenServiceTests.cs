@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using DevUp.Common;
+using DevUp.Domain.Common.Services;
 using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.Services;
@@ -17,7 +17,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         private Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
         private Mock<IDeviceRepository> _deviceRepositoryMock;
         private Mock<IDateTimeProvider> _dateProviderMock;
-        private JwtSettings _jwtSettings;
+        private Mock<IJwtSettings> _jwtSettingsMock;
 
         private ITokenService _tokenService;
 
@@ -28,9 +28,9 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
             _refreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
             _deviceRepositoryMock = new Mock<IDeviceRepository>();
             _dateProviderMock = new Mock<IDateTimeProvider>();
-            _jwtSettings = null; // mock?
+            _jwtSettingsMock = new Mock<IJwtSettings>();
 
-            _tokenService = new TokenService(_userRepositoryMock.Object, _refreshTokenRepositoryMock.Object, _deviceRepositoryMock.Object, _dateProviderMock.Object, _jwtSettings);
+            _tokenService = new TokenService(_userRepositoryMock.Object, _refreshTokenRepositoryMock.Object, _deviceRepositoryMock.Object, _dateProviderMock.Object, _jwtSettingsMock.Object);
         }
 
         [Test]

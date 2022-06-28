@@ -5,7 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using DevUp.Common;
+using DevUp.Domain.Common.Services;
+using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Repositories;
@@ -24,13 +25,13 @@ namespace DevUp.Domain.Identity.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IDeviceRepository _deviceRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly JwtSettings _jwtSettings;
+        private readonly IJwtSettings _jwtSettings;
 
         public TokenService(IUserRepository userRepository,
             IRefreshTokenRepository refreshTokenRepository,
             IDeviceRepository deviceRepository,
             IDateTimeProvider dateTimeProvider, 
-            JwtSettings jwtSettings)
+            IJwtSettings jwtSettings)
         {
             _userRepository = userRepository;
             _refreshTokenRepository = refreshTokenRepository;
@@ -41,7 +42,7 @@ namespace DevUp.Domain.Identity.Services
 
         public async Task<(Token, RefreshToken)> CreateAsync(User user, Device device, CancellationToken cancellationToken)
         {
-            var now = _dateTimeProvider.UtcNow;
+            var now = _dateTimeProvider.Now;
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jti = Guid.NewGuid().ToString();

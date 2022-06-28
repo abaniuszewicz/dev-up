@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using DevUp.Common.Extensions;
+using DevUp.Domain.Common.Extensions;
 using NUnit.Framework;
 
-namespace DevUp.Common.Tests.Unit.Extensions
+namespace DevUp.Domain.Tests.Unit.Common.Extensions
 {
     public class IEnumerableExtensionsTests
     {

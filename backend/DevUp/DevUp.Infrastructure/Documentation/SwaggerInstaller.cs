@@ -7,7 +7,7 @@ using Microsoft.OpenApi.Models;
 
 namespace DevUp.Infrastructure.Documentation
 {
-    public static class SwaggerInstaller
+    internal static class SwaggerInstaller
     {
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {

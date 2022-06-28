@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using DevUp.Common;
+using DevUp.Domain.Common.Services;
+using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Seedwork;
 
@@ -22,7 +23,7 @@ namespace DevUp.Domain.Identity.ValueObjects
 
         public bool IsActive(IDateTimeProvider dateTimeProvider)
         {
-            return Lifespan.IsWithinRange(dateTimeProvider.UtcNow);
+            return Lifespan.IsWithinRange(dateTimeProvider.Now);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DevUp.Common\DevUp.Common.csproj" />
     <ProjectReference Include="..\DevUp.Domain\DevUp.Domain.csproj" />
   </ItemGroup>
 

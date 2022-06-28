@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DevUp.Common.Extensions;
+using DevUp.Domain.Common.Extensions;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Seedwork;
 

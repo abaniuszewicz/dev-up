@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using AutoMapper;
 using Dapper;
-using DevUp.Common.Extensions;
+using DevUp.Domain.Common.Extensions;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.ValueObjects;

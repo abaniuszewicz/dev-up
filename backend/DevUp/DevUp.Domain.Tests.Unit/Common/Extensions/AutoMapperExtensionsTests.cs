@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using DevUp.Common.Extensions;
+using DevUp.Domain.Common.Extensions;
 using Moq;
 using NUnit.Framework;
 
-namespace DevUp.Common.Tests.Unit.Extensions
+namespace DevUp.Domain.Tests.Unit.Common.Extensions
 {
     public class AutoMapperExtensionsTests
     {

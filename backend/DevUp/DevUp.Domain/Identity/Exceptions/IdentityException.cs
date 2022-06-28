@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public class IdentityException : Exception
+    public class IdentityException : DomainException
     {
-        public IEnumerable<string> Errors { get; }
-
         public IdentityException(string error)
-            : this(new[] { error })
+            : base(error)
         {
         }
 
         public IdentityException(IEnumerable<string> errors)
+            : base(errors)
         {
-            Errors = errors;
         }
     }
 }

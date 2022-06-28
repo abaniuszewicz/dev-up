@@ -1,4 +1,6 @@
-﻿namespace DevUp.Common
+﻿using System;
+
+namespace DevUp.Domain.Common.Types
 {
     public class DateTimeRange
     {

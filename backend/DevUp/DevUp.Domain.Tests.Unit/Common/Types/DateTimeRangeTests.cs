@@ -1,7 +1,8 @@
 ﻿using System;
+using DevUp.Domain.Common.Types;
 using NUnit.Framework;
 
-namespace DevUp.Common.Tests.Unit
+namespace DevUp.Domain.Tests.Unit.Common.Types
 {
     public class DateTimeRangeTests
     {
@@ -47,11 +48,11 @@ namespace DevUp.Common.Tests.Unit
         [Test]
         public void IsWithinRange_WhenCalled_TakesTimeComponentIntoConsideration()
         {
-            var before =    new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 0);
-            var start =     new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 1);
-            var between =   new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 2);
-            var end =       new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 3);
-            var after =     new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 4);
+            var before = new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 0);
+            var start = new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 1);
+            var between = new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 2);
+            var end = new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 3);
+            var after = new DateTime(2000, 1, 1, hour: 1, minute: 1, second: 1, millisecond: 4);
 
             var range = new DateTimeRange(start, end);
             Assert.IsFalse(range.IsWithinRange(before));

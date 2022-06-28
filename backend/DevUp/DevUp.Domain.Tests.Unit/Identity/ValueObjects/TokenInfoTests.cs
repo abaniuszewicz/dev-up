@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using DevUp.Common;
+using DevUp.Domain.Common.Services;
+using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.ValueObjects;
 using Moq;
@@ -55,7 +56,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         public void IsActive_ForDatesWithinLifespan_ReturnsTrue(DateTime date)
         {
             var dateProvider = new Mock<IDateTimeProvider>();
-            dateProvider.Setup(dp => dp.UtcNow).Returns(date);
+            dateProvider.Setup(dp => dp.Now).Returns(date);
 
             Assert.IsTrue(_tokenInfo.IsActive(dateProvider.Object));
         }
@@ -65,7 +66,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         public void IsActive_ForDatesOutsideLifespan_ReturnsFalse(DateTime date)
         {
             var dateProvider = new Mock<IDateTimeProvider>();
-            dateProvider.Setup(dp => dp.UtcNow).Returns(date);
+            dateProvider.Setup(dp => dp.Now).Returns(date);
 
             Assert.IsFalse(_tokenInfo.IsActive(dateProvider.Object));
         }

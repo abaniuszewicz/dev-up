@@ -1,30 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DevUp.Common.Extensions;
+﻿using System.Collections.Generic;
 
 namespace DevUp.Domain.Seedwork.Exceptions
 {
-    public class ValidationException : Exception
+    public class ValidationException : DomainException
     {
-        public IEnumerable<string> Errors { get; }
-
         public ValidationException(string error)
-            : this(new[] { error })
+            : base(error)
         {
         }
 
         public ValidationException(IEnumerable<string> errors)
-            : base(GetMessage(errors))
+            : base(errors)
         {
-            Errors = errors;
-        }
-
-        private static string GetMessage(IEnumerable<string> errors)
-        {
-            var builder = new StringBuilder("Validation failed");
-            errors.ForEach(error => builder.AppendLine(error));
-            return builder.ToString();
         }
     }
 }
