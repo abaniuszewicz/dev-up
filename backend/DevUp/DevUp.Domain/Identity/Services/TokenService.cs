@@ -123,7 +123,7 @@ namespace DevUp.Domain.Identity.Services
                 errors.Add(RefreshTokenWrongDeviceMessage);
 
             if (errors.Any())
-                throw new IdentityException(errors);
+                throw new TokenValidationException(errors);
         }
     }
 }
