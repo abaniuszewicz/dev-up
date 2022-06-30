@@ -1,4 +1,5 @@
-﻿using DevUp.Common;
+﻿using DevUp.Domain.Common.Services;
+using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Seedwork;
 
@@ -38,7 +39,7 @@ namespace DevUp.Domain.Identity.Entities
 
         public bool IsActive(IDateTimeProvider dateTimeProvider)
         {
-            return Lifespan.IsWithinRange(dateTimeProvider.UtcNow);
+            return Lifespan.IsWithinRange(dateTimeProvider.Now);
         }
     }
 }

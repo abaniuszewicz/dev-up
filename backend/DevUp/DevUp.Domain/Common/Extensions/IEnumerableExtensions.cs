@@ -1,4 +1,8 @@
-﻿namespace DevUp.Common.Extensions
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DevUp.Domain.Common.Extensions
 {
     public static class IEnumerableExtensions
     {
@@ -6,6 +10,11 @@
         {
             foreach (var element in enumerable)
                 action(element);
+        }
+
+        public static bool None<T>(this IEnumerable<T> enumerable)
+        {
+            return !enumerable.Any();
         }
 
         public static bool None<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate)

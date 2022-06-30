@@ -3,7 +3,7 @@ using Serilog;
 
 namespace DevUp.Infrastructure.Logging
 {
-    public static class LoggerInstaller
+    internal static class LoggerInstaller
     {
         public static IServiceCollection AddLogger(this IServiceCollection services)
         {

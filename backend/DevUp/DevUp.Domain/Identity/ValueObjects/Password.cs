@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DevUp.Common.Extensions;
+using DevUp.Domain.Common.Extensions;
+using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Seedwork;
-using DevUp.Domain.Seedwork.Exceptions;
+
+using static DevUp.Domain.Identity.Exceptions.PasswordValidationException;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
@@ -29,22 +31,22 @@ namespace DevUp.Domain.Identity.ValueObjects
         private static void Validate(string password)
         {
             if (password is null)
-                throw new ValidationException("Password cannot be null.");
+                throw new PasswordValidationException(NullMessage);
 
             var errors = new List<string>();
             if (password.Length < 8)
-                errors.Add("Password must be at least 8 characters long.");
+                errors.Add(TooShortMessage);
             if (password.None(char.IsLower))
-                errors.Add("Password must contain at least one lower case letter.");
+                errors.Add(NoLowercaseLetterMessage);
             if (password.None(char.IsUpper))
-                errors.Add("Password must contain at least one upper case letter.");
-            if (password.None(char.IsLetterOrDigit))
-                errors.Add("Password must contain at least one special character.");
+                errors.Add(NoUppercaseLetterMessage);
+            if (password.None(c => !char.IsLetterOrDigit(c)))
+                errors.Add(NoSpecialCharacterMessage);
             if (password.None(char.IsDigit))
-                errors.Add("Password must contain at least one digit.");
+                errors.Add(NoDigitMessage);
 
             if (errors.Any())
-                throw new ValidationException(errors);
+                throw new PasswordValidationException(errors);
         }
     }
 }

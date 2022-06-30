@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DevUp.Infrastructure.Postgres.Identity
 {
-    public static class PostgresIdentityInstaller
+    internal static class PostgresIdentityInstaller
     {
         public static IServiceCollection AddPostgresIdentity(this IServiceCollection services)
         {

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Seedwork;
-using DevUp.Domain.Seedwork.Exceptions;
+
+using static DevUp.Domain.Identity.Exceptions.TokenValidationException;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
@@ -22,9 +24,9 @@ namespace DevUp.Domain.Identity.ValueObjects
         private static void Validate(string token)
         {
             if (token is null)
-                throw new ValidationException("Token cannot be null.");
+                throw new TokenValidationException(TokenNullMessage);
             if (string.IsNullOrWhiteSpace(token))
-                throw new ValidationException("Token cannot be empty.");
+                throw new TokenValidationException(TokenEmptyMessage);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

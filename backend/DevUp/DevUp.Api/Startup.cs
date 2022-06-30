@@ -1,9 +1,6 @@
 ﻿using DevUp.Domain.Identity;
-using DevUp.Infrastructure.Documentation;
-using DevUp.Infrastructure.Logging;
+using DevUp.Infrastructure;
 using DevUp.Infrastructure.Postgres;
-using DevUp.Infrastructure.Postgres.Identity;
-using DevUp.Infrastructure.Postgres.Migrations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -22,16 +19,13 @@ namespace DevUp.Api
             Configuration = configuration;
         }
 
-        public void ConfigureServices(IServiceCollection services) 
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddIdentity();
-            services.AddPostgresIdentity();
-            services.AddLogger();
+            services.AddInfrastructure();
+            services.AddPostgresInfrastructure();
             services.AddControllers(opt => opt.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer())));
             services.AddEndpointsApiExplorer();
-            services.AddSwagger();
-            services.AddDatabaseMigrator();
-            services.AddPostgresInfrastructure();
             services.AddRouting();
             services.AddAutoMapper(typeof(Startup).Assembly);
         }

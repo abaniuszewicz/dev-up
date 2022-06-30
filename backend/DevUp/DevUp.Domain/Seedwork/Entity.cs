@@ -26,5 +26,18 @@ namespace DevUp.Domain.Seedwork
         {
             return Id.GetHashCode();
         }
+
+        public static bool operator ==(Entity<TId> left, Entity<TId> right)
+        {
+            if (left is null)
+                return right is null;
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Entity<TId> left, Entity<TId> right)
+        {
+            return !(left == right);
+        }
     }
 }

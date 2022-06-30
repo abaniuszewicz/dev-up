@@ -1,6 +1,10 @@
-﻿namespace DevUp.Common
+﻿using System;
+using System.Collections.Generic;
+using DevUp.Domain.Seedwork;
+
+namespace DevUp.Domain.Common.Types
 {
-    public class DateTimeRange
+    public class DateTimeRange : ValueObject
     {
         public DateTime Start { get; init; }
         public DateTime End { get; init; }
@@ -17,6 +21,12 @@
         public bool IsWithinRange(DateTime date)
         {
             return Start <= date && date <= End;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Start;
+            yield return End;
         }
 
         public override string ToString()
