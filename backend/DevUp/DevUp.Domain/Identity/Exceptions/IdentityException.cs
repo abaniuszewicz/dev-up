@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public abstract class IdentityException : Exception
+    public class IdentityException : Exception
     {
         public IEnumerable<string> Errors { get; }
 

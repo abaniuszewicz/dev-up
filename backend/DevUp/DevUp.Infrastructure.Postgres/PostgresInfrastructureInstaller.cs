@@ -12,6 +12,7 @@ namespace DevUp.Infrastructure.Postgres
             services.AddSingleton(settings);
 
             services.AddTransient<IDbConnection>(s => new NpgsqlConnection(settings.ConnectionString));
+            services.AddAutoMapper(typeof(PostgresInfrastructureInstaller).Assembly);
             return services;
         }
     }
