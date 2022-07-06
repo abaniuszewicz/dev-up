@@ -40,5 +40,10 @@ TODO :see_no_evil:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
-### Frameworks
-- [x] [Serilog](https://github.com/serilog)
+### Backend
+- [x] [AutoMapper](https://github.com/AutoMapper/AutoMapper)
+- [x] [Dapper](https://github.com/DapperLib/Dapper)
+- [x] [FluentMigrator](https://github.com/fluentmigrator/fluentmigrator)
+- [x] [Moq](https://github.com/moq/moq)
+- [x] [NUnit](https://github.com/nunit/nunit)
+- [x] [Serilog](https://github.com/serilog/serilog)
