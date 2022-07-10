@@ -5,6 +5,7 @@ using DevUp.Domain.Common.Extensions;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Infrastructure.Postgres.Identity.Dtos;
+using DevUp.Infrastructure.Postgres.Setup;
 
 namespace DevUp.Infrastructure.Postgres.Identity.Repositories
 {
@@ -13,9 +14,9 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
         private readonly IDbConnection _connection;
         private readonly IMapper _mapper;
 
-        public RefreshTokenRepository(IDbConnection connection, IMapper mapper)
+        public RefreshTokenRepository(IDbConnectionFactory connectionFactory, IMapper mapper)
         {
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            _connection = connectionFactory?.Create(DbConnectionName.Identity) ?? throw new ArgumentNullException(nameof(connectionFactory));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
