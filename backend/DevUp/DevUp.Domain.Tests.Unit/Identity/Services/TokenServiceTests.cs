@@ -103,12 +103,12 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         }
 
         [Test]
-        public void ValidateAsync_WhenCalledWithValidTokenPair_DoesNotThrow()
+        public void ValidateAsync_WhenTokenHasExpiredButRefreshTokenIsStillActive_DoesNotThrow()
         {
             _userRepositoryMock.Setup(ur => ur.GetByIdAsync(It.IsAny<UserId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(SerenaWilliams.User);
-            var jan2 = new DateTime(2000, 1, 2);
-            _dateProviderMock.Setup(dp => dp.Now).Returns(jan2);
+            var jan4 = new DateTime(2000, 1, 4);
+            _dateProviderMock.Setup(dp => dp.Now).Returns(jan4);
 
             Assert.DoesNotThrowAsync(async () => await _tokenService.ValidateAsync(TokenInfo, RefreshTokenInfo, 
                 SerenaWilliams.Device, CancellationToken.None));
@@ -142,21 +142,22 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         }
 
         [Test]
-        [TestCase("1999-12-31", Description = "Token is not valid till Jan 1st")]
-        [TestCase("2000-01-04", Description = "Token is valid till Jan 3rd")]
-        public void ValidateAsync_WhenTokenIsNoLongerActive_ThrowsTokenValidationException(DateTime expiredDate)
+        [TestCase("2000-01-01", Description = "Token is still active from Jan 1st to Jan 3rd")]
+        [TestCase("2000-01-02", Description = "Token is still active from Jan 1st to Jan 3rd")]
+        [TestCase("2000-01-03", Description = "Token is still active from Jan 1st to Jan 3rd")]
+        public void ValidateAsync_WhenTokenIsStillActive_ThrowsTokenValidationException(DateTime expiredDate)
         {
             _userRepositoryMock.Setup(ur => ur.GetByIdAsync(It.IsAny<UserId>(), It.IsAny<CancellationToken>())).ReturnsAsync(SerenaWilliams.User);
             _dateProviderMock.Setup(dp => dp.Now).Returns(expiredDate);
 
             var exception = Assert.ThrowsAsync<TokenValidationException>(async () 
                 => await _tokenService.ValidateAsync(TokenInfo, RefreshTokenInfo, SerenaWilliams.Device, CancellationToken.None));
-            Assert.That(exception!.Errors, Has.One.EqualTo(TokenValidationException.TokenNotActiveMessage));
+            Assert.That(exception!.Errors, Has.One.EqualTo(TokenValidationException.TokenStillActiveMessage));
         }
 
         [Test]
         [TestCase("1999-12-31", Description = "Refresh token is not valid till Jan 1st")]
-        [TestCase("2000-01-06", Description = "Token is valid till Jan 5rd")]
+        [TestCase("2000-01-06", Description = "Refresh token is valid till Jan 5rd")]
         public void ValidateAsync_WhenRefreshTokenIsNoLongerActive_ThrowsTokenValidationException(DateTime expiredDate)
         {
             _userRepositoryMock.Setup(ur => ur.GetByIdAsync(It.IsAny<UserId>(), It.IsAny<CancellationToken>())).ReturnsAsync(SerenaWilliams.User);
