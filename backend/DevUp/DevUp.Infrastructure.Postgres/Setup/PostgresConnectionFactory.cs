@@ -13,14 +13,18 @@ namespace DevUp.Infrastructure.Postgres.Setup
             _secretProvider = secretProvider;
         }
 
-        public IDbConnection Create(DbConnectionName connectionName)
+        public string GetConnectionString(DbConnectionName connectionName)
         {
-            var connectionString = connectionName switch
+            return connectionName switch
             {
                 DbConnectionName.Identity => _secretProvider.Get("DB_CONNECTION_STRING"),
                 _ => throw new ArgumentOutOfRangeException(nameof(connectionName))
             };
+        }
 
+        public IDbConnection Create(DbConnectionName connectionName)
+        {
+            var connectionString = GetConnectionString(connectionName);
             return new NpgsqlConnection(connectionString);
         }
     }

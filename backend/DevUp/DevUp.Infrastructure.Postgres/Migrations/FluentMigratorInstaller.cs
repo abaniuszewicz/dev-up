@@ -1,4 +1,5 @@
-﻿using FluentMigrator.Runner;
+﻿using DevUp.Infrastructure.Postgres.Setup;
+using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -8,12 +9,10 @@ namespace DevUp.Infrastructure.Postgres.Migrations
     {
         public static IServiceCollection AddDatabaseMigrator(this IServiceCollection services)
         {
-            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-
             return services.AddFluentMigratorCore()
                 .ConfigureRunner(mrb =>
                     mrb.AddPostgres()
-                        .WithGlobalConnectionString(sp => connectionString)
+                        .WithGlobalConnectionString(sp => sp.GetService<IDbConnectionFactory>()!.GetConnectionString(DbConnectionName.Identity))
                         .ScanIn(typeof(FluentMigratorInstaller).Assembly).For.Migrations())
                 .AddLogging(lb => lb.AddFluentMigratorConsole());
         }

@@ -9,6 +9,8 @@ using DevUp.Domain.Identity.ValueObjects;
 using static DevUp.Domain.Identity.Exceptions.RegisterException;
 using static DevUp.Domain.Identity.Exceptions.LoginException;
 using static DevUp.Domain.Identity.Exceptions.RefreshException;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DevUp.Domain.Identity.Services
 {
@@ -66,13 +68,19 @@ namespace DevUp.Domain.Identity.Services
 
         public async Task<IdentityResult> RefreshAsync(Token token, RefreshToken refreshToken, Device device, CancellationToken cancellationToken)
         {
-            var tokenInfo = await _tokenService.DescribeAsync(token, cancellationToken);
-            if (tokenInfo is null)
-                throw new RefreshException(InvalidTokenMessage);
+            var tokenInfoTask = _tokenService.DescribeAsync(token, cancellationToken);
+            var refreshTokenInfoTask = _tokenService.DescribeAsync(refreshToken, cancellationToken);
+            await Task.WhenAll(tokenInfoTask, refreshTokenInfoTask);
 
-            var refreshTokenInfo = await _tokenService.DescribeAsync(refreshToken, cancellationToken);
+            var (tokenInfo, refreshTokenInfo) = (tokenInfoTask.Result, refreshTokenInfoTask.Result);
+
+            var errors = new List<string>();
+            if (tokenInfo is null)
+                errors.Add(InvalidTokenMessage);
             if (refreshTokenInfo is null)
-                throw new RefreshException(InvalidRefreshTokenMessage);
+                errors.Add(InvalidRefreshTokenMessage);
+            if (errors.Any())
+                throw new RefreshException(errors);
 
             await _tokenService.ValidateAsync(tokenInfo, refreshTokenInfo, device, cancellationToken);
             await _refreshTokenRepository.MarkAsUsedAsync(refreshTokenInfo, cancellationToken);

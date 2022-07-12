@@ -5,7 +5,6 @@ using AutoMapper;
 using DevUp.Api.V1.Controllers.Identity.Requests;
 using DevUp.Api.V1.Controllers.Identity.Responses;
 using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Seedwork.Exceptions;
@@ -42,18 +41,14 @@ namespace DevUp.Api.V1.Controllers.Identity
                 var response = _mapper.Map<IdentityResponse>(result);
                 return Ok(response);
             }
-            catch (ValidationException exception)
+            catch (DomainException exception)
             {
-                return BadRequest(exception.Errors);
+                var response = _mapper.Map<IdentityResponse>(exception);
+                return BadRequest(response);
             }
             catch (OperationCanceledException exception)
             {
                 return BadRequest();
-            }
-            catch (IdentityException exception)
-            {
-                var response = _mapper.Map<IdentityResponse>(exception);
-                return BadRequest(response);
             }
             catch (Exception exception)
             {
@@ -77,18 +72,14 @@ namespace DevUp.Api.V1.Controllers.Identity
                 var response = _mapper.Map<IdentityResponse>(result);
                 return Ok(response);
             }
-            catch (ValidationException exception)
+            catch (DomainException exception)
             {
-                return BadRequest(exception.Errors);
+                var response = _mapper.Map<IdentityResponse>(exception);
+                return BadRequest(response);
             }
             catch (OperationCanceledException exception)
             {
                 return BadRequest();
-            }
-            catch (IdentityException exception)
-            {
-                var response = _mapper.Map<IdentityResponse>(exception);
-                return BadRequest(response);
             }
             catch (Exception exception)
             {
@@ -112,18 +103,14 @@ namespace DevUp.Api.V1.Controllers.Identity
                 var response = _mapper.Map<IdentityResponse>(result);
                 return Ok(response);
             }
-            catch (ValidationException exception)
+            catch (DomainException exception)
             {
-                return BadRequest(exception.Errors);
+                var response = _mapper.Map<IdentityResponse>(exception);
+                return BadRequest(response);
             }
             catch (OperationCanceledException exception)
             {
                 return BadRequest();
-            }
-            catch (IdentityException exception)
-            {
-                var response = _mapper.Map<IdentityResponse>(exception);
-                return BadRequest(response);
             }
             catch (Exception exception)
             {
