@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using DevUp.Api.V1.Controllers.Identity.Requests;
-using DevUp.Api.V1.Controllers.Identity.Responses;
+using DevUp.Api.Contracts.V1.Identity.Requests;
+using DevUp.Api.Contracts.V1.Identity.Responses;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Services;
@@ -11,7 +11,7 @@ using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Seedwork.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DevUp.Api.V1.Controllers.Identity
+namespace DevUp.Api.V1.Identity
 {
     [Route("api/v1/[controller]")]
     [ApiController]

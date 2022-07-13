@@ -1,4 +1,4 @@
-﻿namespace DevUp.Api.V1.Controllers.Identity.Responses
+﻿namespace DevUp.Api.Contracts.V1.Identity.Responses
 {
     public class IdentityResponse
     {
