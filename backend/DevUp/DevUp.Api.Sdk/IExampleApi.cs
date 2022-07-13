@@ -6,10 +6,10 @@ namespace DevUp.Api.Sdk
 {
     public interface IExampleApi
     {
-        [Get("api/v1/example")]
+        [Get("/api/v1/example")]
         public Task<ApiResponse<IEnumerable<ExampleResponse>>> Get();
 
-        [Post("api/v1/example")]
+        [Post("/api/v1/example")]
         public Task Post([Body] ExampleRequest request);
 
     }
