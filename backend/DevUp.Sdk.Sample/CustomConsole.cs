@@ -6,12 +6,19 @@
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(message);
+            ResetColor();
         }
 
         public static void WriteError(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(message);
+            ResetColor();
+        }
+
+        public static string ReadLine()
+        {
+            return Console.ReadLine()!;
         }
 
         public static void LineBreak()
@@ -19,10 +26,9 @@
             Console.WriteLine();
         }
 
-        public static string ReadLine()
+        private static void ResetColor()
         {
             Console.ForegroundColor = ConsoleColor.White;
-            return Console.ReadLine()!;
         }
     }
 }
