@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using DevUp.Api.Contracts;
 using DevUp.Api.Contracts.V1.Identity.Requests;
 using DevUp.Api.Contracts.V1.Identity.Responses;
 using DevUp.Domain.Identity.Entities;
@@ -13,7 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DevUp.Api.V1.Identity
 {
-    [Route("api/v1/[controller]")]
     [ApiController]
     public class IdentityController : ControllerBase
     {
@@ -26,7 +26,7 @@ namespace DevUp.Api.V1.Identity
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpPost("register")]
+        [HttpPost(Route.Api.V1.Identity.Register)]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -61,7 +61,7 @@ namespace DevUp.Api.V1.Identity
             }
         }
 
-        [HttpPost("login")]
+        [HttpPost(Route.Api.V1.Identity.Login)]
         public async Task<IActionResult> Login([FromBody] LoginUserRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -96,7 +96,7 @@ namespace DevUp.Api.V1.Identity
             }
         }
 
-        [HttpPost("refresh")]
+        [HttpPost(Route.Api.V1.Identity.Refresh)]
         public async Task<IActionResult> Refresh([FromBody] RefreshUserRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
