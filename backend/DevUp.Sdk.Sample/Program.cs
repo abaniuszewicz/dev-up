@@ -21,16 +21,24 @@ namespace DevUp.Sdk.Sample
             var hostUrl = "https://localhost:65532";
             var identityClient = RestService.For<IIdentityApi>(hostUrl);
 
-            CustomConsole.WriteMessage("First, let's create an user.");
-            await Register(identityClient);
-            CustomConsole.LineBreak();
+            try
+            {
+                CustomConsole.WriteMessage("First, let's create an user.");
+                await Register(identityClient);
+                CustomConsole.LineBreak();
 
-            CustomConsole.WriteMessage("Now, let's try to log in. You can either use credentials you just registered with or enter some bonkers data to see if it will fail as expected.");
-            await Login(identityClient);
-            CustomConsole.LineBreak();
+                CustomConsole.WriteMessage("Now, let's try to log in. You can either use credentials you just registered with or enter some bonkers data to see if it will fail as expected.");
+                await Login(identityClient);
+                CustomConsole.LineBreak();
 
-            CustomConsole.WriteMessage("Press any key to exit...");
-            Console.ReadKey();
+                CustomConsole.WriteMessage("Press any key to exit...");
+                Console.ReadKey();
+            }
+            catch (Exception exception)
+            {
+                CustomConsole.WriteError($"Unhandled exception. Is API listening at '{hostUrl}'?");
+                CustomConsole.WriteError(exception.Message);
+            }
         }
 
         private static async Task Register(IIdentityApi identityClient)
