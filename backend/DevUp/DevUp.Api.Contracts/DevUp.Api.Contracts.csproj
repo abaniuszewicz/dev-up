@@ -5,6 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>abaniuszewicz</Authors>
+    <Company>abaniuszewicz/dev-up</Company>
+    <Description>Contracts for integrating DevUp.Api</Description>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/abaniuszewicz/dev-up</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,15 +5,14 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DevUp.Api.Sdk" Version="1.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Refit" Version="6.3.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DevUp\DevUp.Api.Contracts\DevUp.Api.Contracts.csproj" />
-    <ProjectReference Include="..\DevUp\DevUp.Api.Sdk\DevUp.Api.Sdk.csproj" />
   </ItemGroup>
 
 </Project>

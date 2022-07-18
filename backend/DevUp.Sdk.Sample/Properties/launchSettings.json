@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DevUp.Sdk.Sample": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
