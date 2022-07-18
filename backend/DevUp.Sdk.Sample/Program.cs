@@ -18,11 +18,17 @@ namespace DevUp.Sdk.Sample
             CustomConsole.WriteMessage($"This is a DevUp.Api.Sdk sample consumer.");
             CustomConsole.LineBreak();
 
-            var hostUrl = "https://localhost:65532";
-            var identityClient = RestService.For<IIdentityApi>(hostUrl);
+            CustomConsole.WriteMessage("Please specify what port is API listening on and press enter.");
+            var port = CustomConsole.ReadLine();
+            var hostUrl = $"https://localhost:{port}";
+
+            CustomConsole.WriteMessage($"Calls will be forwarded to {hostUrl}.");
+            CustomConsole.LineBreak();
 
             try
             {
+                var identityClient = RestService.For<IIdentityApi>(hostUrl);
+
                 CustomConsole.WriteMessage("First, let's create an user.");
                 await Register(identityClient);
                 CustomConsole.LineBreak();
@@ -31,8 +37,16 @@ namespace DevUp.Sdk.Sample
                 await Login(identityClient);
                 CustomConsole.LineBreak();
 
-                CustomConsole.WriteMessage("Press any key to exit...");
-                Console.ReadKey();
+                CustomConsole.WriteMessage("Last but not least, use tokens that you just generated to have them refreshed. Note that this will run in the loop until you exit the app, so you can explore different scenarios. For example, you might want to use invalid token or to use single refresh token multiple times.");
+                while (true)
+                {
+                    await Refresh(identityClient);
+                    CustomConsole.LineBreak();
+
+                    CustomConsole.WriteMessage("Type 'q' to exit or press enter to run refresh demo again.");
+                    if (CustomConsole.ReadLine() == "q")
+                        return;
+                }
             }
             catch (Exception exception)
             {
@@ -64,6 +78,19 @@ namespace DevUp.Sdk.Sample
 
             var request = new LoginUserRequest() { Username = username, Password = password, Device = _device };
             var response = await identityClient.Login(request, CancellationToken.None);
+            DisplayResponse(response);
+        }
+
+        private static async Task Refresh(IIdentityApi identityClient)
+        {
+            CustomConsole.WriteMessage("Please enter token and press enter.");
+            var token = CustomConsole.ReadLine();
+            CustomConsole.WriteMessage("Please enter refresh token and press enter.");
+            var refreshToken = CustomConsole.ReadLine();
+            CustomConsole.WriteMessage($"Refreshing token '{token}' with use of refresh token '{refreshToken}'...");
+
+            var request = new RefreshUserRequest() { Token = token, RefreshToken = refreshToken, Device = _device };
+            var response = await identityClient.Refresh(request, CancellationToken.None);
             DisplayResponse(response);
         }
 
