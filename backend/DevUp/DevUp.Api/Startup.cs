@@ -29,7 +29,7 @@ namespace DevUp.Api
             services.AddEndpointsApiExplorer();
             services.AddRouting();
             services.AddContractsDocumentation();
-            services.AddAutoMapper(typeof(Startup).Assembly);
+            services.AddAutoMapper(typeof(IApiMarker).Assembly);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

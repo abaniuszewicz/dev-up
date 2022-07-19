@@ -5,8 +5,8 @@ using DevUp.Api.Contracts.V1.Identity.Requests;
 using DevUp.Api.Contracts.V1.Identity.Responses;
 using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.ValueObjects;
+using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Api.V1.Identity
 {
@@ -26,7 +26,7 @@ namespace DevUp.Api.V1.Identity
             CreateMap<DeviceRequest, Device>().ConvertUsing(s => new Device(new(s.Id), s.Name));
 
             CreateMap<IdentityResult, IdentityResponse>().ConvertUsing(s => new() { Success = true, Errors = Array.Empty<string>(), Token = s.Token.Value, RefreshToken = s.RefreshToken.Value });
-            CreateMap<IdentityException, IdentityResponse>().ConvertUsing(s => new() { Success = false, Errors = s.Errors.ToArray(), Token = null, RefreshToken = null });
+            CreateMap<DomainException, IdentityResponse>().ConvertUsing(s => new() { Success = false, Errors = s.Errors.ToArray(), Token = null, RefreshToken = null });
         }
     }
 }
