@@ -3,12 +3,12 @@ name: Publish nuget
 on:
   workflow_run:
     workflows: ["Build and test backend"]
-    branches: [ "master" ]
+    branches: [ "master", "feature/create-sdk" ]
     types: [ "completed" ]
 
 jobs:
+  publish-nuget:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - uses: ahmadnassri/action-workflow-run-wait@v1
