@@ -1,4 +1,4 @@
-﻿namespace DevUp.Api.V1.Controllers.Identity.Requests
+﻿namespace DevUp.Api.Contracts.V1.Identity.Requests
 {
     public class DeviceRequest
     {

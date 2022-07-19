@@ -2,17 +2,17 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using DevUp.Api.V1.Controllers.Identity.Requests;
-using DevUp.Api.V1.Controllers.Identity.Responses;
+using DevUp.Api.Contracts;
+using DevUp.Api.Contracts.V1.Identity.Requests;
+using DevUp.Api.Contracts.V1.Identity.Responses;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Seedwork.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DevUp.Api.V1.Controllers.Identity
+namespace DevUp.Api.V1.Identity
 {
-    [Route("api/v1/[controller]")]
     [ApiController]
     public class IdentityController : ControllerBase
     {
@@ -25,7 +25,7 @@ namespace DevUp.Api.V1.Controllers.Identity
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpPost("register")]
+        [HttpPost(Route.Api.V1.Identity.Register)]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -56,7 +56,7 @@ namespace DevUp.Api.V1.Controllers.Identity
             }
         }
 
-        [HttpPost("login")]
+        [HttpPost(Route.Api.V1.Identity.Login)]
         public async Task<IActionResult> Login([FromBody] LoginUserRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -87,7 +87,7 @@ namespace DevUp.Api.V1.Controllers.Identity
             }
         }
 
-        [HttpPost("refresh")]
+        [HttpPost(Route.Api.V1.Identity.Refresh)]
         public async Task<IActionResult> Refresh([FromBody] RefreshUserRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)

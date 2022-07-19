@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using DevUp.Api.V1.Controllers.Identity.Requests;
+using DevUp.Api.Contracts.V1.Identity.Requests;
 
 namespace DevUp.Api.Tests.Integration.V1.Controllers.Identity
 {

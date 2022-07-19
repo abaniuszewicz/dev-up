@@ -1,4 +1,5 @@
-﻿using DevUp.Domain.Identity;
+﻿using DevUp.Api.Contracts;
+using DevUp.Domain.Identity;
 using DevUp.Infrastructure;
 using DevUp.Infrastructure.Postgres;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,7 @@ namespace DevUp.Api
             services.AddControllers(opt => opt.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer())));
             services.AddEndpointsApiExplorer();
             services.AddRouting();
+            services.AddContractsDocumentation();
             services.AddAutoMapper(typeof(IApiMarker).Assembly);
         }
 
