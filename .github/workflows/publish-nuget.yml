@@ -3,7 +3,7 @@ name: Publish nuget
 on:
   workflow_run:
     workflows: ["Build and test backend"]
-    branches: [ "master", "feature/create-sdk" ]
+    branches: [ "master" ]
     types: [ "completed" ]
 
 jobs:
