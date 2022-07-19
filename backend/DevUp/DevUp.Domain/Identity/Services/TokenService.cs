@@ -108,8 +108,8 @@ namespace DevUp.Domain.Identity.Services
             if (user is not null && !refreshToken.BelongsTo(user))
                 errors.Add(RefreshTokenWrongUserMessage);
 
-            if (!token.IsActive(_dateTimeProvider))
-                errors.Add(TokenNotActiveMessage);
+            if (token.IsActive(_dateTimeProvider))
+                errors.Add(TokenStillActiveMessage);
 
             if (!refreshToken.IsActive(_dateTimeProvider))
                 errors.Add(RefreshTokenNotActiveMessage);

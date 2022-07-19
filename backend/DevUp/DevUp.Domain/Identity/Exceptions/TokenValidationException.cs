@@ -8,7 +8,7 @@ namespace DevUp.Domain.Identity.Exceptions
         internal const string TokenNullMessage = "Token cannot be null.";
         internal const string TokenEmptyMessage = "Token cannot be empty.";
         internal const string TokenInvalidUserIdMessage = "Token did not contain id of an existing user";
-        internal const string TokenNotActiveMessage = "Token is no longer active";
+        internal const string TokenStillActiveMessage = "Token is still active";
 
         internal const string RefreshTokenNullMessage = "Refresh token cannot be null.";
         internal const string RefreshTokenEmptyMessage = "Refresh token cannot be empty.";

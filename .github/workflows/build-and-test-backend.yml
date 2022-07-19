@@ -17,6 +17,9 @@ jobs:
       - name: Build
         run: dotnet build DevUp.sln
         working-directory: ./backend/DevUp/
-      - name: Test
-        run: dotnet test DevUp.sln
+      - name: Run unit tests
+        run: dotnet test DevUp.sln --filter FullyQualifiedName~Tests.Unit
+        working-directory: ./backend/DevUp/
+      - name: Run integration tests
+        run: dotnet test DevUp.sln --filter FullyQualifiedName~Tests.Integration
         working-directory: ./backend/DevUp/

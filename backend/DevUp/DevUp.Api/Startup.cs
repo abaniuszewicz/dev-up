@@ -27,7 +27,7 @@ namespace DevUp.Api
             services.AddControllers(opt => opt.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer())));
             services.AddEndpointsApiExplorer();
             services.AddRouting();
-            services.AddAutoMapper(typeof(Startup).Assembly);
+            services.AddAutoMapper(typeof(IApiMarker).Assembly);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -15,7 +15,8 @@ namespace DevUp.Infrastructure.Documentation
             {
                 var docName = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                 var docPath = Path.Combine(AppContext.BaseDirectory, docName);
-                options.IncludeXmlComments(docPath);
+                if (File.Exists(docPath))
+                    options.IncludeXmlComments(docPath);
 
                 options.AddSecurityDefinition("Bearer", new()
                 {
