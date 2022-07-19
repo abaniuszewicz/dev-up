@@ -93,7 +93,7 @@ namespace DevUp.Api.Tests.Integration.V1.Controllers.Identity
             var oldTokenPair = await loginResult.Content.ReadFromJsonAsync<IdentityResponse>();
 
             // wait for token expiration. refresh token will still be active
-            await Task.Delay(IdentityApiFactory.JWT_EXPIRY_MS);
+            await Task.Delay(IdentityApiFactory.JWT_EXPIRY_MS + 1);
 
             // refresh and grab new token pair
             var refreshRequest = new RefreshUserRequest() { Token = oldTokenPair!.Token!, RefreshToken = oldTokenPair.RefreshToken!, Device = _apiFactory.SampleRequest.Login.Device };
@@ -136,7 +136,7 @@ namespace DevUp.Api.Tests.Integration.V1.Controllers.Identity
             var oldTokenPair = await loginResult.Content.ReadFromJsonAsync<IdentityResponse>();
 
             // wait for token expiration. both token and refresh token should expire
-            var delayMs = Math.Max(IdentityApiFactory.JWT_EXPIRY_MS, IdentityApiFactory.JWT_REFRESH_EXPIRY_MS);
+            var delayMs = Math.Max(IdentityApiFactory.JWT_EXPIRY_MS, IdentityApiFactory.JWT_REFRESH_EXPIRY_MS) + 1;
             await Task.Delay(delayMs);
 
             // try refreshing
