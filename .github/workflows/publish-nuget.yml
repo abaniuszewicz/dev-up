@@ -16,5 +16,7 @@ jobs:
           timeout: 90000
       - name: Pack package
         run: dotnet pack DevUp.sln
+        working-directory: ./backend/DevUp/
       - name: Push package to GitHub.com
         run: dotnet nuget push --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/abaniuszewicz/index.json *.nupkg
+        working-directory: ./backend/DevUp/
