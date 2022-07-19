@@ -12,7 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ahmadnassri/action-workflow-run-wait@v1
+        with:
+          timeout: 90000
       - name: Pack package
-        run: dotnet nuget pack DevUp.sln
+        run: dotnet pack DevUp.sln
       - name: Push package to GitHub.com
         run: dotnet nuget push --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/abaniuszewicz/index.json *.nupkg
