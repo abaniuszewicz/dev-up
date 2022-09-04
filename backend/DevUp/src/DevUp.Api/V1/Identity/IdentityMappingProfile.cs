@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using DevUp.Api.Contracts.V1.Identity.Requests;
+using DevUp.Api.Contracts.V1.Identity.Responses;
+using DevUp.Application.Identity;
 using DevUp.Application.Identity.Commands;
 
 namespace DevUp.Api.V1.Identity
@@ -25,6 +27,11 @@ namespace DevUp.Api.V1.Identity
                 .ForMember(c => c.RefreshToken, m => m.MapFrom(r => r.RefreshToken))
                 .ForMember(c => c.DeviceId, m => m.MapFrom(r => r.Device.Id))
                 .ForMember(c => c.DeviceName, m => m.MapFrom(r => r.Device.Name));
+
+            CreateMap<TokenPair, IdentityResponse>()
+                .ForMember(r => r.Token, m => m.MapFrom(tp => tp.Token))
+                .ForMember(r => r.RefreshToken, m => m.MapFrom(tp => tp.RefreshToken))
+                .ForMember(r => r.Success, m => m.MapFrom(_ => true));
         }
     }
 }

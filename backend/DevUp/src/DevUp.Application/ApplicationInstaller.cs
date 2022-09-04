@@ -12,6 +12,7 @@ namespace DevUp.Application
             services.AddMediatR(typeof(IApplicationMarker));
             services.AddValidatorsFromAssemblyContaining<IApplicationMarker>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddAutoMapper(typeof(IApplicationMarker).Assembly);
 
             return services;
         }

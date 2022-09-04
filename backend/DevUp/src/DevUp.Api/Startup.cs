@@ -2,6 +2,7 @@
 using DevUp.Application;
 using DevUp.Domain.Identity;
 using DevUp.Infrastructure;
+using DevUp.Infrastructure.Http;
 using DevUp.Infrastructure.Postgres;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +27,7 @@ namespace DevUp.Api
             services.AddApplication();
             services.AddIdentity();
             services.AddInfrastructure();
+            services.AddHttpInfrastructure();
             services.AddPostgresInfrastructure();
             services.AddControllers(opt => opt.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer())));
             services.AddEndpointsApiExplorer();

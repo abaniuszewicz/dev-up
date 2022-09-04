@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DevUp.Api.Contracts\DevUp.Api.Contracts.csproj" />
     <ProjectReference Include="..\DevUp.Application\DevUp.Application.csproj" />
+    <ProjectReference Include="..\DevUp.Infrastructure.Http\DevUp.Infrastructure.Http.csproj" />
     <ProjectReference Include="..\DevUp.Infrastructure.Postgres\DevUp.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="..\DevUp.Infrastructure\DevUp.Infrastructure.csproj" />
   </ItemGroup>

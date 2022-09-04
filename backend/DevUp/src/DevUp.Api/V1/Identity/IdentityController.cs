@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DevUp.Api.Contracts;
 using DevUp.Api.Contracts.V1.Identity.Requests;
+using DevUp.Api.Contracts.V1.Identity.Responses;
+using DevUp.Application.Identity;
 using DevUp.Application.Identity.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +16,13 @@ namespace DevUp.Api.V1.Identity
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
+        private readonly ITokenStore _tokenStore;
 
-        public IdentityController(IMapper mapper, IMediator mediator)
+        public IdentityController(IMapper mapper, IMediator mediator, ITokenStore tokenStore)
         {
             _mapper = mapper;
             _mediator = mediator;
+            _tokenStore = tokenStore;
         }
 
         [HttpPost(Route.Api.V1.Identity.Register)]
@@ -26,7 +30,10 @@ namespace DevUp.Api.V1.Identity
         {
             var command = _mapper.Map<RegisterUserCommand>(request);
             await _mediator.Send(command, cancellationToken);
-            return Ok();
+
+            var tokenPair = _tokenStore.Get();
+            var response = _mapper.Map<IdentityResponse>(tokenPair);
+            return Ok(response);
         }
 
         [HttpPost(Route.Api.V1.Identity.Login)]
@@ -34,7 +41,10 @@ namespace DevUp.Api.V1.Identity
         {
             var command = _mapper.Map<LoginUserCommand>(request);
             await _mediator.Send(command, cancellationToken);
-            return Ok();
+
+            var tokenPair = _tokenStore.Get();
+            var response = _mapper.Map<IdentityResponse>(tokenPair);
+            return Ok(response);
         }
 
         [HttpPost(Route.Api.V1.Identity.Refresh)]
@@ -42,7 +52,10 @@ namespace DevUp.Api.V1.Identity
         {
             var command = _mapper.Map<RefreshUserCommand>(request);
             await _mediator.Send(command, cancellationToken);
-            return Ok();
+
+            var tokenPair = _tokenStore.Get();
+            var response = _mapper.Map<IdentityResponse>(tokenPair);
+            return Ok(response);
         }
     }
 }
