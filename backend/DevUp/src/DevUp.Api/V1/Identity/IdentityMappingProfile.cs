@@ -34,6 +34,12 @@ namespace DevUp.Api.V1.Identity
                 .ForMember(c => c.Password, m => m.MapFrom(r => r.Password))
                 .ForMember(c => c.DeviceId, m => m.MapFrom(r => r.Device.Id))
                 .ForMember(c => c.DeviceName, m => m.MapFrom(r => r.Device.Name));
+
+            CreateMap<LoginUserRequest, LoginUserCommand>()
+                .ForMember(c => c.Username, m => m.MapFrom(r => r.Username))
+                .ForMember(c => c.Password, m => m.MapFrom(r => r.Password))
+                .ForMember(c => c.DeviceId, m => m.MapFrom(r => r.Device.Id))
+                .ForMember(c => c.DeviceName, m => m.MapFrom(r => r.Device.Name));
         }
     }
 }

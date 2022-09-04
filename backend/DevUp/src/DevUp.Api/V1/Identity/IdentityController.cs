@@ -40,32 +40,9 @@ namespace DevUp.Api.V1.Identity
         [HttpPost(Route.Api.V1.Identity.Login)]
         public async Task<IActionResult> Login([FromBody] LoginUserRequest request, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                var username = _mapper.Map<Username>(request);
-                var password = _mapper.Map<Password>(request);
-                var device = _mapper.Map<Device>(request.Device);
-
-                var result = await _identityService.LoginAsync(username, password, device, cancellationToken);
-                var response = _mapper.Map<IdentityResponse>(result);
-                return Ok(response);
-            }
-            catch (DomainException exception)
-            {
-                var response = _mapper.Map<IdentityResponse>(exception);
-                return BadRequest(response);
-            }
-            catch (OperationCanceledException exception)
-            {
-                return BadRequest();
-            }
-            catch (Exception exception)
-            {
-                return Problem();
-            }
+            var command = _mapper.Map<LoginUserCommand>(request);
+            await _mediator.Send(command, cancellationToken);
+            return Ok();
         }
 
         [HttpPost(Route.Api.V1.Identity.Refresh)]
