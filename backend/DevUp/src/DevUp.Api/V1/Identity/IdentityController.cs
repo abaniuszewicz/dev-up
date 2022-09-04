@@ -5,10 +5,12 @@ using AutoMapper;
 using DevUp.Api.Contracts;
 using DevUp.Api.Contracts.V1.Identity.Requests;
 using DevUp.Api.Contracts.V1.Identity.Responses;
+using DevUp.Application.Identity.Commands;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Seedwork.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevUp.Api.V1.Identity
@@ -18,42 +20,21 @@ namespace DevUp.Api.V1.Identity
     {
         private readonly IIdentityService _identityService;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public IdentityController(IIdentityService identityService, IMapper mapper)
+        public IdentityController(IIdentityService identityService, IMapper mapper, IMediator mediator)
         {
-            _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _identityService = identityService;
+            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpPost(Route.Api.V1.Identity.Register)]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                var username = _mapper.Map<Username>(request);
-                var password = _mapper.Map<Password>(request);
-                var device = _mapper.Map<Device>(request.Device);
-
-                var result = await _identityService.RegisterAsync(username, password, device, cancellationToken);
-                var response = _mapper.Map<IdentityResponse>(result);
-                return Ok(response);
-            }
-            catch (DomainException exception)
-            {
-                var response = _mapper.Map<IdentityResponse>(exception);
-                return BadRequest(response);
-            }
-            catch (OperationCanceledException exception)
-            {
-                return BadRequest();
-            }
-            catch (Exception exception)
-            {
-                return Problem();
-            }
+            var command = _mapper.Map<RegisterUserCommand>(request);
+            await _mediator.Send(command, cancellationToken);
+            return Ok();
         }
 
         [HttpPost(Route.Api.V1.Identity.Login)]

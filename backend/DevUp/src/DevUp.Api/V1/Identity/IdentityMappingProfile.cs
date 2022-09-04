@@ -3,6 +3,7 @@ using System.Linq;
 using AutoMapper;
 using DevUp.Api.Contracts.V1.Identity.Requests;
 using DevUp.Api.Contracts.V1.Identity.Responses;
+using DevUp.Application.Identity.Commands;
 using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.ValueObjects;
@@ -27,6 +28,12 @@ namespace DevUp.Api.V1.Identity
 
             CreateMap<IdentityResult, IdentityResponse>().ConvertUsing(s => new() { Success = true, Errors = Array.Empty<string>(), Token = s.Token.Value, RefreshToken = s.RefreshToken.Value });
             CreateMap<DomainException, IdentityResponse>().ConvertUsing(s => new() { Success = false, Errors = s.Errors.ToArray(), Token = null, RefreshToken = null });
+
+            CreateMap<RegisterUserRequest, RegisterUserCommand>()
+                .ForMember(c => c.Username, m => m.MapFrom(r => r.Username))
+                .ForMember(c => c.Password, m => m.MapFrom(r => r.Password))
+                .ForMember(c => c.DeviceId, m => m.MapFrom(r => r.Device.Id))
+                .ForMember(c => c.DeviceName, m => m.MapFrom(r => r.Device.Name));
         }
     }
 }

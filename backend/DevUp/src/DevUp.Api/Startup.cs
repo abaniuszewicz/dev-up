@@ -1,4 +1,5 @@
 ﻿using DevUp.Api.Contracts;
+using DevUp.Application;
 using DevUp.Domain.Identity;
 using DevUp.Infrastructure;
 using DevUp.Infrastructure.Postgres;
@@ -22,6 +23,7 @@ namespace DevUp.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplication();
             services.AddIdentity();
             services.AddInfrastructure();
             services.AddPostgresInfrastructure();
