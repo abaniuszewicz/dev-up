@@ -1,13 +1,6 @@
-﻿using System;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using DevUp.Api.Contracts.V1.Identity.Requests;
-using DevUp.Api.Contracts.V1.Identity.Responses;
 using DevUp.Application.Identity.Commands;
-using DevUp.Domain.Identity;
-using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.ValueObjects;
-using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Api.V1.Identity
 {
