@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using DevUp.Infrastructure.Http.Documentation.Exceptions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
 namespace DevUp.Infrastructure.Documentation
 {
-    internal static class SwaggerInstaller
+    internal static class DocumentationInstaller
     {
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
@@ -37,7 +38,26 @@ namespace DevUp.Infrastructure.Documentation
                 });
             });
 
+            services.ConfigureSwaggerGen(options =>
+            {
+                var docName = "DevUp.Api.Contracts.xml";
+                var docPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, docName);
+                if (!File.Exists(docPath))
+                    throw new DocumentationFileNotFoundException(docPath);
+
+                options.IncludeXmlComments(docPath);
+            });
+
+
+
             return services;
+        }
+
+        public static IApplicationBuilder UseSwaggerDoc(this IApplicationBuilder app)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            return app;
         }
     }
 }

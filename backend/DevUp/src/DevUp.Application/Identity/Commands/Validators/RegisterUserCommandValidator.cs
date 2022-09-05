@@ -13,7 +13,7 @@ namespace DevUp.Application.Identity.Commands.Validators
             When(c => c.Username is not null, () =>
             {
                 RuleFor(c => c.Username)
-                    .Matches(@"[a-z\-]+").WithMessage("'{PropertyName}' may only contain lowercase letters or hyphens.")
+                    .Matches(@"^[a-z\-]+$").WithMessage("'{PropertyName}' may only contain lowercase letters or hyphens.")
                     .Must(s => !s.StartsWith('-')).WithMessage("'{PropertyName}' cannot begin with a hyphen.")
                     .Must(s => !s.EndsWith('-')).WithMessage("'{PropertyName}' cannot end with a hyphen.")
                     .Must(s => !s.Contains("--")).WithMessage("'{PropertyName}' cannot contain two consecutive hyphens.");

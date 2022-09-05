@@ -11,6 +11,7 @@
     <Description>Contracts for integrating DevUp.Api</Description>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/abaniuszewicz/dev-up</RepositoryUrl>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

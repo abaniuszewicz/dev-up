@@ -1,5 +1,4 @@
 ﻿using DevUp.Domain.Common.Services;
-using DevUp.Infrastructure.Documentation;
 using DevUp.Infrastructure.Identity;
 using DevUp.Infrastructure.Logging;
 using DevUp.Infrastructure.System;
@@ -14,7 +13,6 @@ namespace DevUp.Infrastructure
             var secretProvider = new EnvSecretProvider();
             services.AddSingleton<ISecretProvider>(secretProvider);
 
-            services.AddSwagger();
             services.AddLogger();
             services.AddIdentity(secretProvider);
             return services;

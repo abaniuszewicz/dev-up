@@ -1,5 +1,7 @@
 ﻿using DevUp.Api.Contracts;
+using DevUp.Api.V1.Middlewares;
 using DevUp.Application;
+using DevUp.Domain;
 using DevUp.Domain.Identity;
 using DevUp.Infrastructure;
 using DevUp.Infrastructure.Http;
@@ -24,30 +26,18 @@ namespace DevUp.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDomain();
             services.AddApplication();
-            services.AddIdentity();
+            services.AddApi();
             services.AddInfrastructure();
             services.AddHttpInfrastructure();
             services.AddPostgresInfrastructure();
-            services.AddControllers(opt => opt.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer())));
-            services.AddEndpointsApiExplorer();
-            services.AddRouting();
-            services.AddContractsDocumentation();
-            services.AddAutoMapper(typeof(IApiMarker).Assembly);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseRouting();
-            app.UseAuthorization();
-            app.UseEndpoints(opt => opt.MapControllers());
+            app.UseApi();
+            app.UseHttpInfrastructure(env);
         }
     }
 }
