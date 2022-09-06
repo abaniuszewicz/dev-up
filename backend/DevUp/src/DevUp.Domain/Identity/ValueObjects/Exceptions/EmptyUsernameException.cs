@@ -2,7 +2,7 @@
 
 namespace DevUp.Domain.Identity.ValueObjects.Exceptions
 {
-    public class EmptyUsernameException : ValidationException
+    internal sealed class EmptyUsernameException : ValidationException
     {
         public EmptyUsernameException()
             : base("Username cannot be empty.")

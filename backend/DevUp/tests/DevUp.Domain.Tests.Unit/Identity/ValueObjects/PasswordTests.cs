@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.ValueObjects;
+using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using NUnit.Framework;
 
 namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
@@ -17,25 +17,11 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        [TestCase(null, PasswordValidationException.NullMessage)]
-        [TestCase("lU#1", PasswordValidationException.TooShortMessage)]
-        [TestCase("UPPERCASE#1", PasswordValidationException.NoLowercaseLetterMessage)]
-        [TestCase("lowercase#1", PasswordValidationException.NoUppercaseLetterMessage)]
-        [TestCase("lowercaseUPPERCASE1", PasswordValidationException.NoSpecialCharacterMessage)]
-        [TestCase("lowercaseUPPERCASE#", PasswordValidationException.NoDigitMessage)]
-        public void Constructor_WhenGivenInvalidPassword_ThrowsPasswordValidationExeption(string password, string error)
+        [TestCase(null)]
+        [TestCase("")]
+        public void Constructor_WhenGivenEmptyPassword_ThrowsEmptyPasswordException(string password)
         {
-            var exception = Assert.Throws<PasswordValidationException>(() => new Password(password));
-            Assert.That(exception!.Errors, Has.One.EqualTo(error));
-        }
-
-        [Test]
-        [TestCase("lowercase#", new[] { PasswordValidationException.NoUppercaseLetterMessage, PasswordValidationException.NoDigitMessage })]
-        [TestCase("", new[] { PasswordValidationException.TooShortMessage, PasswordValidationException.NoLowercaseLetterMessage, PasswordValidationException.NoUppercaseLetterMessage, PasswordValidationException.NoSpecialCharacterMessage, PasswordValidationException.NoDigitMessage })]
-        public void Constructor_WhenMultipleConstraintsFail_ThrowsExceptionWithAllErrors(string password, string[] errors)
-        {
-            var exception = Assert.Throws<PasswordValidationException>(() => new Password(password));
-            CollectionAssert.AreEquivalent(exception!.Errors, errors);
+            var exception = Assert.Throws<EmptyPasswordException>(() => new Password(password));
         }
 
         [Test]

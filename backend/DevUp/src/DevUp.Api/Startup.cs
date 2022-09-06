@@ -1,17 +1,12 @@
-﻿using DevUp.Api.Contracts;
-using DevUp.Api.V1.Middlewares;
-using DevUp.Application;
+﻿using DevUp.Application;
 using DevUp.Domain;
-using DevUp.Domain.Identity;
 using DevUp.Infrastructure;
 using DevUp.Infrastructure.Http;
 using DevUp.Infrastructure.Postgres;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace DevUp.Api
 {
