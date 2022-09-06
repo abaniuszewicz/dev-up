@@ -2,14 +2,14 @@
 
 namespace DevUp.Domain.Seedwork.Exceptions
 {
-    public class ValidationException : DomainException
+    public class DomainValidationException : DomainException
     {
-        public ValidationException(string error)
+        public DomainValidationException(string error)
             : base(error)
         {
         }
 
-        public ValidationException(IEnumerable<string> errors)
+        public DomainValidationException(IEnumerable<string> errors)
             : base(errors)
         {
         }

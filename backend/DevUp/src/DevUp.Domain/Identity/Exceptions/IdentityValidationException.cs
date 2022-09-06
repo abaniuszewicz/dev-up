@@ -3,14 +3,14 @@ using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public abstract class IdentityException : DomainException
+    public abstract class IdentityValidationException : DomainValidationException
     {
-        public IdentityException(string error)
+        public IdentityValidationException(string error) 
             : base(error)
         {
         }
 
-        public IdentityException(IEnumerable<string> errors)
+        public IdentityValidationException(IEnumerable<string> errors) 
             : base(errors)
         {
         }

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using DevUp.Domain.Identity.Enums;
+using DevUp.Domain.Identity.Services.Enums;
 using DevUp.Domain.Identity.ValueObjects;
 
 namespace DevUp.Domain.Identity.Services

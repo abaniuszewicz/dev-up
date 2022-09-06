@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.Enums;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.ValueObjects;
@@ -11,6 +10,7 @@ using static DevUp.Domain.Identity.Exceptions.LoginException;
 using static DevUp.Domain.Identity.Exceptions.RefreshException;
 using System.Collections.Generic;
 using System.Linq;
+using DevUp.Domain.Identity.Services.Enums;
 
 namespace DevUp.Domain.Identity.Services
 {

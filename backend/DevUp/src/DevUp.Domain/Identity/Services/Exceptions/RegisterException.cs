@@ -2,7 +2,7 @@
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public class RegisterException : IdentityException
+    internal sealed class RegisterException : IdentityValidationException
     {
         internal const string UsernameTakenMessage = "User with this username already exist.";
         internal const string CreationFailedMessage = "Failed to persist the user.";

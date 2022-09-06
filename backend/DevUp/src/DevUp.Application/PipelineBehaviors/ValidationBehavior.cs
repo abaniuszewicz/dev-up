@@ -24,7 +24,7 @@ namespace DevUp.Application.PipelineBehaviors
                 .ToArray();
 
             if (errors.Any())
-                throw new domain.ValidationException(errors);
+                throw new domain.DomainValidationException(errors);
 
             return next();
         }

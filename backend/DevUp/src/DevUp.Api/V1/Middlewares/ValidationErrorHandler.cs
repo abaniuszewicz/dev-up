@@ -13,7 +13,7 @@ namespace DevUp.Api.V1.Middlewares
             {
                 await next(context);
             }
-            catch (ValidationException exception)
+            catch (DomainValidationException exception)
             {
                 var code = exception.GetType().Name
                     .ToLowerInvariant()

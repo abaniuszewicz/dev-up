@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using NUnit.Framework;

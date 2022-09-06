@@ -1,4 +1,4 @@
-﻿namespace DevUp.Domain.Identity.Enums
+﻿namespace DevUp.Domain.Identity.Services.Enums
 {
     public enum PasswordVerifyResult
     {

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public class TokenValidationException : ValidationException
+    internal sealed class TokenValidationException : IdentityValidationException
     {
         internal const string TokenInvalidUserIdMessage = "Token did not contain id of an existing user";
         internal const string TokenStillActiveMessage = "Token is still active";

@@ -2,7 +2,7 @@
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public class LoginException : IdentityException
+    internal sealed class LoginException : IdentityValidationException
     {
         internal const string InvalidUsernameMessage = "User with this username does not exists.";
         internal const string InvalidPasswordMessage = "Invalid password.";
