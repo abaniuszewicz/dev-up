@@ -19,10 +19,10 @@ jobs:
         working-directory: ./backend/DevUp/
       - name: Pack contracts
         run: dotnet pack -o ./../packages
-        working-directory: ./backend/DevUp/DevUp.Api.Contracts/
+        working-directory: ./backend/DevUp/src/DevUp.Api.Contracts/
       - name: Pack sdk
         run: dotnet pack -o ./../packages
-        working-directory: ./backend/DevUp/DevUp.Api.Sdk/
+        working-directory: ./backend/DevUp/src/DevUp.Api.Sdk/
       - name: Push package to GitHub.com
         run: dotnet nuget push --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/abaniuszewicz/index.json *.nupkg
-        working-directory: ./backend/DevUp/packages/
+        working-directory: ./backend/DevUp/src/packages/
