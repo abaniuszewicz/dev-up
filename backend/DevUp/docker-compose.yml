@@ -8,7 +8,7 @@ services:
         - 5000:80
     build:
       context: .
-      dockerfile: DevUp.Api/Dockerfile
+      dockerfile: src/DevUp.Api/Dockerfile
     environment:
       JWT_SECRET: 2r5u8x/A?D(G-KaPdSgVkYp3s6v9y$B&
       JWT_EXPIRY_MS: 300000
