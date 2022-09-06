@@ -52,14 +52,14 @@ namespace DevUp.Domain.Tests.Unit.Identity.Entities
         [Test]
         public void BelongsTo_ForTokenInfoWithTheSameJti_ReturnsTrue()
         {
-            var sameJtiTokenInfo = new TokenInfo(new Token("valid.token"), _jti, _userId, _lifespan);
+            var sameJtiTokenInfo = new TokenInfo(new Token("header.payload.signature"), _jti, _userId, _lifespan);
             Assert.IsTrue(_refreshTokenInfo.BelongsTo(sameJtiTokenInfo));
         }
 
         [Test]
         public void BelongsTo_ForTokenInfoWithDifferentJti_ReturnsFalse()
         {
-            var differentJtiTokenInfo = new TokenInfo(new Token("valid.token"), "different_jti", _userId, _lifespan);
+            var differentJtiTokenInfo = new TokenInfo(new Token("header.payload.signature"), "different_jti", _userId, _lifespan);
             Assert.IsFalse(_refreshTokenInfo.BelongsTo(differentJtiTokenInfo));
         }
 

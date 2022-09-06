@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using DevUp.Domain.Identity.Exceptions;
+﻿using System;
+using System.Collections.Generic;
+using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using DevUp.Domain.Seedwork;
-
-using static DevUp.Domain.Identity.Exceptions.TokenValidationException;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
@@ -23,10 +22,12 @@ namespace DevUp.Domain.Identity.ValueObjects
 
         private static void Validate(string token)
         {
-            if (token is null)
-                throw new TokenValidationException(TokenNullMessage);
             if (string.IsNullOrWhiteSpace(token))
-                throw new TokenValidationException(TokenEmptyMessage);
+                throw new EmptyTokenException();
+
+            var segments = token.Split('.', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length != 3)
+                throw new InvalidTokenFormatException();
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

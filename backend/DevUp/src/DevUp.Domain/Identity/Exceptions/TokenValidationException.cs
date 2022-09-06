@@ -5,8 +5,6 @@ namespace DevUp.Domain.Identity.Exceptions
 {
     public class TokenValidationException : ValidationException
     {
-        internal const string TokenNullMessage = "Token cannot be null.";
-        internal const string TokenEmptyMessage = "Token cannot be empty.";
         internal const string TokenInvalidUserIdMessage = "Token did not contain id of an existing user";
         internal const string TokenStillActiveMessage = "Token is still active";
 

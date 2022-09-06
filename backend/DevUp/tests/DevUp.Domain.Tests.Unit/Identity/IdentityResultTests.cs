@@ -10,7 +10,7 @@ namespace DevUp.Domain.Tests.Unit.Identity
         [Test]
         public void Constructor_WhenCalled_AssignsProperties()
         {
-            var token = new Token("valid.token");
+            var token = new Token("header.payload.signature");
             var refreshToken = new RefreshToken("--valid_refresh_token--");
             var result = new IdentityResult(token, refreshToken);
 
