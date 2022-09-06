@@ -30,8 +30,7 @@ namespace DevUp.Api.V1.Identity
 
             CreateMap<TokenPair, IdentityResponse>()
                 .ForMember(r => r.Token, m => m.MapFrom(tp => tp.Token))
-                .ForMember(r => r.RefreshToken, m => m.MapFrom(tp => tp.RefreshToken))
-                .ForMember(r => r.Success, m => m.MapFrom(_ => true));
+                .ForMember(r => r.RefreshToken, m => m.MapFrom(tp => tp.RefreshToken));
         }
     }
 }

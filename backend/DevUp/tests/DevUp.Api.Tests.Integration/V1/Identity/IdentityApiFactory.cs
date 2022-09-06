@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using DevUp.Infrastructure.Postgres.Migrations;
 using System.Globalization;
 
-namespace DevUp.Api.Tests.Integration.V1.Controllers.Identity
+namespace DevUp.Api.Tests.Integration.V1.Identity
 {
     public class IdentityApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     {
@@ -28,7 +28,7 @@ namespace DevUp.Api.Tests.Integration.V1.Controllers.Identity
             })
             .Build();
 
-        public SampleRequest SampleRequest { get; } = new SampleRequest(); 
+        public SampleRequest SampleRequest { get => new SampleRequest(); }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

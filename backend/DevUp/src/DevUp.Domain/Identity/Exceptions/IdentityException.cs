@@ -3,7 +3,7 @@ using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public class IdentityException : DomainException
+    public class IdentityException : ValidationException
     {
         public IdentityException(string error)
             : base(error)

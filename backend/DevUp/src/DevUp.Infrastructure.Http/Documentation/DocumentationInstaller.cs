@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace DevUp.Infrastructure.Documentation
+namespace DevUp.Infrastructure.Http.Documentation
 {
     internal static class DocumentationInstaller
     {

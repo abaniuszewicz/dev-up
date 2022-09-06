@@ -1,7 +1,6 @@
 ﻿using DevUp.Application.Identity;
-using DevUp.Infrastructure.Documentation;
+using DevUp.Infrastructure.Http.Documentation;
 using DevUp.Infrastructure.Http.Identity;
-using DevUp.Infrastructure.Http.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,14 +14,12 @@ namespace DevUp.Infrastructure.Http
         {
             services.AddHttpContextAccessor();
             services.AddScoped<ITokenStore, HttpContextTokenStore>();
-            services.AddSingleton<InfrastructureErrorHandler>();
             services.AddSwagger();
             return services;
         }
 
         public static IApplicationBuilder UseHttpInfrastructure(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<InfrastructureErrorHandler>();
             if (env.IsDevelopment())
                 app.UseSwaggerDoc();
 

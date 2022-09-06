@@ -14,6 +14,7 @@ namespace DevUp.Api
             services.AddRouting();
             services.AddAutoMapper(typeof(IApiMarker).Assembly);
             services.AddSingleton<ValidationErrorHandler>();
+            services.AddSingleton<InfrastructureErrorHandler>();
             return services;
         }
 
@@ -23,6 +24,7 @@ namespace DevUp.Api
             app.UseRouting();
             app.UseAuthorization();
             app.UseMiddleware<ValidationErrorHandler>();
+            app.UseMiddleware<InfrastructureErrorHandler>();
             app.UseEndpoints(opt => opt.MapControllers());
             return app;
         }

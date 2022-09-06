@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using DevUp.Api.Contracts.V1.Identity.Requests;
 
-namespace DevUp.Api.Tests.Integration.V1.Controllers.Identity
+namespace DevUp.Api.Tests.Integration.V1.Identity
 {
     public class SampleRequest
     {
