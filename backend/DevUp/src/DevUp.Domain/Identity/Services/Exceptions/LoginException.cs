@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using DevUp.Domain.Identity.Exceptions;
 
-namespace DevUp.Domain.Identity.Exceptions
+namespace DevUp.Domain.Identity.Services.Exceptions
 {
     internal sealed class LoginException : IdentityValidationException
     {

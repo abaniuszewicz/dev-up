@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using DevUp.Domain.Common.Services;
 using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Repositories;
+using DevUp.Domain.Identity.Services.Exceptions;
 using DevUp.Domain.Identity.ValueObjects;
 using Microsoft.IdentityModel.Tokens;
 
-using static DevUp.Domain.Identity.Exceptions.TokenValidationException;
+using static DevUp.Domain.Identity.Services.Exceptions.TokenValidationException;
 
 namespace DevUp.Domain.Identity.Services
 {

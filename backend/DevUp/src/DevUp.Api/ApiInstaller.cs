@@ -1,4 +1,5 @@
-﻿using DevUp.Api.V1.Middlewares;
+﻿using DevUp.Api.Configuration;
+using DevUp.Api.V1.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection;
