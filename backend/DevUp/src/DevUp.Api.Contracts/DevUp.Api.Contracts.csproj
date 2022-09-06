@@ -12,6 +12,7 @@
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/abaniuszewicz/dev-up</RepositoryUrl>
     <DocumentationFile></DocumentationFile>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

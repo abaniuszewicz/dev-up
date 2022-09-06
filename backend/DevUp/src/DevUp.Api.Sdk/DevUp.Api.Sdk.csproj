@@ -10,6 +10,7 @@
     <RepositoryUrl>https://github.com/abaniuszewicz/dev-up</RepositoryUrl>
     <Description>SDK for integrating DevUp.Api</Description>
     <Authors>abaniuszewicz</Authors>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
