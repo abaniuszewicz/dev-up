@@ -1,6 +1,6 @@
-﻿using FluentValidation;
+﻿using DevUp.Application.PipelineBehaviors.Exceptions;
+using FluentValidation;
 using MediatR;
-using domain = DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Application.PipelineBehaviors
 {
@@ -24,7 +24,7 @@ namespace DevUp.Application.PipelineBehaviors
                 .ToArray();
 
             if (errors.Any())
-                throw new domain.DomainValidationException(errors);
+                throw new InputValidationException(errors);
 
             return next();
         }

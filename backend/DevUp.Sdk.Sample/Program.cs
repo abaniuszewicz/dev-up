@@ -1,4 +1,5 @@
-﻿using DevUp.Api.Contracts.V1.Identity.Requests;
+﻿using DevUp.Api.Contracts.V1;
+using DevUp.Api.Contracts.V1.Identity.Requests;
 using DevUp.Api.Contracts.V1.Identity.Responses;
 using DevUp.Api.Sdk;
 using Refit;
@@ -91,12 +92,12 @@ namespace DevUp.Sdk.Sample
 
             var request = new RefreshUserRequest() { Token = token, RefreshToken = refreshToken, Device = _device };
             var response = await identityClient.Refresh(request, CancellationToken.None);
-            DisplayResponse(response);
+            await DisplayResponse(response);
         }
 
-        private static void DisplayResponse(ApiResponse<IdentityResponse> response)
+        private async static Task DisplayResponse(ApiResponse<IdentityResponse> response)
         {
-            if (response.IsSuccessStatusCode && response.Content.Success)
+            if (response.IsSuccessStatusCode)
             {
                 CustomConsole.WriteMessage("Request was successful. Received new token pair.");
                 CustomConsole.WriteMessage($"Token: {response.Content.Token}");
@@ -106,8 +107,10 @@ namespace DevUp.Sdk.Sample
             {
                 CustomConsole.WriteError("Request was not successful.");
                 CustomConsole.WriteError($"Status code: {(int)response.StatusCode} ({response.StatusCode})");
-                var reason = response.Content is not null ? string.Join(Environment.NewLine, response.Content.Errors) : response.Error?.Content;
-                CustomConsole.WriteError($"Reason: {reason}");
+
+                var error = await response.Error.GetContentAsAsync<ErrorResponse>();
+                CustomConsole.WriteError($"Error code: {error!.Code}");
+                CustomConsole.WriteError($"Reason: {string.Join(Environment.NewLine, error.Errors)}");
             }
         }
     }
