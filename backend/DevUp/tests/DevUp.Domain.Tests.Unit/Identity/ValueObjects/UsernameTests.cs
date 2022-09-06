@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.ValueObjects;
+using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using NUnit.Framework;
 
 namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
@@ -17,29 +18,12 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        [TestCase(null, UsernameValidationException.NullMessage)]
-        [TestCase("short", UsernameValidationException.InvalidLengthMessage)]
-        [TestCase("too-long-to-be-considered-a-good-username", UsernameValidationException.InvalidLengthMessage)]
-        [TestCase("wrong-char$acter", UsernameValidationException.InvalidCharactersMessage)]
-        [TestCase("wrong-char0acter", UsernameValidationException.InvalidCharactersMessage)]
-        [TestCase("wrong-char_acter", UsernameValidationException.InvalidCharactersMessage)]
-        [TestCase("WRONG-CHAR字ACTER", UsernameValidationException.InvalidCharactersMessage)]
-        [TestCase("WRONG-CHARACTER", UsernameValidationException.InvalidCharactersMessage)]
-        [TestCase("-wrong-start", UsernameValidationException.InvalidFirstOrLastCharacterMessage)]
-        [TestCase("wrong-end-", UsernameValidationException.InvalidFirstOrLastCharacterMessage)]
-        public void Constructor_WhenGivenInvalidUsername_ThrowsUsernameValidationExeption(string username, string error)
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void Constructor_WhenGivenEmptyUsername_ThrowsEmptyUsernameException(string username)
         {
-            var exception = Assert.Throws<UsernameValidationException>(() => new Username(username));
-            Assert.That(exception!.Errors, Has.One.EqualTo(error));
-        }
-
-        [Test]
-        [TestCase("-$-", new[] { UsernameValidationException.InvalidLengthMessage, UsernameValidationException.InvalidCharactersMessage, UsernameValidationException.InvalidFirstOrLastCharacterMessage })]
-        [TestCase("-", new[] { UsernameValidationException.InvalidLengthMessage, UsernameValidationException.InvalidFirstOrLastCharacterMessage })]
-        public void Constructor_WhenMultipleConstraintsFail_ThrowsExceptionWithAllErrors(string username, string[] errors)
-        {
-            var exception = Assert.Throws<UsernameValidationException>(() => new Username(username));
-            CollectionAssert.AreEquivalent(exception!.Errors, errors);
+            var exception = Assert.Throws<EmptyUsernameException>(() => new Username(username));
         }
 
         [Test]
