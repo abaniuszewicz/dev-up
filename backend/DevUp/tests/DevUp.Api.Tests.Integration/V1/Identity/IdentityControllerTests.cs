@@ -54,7 +54,6 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
 
             var expectedErrors = new[] 
             {
-                $"'{nameof(RegisterUserRequest.Username)}' must be between 6 and 30 characters. You entered 4 characters.",
                 $"'{nameof(RegisterUserRequest.Username)}' may only contain lowercase letters or hyphens.",
                 $"'{nameof(RegisterUserRequest.Username)}' cannot end with a hyphen."
             };
