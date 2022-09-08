@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Bogus;
 using DevUp.Api.Contracts.V1.Identity.Requests;
 
@@ -6,6 +8,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
 {
     public class IdentityFaker
     {
+        private static readonly HashSet<string> AlreadyUsedUsernames = new HashSet<string>();
         private static readonly string[] Models = new[] { "iPhone", "Motorola", "PC", "iMac Pro" };
         private static readonly string[] Formats = new[] { "{model} ({name})", "{model} - {name}", "{name}'s {model}", "{name}", "{model}" };
 
@@ -44,8 +47,10 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
 
         private string GetUsername()
         {
-            var username = $"{Faker.Person.FirstName}-{Faker.Person.LastName}".ToLowerInvariant();
-            return Regex.Replace(username, @"[^a-z\-]", string.Empty);
+            var username = Regex.Replace($"{Faker.Person.FirstName}-{Faker.Person.LastName}", @"[^a-z\-]", string.Empty).ToLowerInvariant();
+            return AlreadyUsedUsernames.Contains(username) 
+                ? GetUsername() 
+                : username;
         }
 
         private string RandomDeviceName()
