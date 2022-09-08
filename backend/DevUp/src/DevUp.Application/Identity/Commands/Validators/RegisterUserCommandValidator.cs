@@ -8,7 +8,7 @@ namespace DevUp.Application.Identity.Commands.Validators
         {
             RuleFor(c => c.Username)
                 .NotEmpty()
-                .Length(6, 30);
+                .Length(3, 30);
 
             When(c => c.Username is not null, () =>
             {

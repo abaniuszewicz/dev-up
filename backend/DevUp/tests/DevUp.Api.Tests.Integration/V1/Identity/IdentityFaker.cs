@@ -48,11 +48,17 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
         private string GetUsername()
         {
             var username = Regex.Replace($"{Faker.Person.FirstName}-{Faker.Person.LastName}", @"[^a-z\-]", string.Empty).ToLowerInvariant();
-            return AlreadyUsedUsernames.Contains(username) 
-                ? GetUsername() 
-                : username;
-        }
+            while (AlreadyUsedUsernames.Contains(username))
+            {
+                var suffixLength = Faker.Random.Byte(1, 3);
+                var suffix = Faker.Random.String2(suffixLength);
+                username = $"{username}-{suffix}";
+            }
 
+            AlreadyUsedUsernames.Add(username);
+            return username;
+        }
+        
         private string RandomDeviceName()
         {
             var model = Faker.PickRandom(Models);

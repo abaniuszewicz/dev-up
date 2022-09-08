@@ -64,66 +64,15 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
         [Fact]
         public async Task Login_WhenGivenValidCredentialsOfAnExistingUser_ReturnsTokenPair()
         {
-            for (var i = 0; i < 10_000; i++)
-            {
-                var faker = new IdentityFaker();
-                var resultReg = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, faker.RegisterUserRequest);
+            var faker = new IdentityFaker();
+            var resultReg = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, faker.RegisterUserRequest);
 
-                var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, faker.LoginUserRequest);
-                var response = await result.Content.ReadFromJsonAsync<IdentityResponse>();
-
-                if (!result.IsSuccessStatusCode)
-                {
-                    var decode = resultReg.Content.ReadAsStringAsync();
-                }
-
-                result.Should().HaveStatusCode(HttpStatusCode.OK);
-                response!.Token.Should().NotBeEmpty();
-                response.RefreshToken.Should().NotBeEmpty();
-
-                await Task.Delay(1);
-            }
-        }
-
-        [Fact]
-        public async Task Check()
-        {
-            var register = new RegisterUserRequest()
-            {
-                Username = "jeannette-shields",
-                Password = "lowUPP1$MMYVy",
-                Device = new DeviceRequest()
-                {
-                    Id = "2d18c462-fbd9-ddde-4b1b-932761c7fda9",
-                    Name = "PC"
-                }
-            };
-
-            var login = new LoginUserRequest()
-            {
-                Username = register.Username,
-                Password = register.Password,
-                Device = new DeviceRequest()
-                {
-                    Id = register.Device.Id,
-                    Name = register.Device.Name
-                }
-            };
-            
-            await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, register);
-
-            var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, login);
+            var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, faker.LoginUserRequest);
             var response = await result.Content.ReadFromJsonAsync<IdentityResponse>();
-
-            if (!result.IsSuccessStatusCode)
-            {
-            }
 
             result.Should().HaveStatusCode(HttpStatusCode.OK);
             response!.Token.Should().NotBeEmpty();
             response.RefreshToken.Should().NotBeEmpty();
-
-            await Task.Delay(1);
         }
 
         [Fact]
