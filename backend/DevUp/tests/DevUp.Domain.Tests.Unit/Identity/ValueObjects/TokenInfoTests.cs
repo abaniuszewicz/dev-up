@@ -37,7 +37,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         {
             _token = new Token("header.payload.signature");
             _jti = "jti";
-            _userId = new UserId(Guid.Parse("85f7c00f-47c3-4079-bb5b-7a3e08fb2309"));
+            _userId = new UserId(Guid.NewGuid());
             _lifespan = new DateTimeRange(start: FirstJan2000_8_00, end: FirstJan2000_8_15);
             _tokenInfo = new TokenInfo(_token, _jti, _userId, _lifespan);
         }

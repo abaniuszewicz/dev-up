@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Bogus;
 using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
@@ -11,12 +12,11 @@ using DevUp.Domain.Identity.ValueObjects;
 using Moq;
 using NUnit.Framework;
 
-using static DevUp.Tests.Utilities.ObjectMothers.Identity.IdentityObjectMother;
-
 namespace DevUp.Domain.Tests.Unit.Identity.Services
 {
     public class IdentityServiceTests
     {
+        private IdentityFaker _faker;
         private Mock<IUserRepository> _userRepositoryMock;
         private Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
         private Mock<IPasswordService> _passwordServiceMock;
@@ -27,6 +27,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         [SetUp]
         public void SetUp()
         {
+            _faker = new IdentityFaker();
             _userRepositoryMock = new Mock<IUserRepository>();
             _refreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
             _passwordServiceMock = new Mock<IPasswordService>();
@@ -38,161 +39,163 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         [Test]
         public void RegisterAsync_WhenUsernameTaken_ThrowsRegisterException()
         {
-            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), It.IsAny<CancellationToken>())).ReturnsAsync(JohnCena.User);
+            var user = _faker.User;
+            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(user);
 
-            var exception = Assert.ThrowsAsync<RegisterException>(async () => await _identityService.RegisterAsync(JohnCena.Username, Unused.Password, Unused.Device, CancellationToken.None));
+            var exception = Assert.ThrowsAsync<RegisterException>(async () 
+                => await _identityService.RegisterAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None));
             Assert.That(exception!.Errors, Has.One.EqualTo(RegisterException.UsernameTakenMessage));
         }
 
         [Test]
         public void RegisterAsync_WhenFailedToStoreNewlyCreatedUser_ThrowsRegisterException()
         {
-            User? usernameNotTaken = null;
-            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), It.IsAny<CancellationToken>())).ReturnsAsync(usernameNotTaken);
+            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((User?)null);
+            _passwordServiceMock.Setup(ps => ps.HashAsync(_faker.Password, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.PasswordHash);
+            _userRepositoryMock.Setup(ur => ur.CreateAsync(_faker.Username, _faker.PasswordHash, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((User?)null);
 
-            _passwordServiceMock.Setup(ps => ps.HashAsync(It.IsAny<Password>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unused.PasswordHash);
-
-            User? userWasNotPersisted = null;
-            _userRepositoryMock.Setup(ur => ur.CreateAsync(It.IsAny<Username>(), It.IsAny<PasswordHash>(), It.IsAny<CancellationToken>())).ReturnsAsync(userWasNotPersisted);
-
-            var exception = Assert.ThrowsAsync<RegisterException>(async () => await _identityService.RegisterAsync(Unused.Username, Unused.Password, Unused.Device, CancellationToken.None));
+            var exception = Assert.ThrowsAsync<RegisterException>(async () 
+                => await _identityService.RegisterAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None));
             Assert.That(exception!.Errors, Has.One.EqualTo(RegisterException.CreationFailedMessage));
         }
 
         [Test]
         public async Task RegisterAsync_WhenRegistrationSucceeded_ReturnsTokenPair()
         {
-            User? usernameNotTaken = null;
-            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), It.IsAny<CancellationToken>())).ReturnsAsync(usernameNotTaken);
+            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((User?)null);
+            _passwordServiceMock.Setup(ps => ps.HashAsync(_faker.Password, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.PasswordHash);
+            _userRepositoryMock.Setup(ur => ur.CreateAsync(_faker.Username, _faker.PasswordHash, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.User);
+            _tokenServiceMock.Setup(ts => ts.CreateAsync(_faker.User, _faker.Device, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((_faker.Token, _faker.RefreshToken));
 
-            _userRepositoryMock.Setup(ur => ur.CreateAsync(It.IsAny<Username>(), It.IsAny<PasswordHash>(), It.IsAny<CancellationToken>())).ReturnsAsync(JohnCena.User);
-
-            _tokenServiceMock.Setup(ts => ts.CreateAsync(It.IsAny<User>(), It.IsAny<Device>(), It.IsAny<CancellationToken>())).ReturnsAsync((JohnCena.Token, JohnCena.RefreshToken));
-
-            var result = await _identityService.RegisterAsync(JohnCena.Username, JohnCena.Password, JohnCena.Device, CancellationToken.None);
+            var result = await _identityService.RegisterAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None);
             Assert.NotNull(result);
-            Assert.AreEqual(result.Token, JohnCena.Token);
-            Assert.AreEqual(result.RefreshToken, JohnCena.RefreshToken);
+            Assert.AreEqual(result.Token, _faker.Token);
+            Assert.AreEqual(result.RefreshToken, _faker.RefreshToken);
         }
 
         [Test]
         public void LoginAsync_WhenGivenNotRegisteredUsername_ThrowsLoginException()
         {
-            User? usernameNotFound = null;
-            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), It.IsAny<CancellationToken>())).ReturnsAsync(usernameNotFound);
+            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((User?)null);
 
-            var exception = Assert.ThrowsAsync<LoginException>(async () => await _identityService.LoginAsync(Unused.Username, Unused.Password, Unused.Device, CancellationToken.None));
+            var exception = Assert.ThrowsAsync<LoginException>(async () 
+                => await _identityService.LoginAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None));
             Assert.That(exception!.Errors, Has.One.EqualTo(LoginException.InvalidUsernameMessage));
         }
 
         [Test]
         public void LoginAsync_WhenFailedToRetrievePasswordHash_ThrowsLoginException()
         {
-            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), It.IsAny<CancellationToken>())).ReturnsAsync(JohnCena.User);
+            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.User);
+            _userRepositoryMock.Setup(ur => ur.GetPasswordHashAsync(_faker.User, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((PasswordHash?)null);
 
-            PasswordHash? passwordHashNotFound = null;
-            _userRepositoryMock.Setup(ur => ur.GetPasswordHashAsync(It.IsAny<User>(), It.IsAny<CancellationToken>())).ReturnsAsync(passwordHashNotFound);
-
-            var exception = Assert.ThrowsAsync<LoginException>(async () => await _identityService.LoginAsync(JohnCena.Username, JohnCena.Password, JohnCena.Device, CancellationToken.None));
+            var exception = Assert.ThrowsAsync<LoginException>(async () 
+                => await _identityService.LoginAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None));
             Assert.That(exception!.Errors, Has.One.EqualTo(LoginException.HashNotFoundMessage));
         }
 
         [Test]
         public void LoginAsync_WhenGivenInvalidPassword_ThrowsLoginException()
         {
-            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), It.IsAny<CancellationToken>())).ReturnsAsync(JohnCena.User);
+            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.User);
+            _userRepositoryMock.Setup(ur => ur.GetPasswordHashAsync(_faker.User, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.PasswordHash);
+            var differentPassword = new IdentityFaker().Password;
+            _passwordServiceMock.Setup(ps => ps.VerifyAsync(differentPassword, _faker.PasswordHash, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(PasswordVerifyResult.Failed);
 
-            var differentPasswordHash = Unused.PasswordHash;
-            _userRepositoryMock.Setup(ur => ur.GetPasswordHashAsync(It.IsAny<User>(), It.IsAny<CancellationToken>())).ReturnsAsync(differentPasswordHash);
-
-            _passwordServiceMock.Setup(ps => ps.VerifyAsync(It.IsAny<Password>(), It.IsAny<PasswordHash>(), It.IsAny<CancellationToken>())).ReturnsAsync(PasswordVerifyResult.Failed);
-
-            var differentPassword = Unused.Password;
-            var exception = Assert.ThrowsAsync<LoginException>(async () => await _identityService.LoginAsync(JohnCena.Username, differentPassword, JohnCena.Device, CancellationToken.None));
+            var exception = Assert.ThrowsAsync<LoginException>(async () 
+                => await _identityService.LoginAsync(_faker.Username, differentPassword, _faker.Device, CancellationToken.None));
             Assert.That(exception!.Errors, Has.One.EqualTo(LoginException.InvalidPasswordMessage));
         }
 
         [Test]
         public async Task LoginAsync_WhenGivenValidCredentials_ReturnsTokenPair()
         {
-            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), It.IsAny<CancellationToken>())).ReturnsAsync(JohnCena.User);
-            _userRepositoryMock.Setup(ur => ur.GetPasswordHashAsync(It.IsAny<User>(), It.IsAny<CancellationToken>())).ReturnsAsync(JohnCena.PasswordHash);
-            _passwordServiceMock.Setup(ps => ps.VerifyAsync(It.IsAny<Password>(), It.IsAny<PasswordHash>(), It.IsAny<CancellationToken>())).ReturnsAsync(PasswordVerifyResult.Success);
+            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.User);
+            _userRepositoryMock.Setup(ur => ur.GetPasswordHashAsync(_faker.User, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.PasswordHash);
+            _passwordServiceMock.Setup(ps => ps.VerifyAsync(_faker.Password, _faker.PasswordHash, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(PasswordVerifyResult.Success);
+            _tokenServiceMock.Setup(ts => ts.CreateAsync(_faker.User, _faker.Device, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((_faker.Token, _faker.RefreshToken));
 
-            _tokenServiceMock.Setup(ts => ts.CreateAsync(It.IsAny<User>(), It.IsAny<Device>(), It.IsAny<CancellationToken>())).ReturnsAsync((JohnCena.Token, JohnCena.RefreshToken));
-
-            var result = await _identityService.LoginAsync(JohnCena.Username, JohnCena.Password, JohnCena.Device, CancellationToken.None);
+            var result = await _identityService.LoginAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None);
             Assert.NotNull(result);
-            Assert.AreEqual(result.Token, JohnCena.Token);
-            Assert.AreEqual(result.RefreshToken, JohnCena.RefreshToken);
+            Assert.AreEqual(result.Token, _faker.Token);
+            Assert.AreEqual(result.RefreshToken, _faker.RefreshToken);
         }
 
         [Test]
         public void RefreshAsync_WhenGivenInvalidToken_ThrowsRefreshException()
         {
-            TokenInfo? invalidToken = null;
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(It.IsAny<Token>(), It.IsAny<CancellationToken>())).ReturnsAsync(invalidToken);
+            _tokenServiceMock.Setup(ts => ts.DescribeAsync(_faker.Token, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((TokenInfo?)null);
 
-            var exception = Assert.ThrowsAsync<RefreshException>(async () => await _identityService.RefreshAsync(Unused.Token, Unused.RefreshToken, Unused.Device, CancellationToken.None));
+            var exception = Assert.ThrowsAsync<RefreshException>(async () 
+                => await _identityService.RefreshAsync(_faker.Token, _faker.RefreshToken, _faker.Device, CancellationToken.None));
             Assert.That(exception!.Errors, Has.One.EqualTo(RefreshException.InvalidTokenMessage));
         }
 
         [Test]
         public void RefreshAsync_WhenGivenInvalidRefreshToken_ThrowsRefreshException()
         {
-            var lifespanDoesNotMatterHere = new DateTimeRange(new DateTime(2022, 6, 24, 0, 0, 0), new DateTime(2022, 6, 24, 15, 0, 0));
+            _tokenServiceMock.Setup(ts => ts.DescribeAsync(_faker.Token, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.TokenInfo);
+            var invalidRefreshToken = new IdentityFaker().RefreshToken;
+            _tokenServiceMock.Setup(ts => ts.DescribeAsync(invalidRefreshToken, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((RefreshTokenInfo?)null);
 
-            var validToken = JohnCena.Token;
-            var validTokenInfo = new TokenInfo(validToken, "fake-jti", JohnCena.UserId, lifespanDoesNotMatterHere);
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(It.IsAny<Token>(), It.IsAny<CancellationToken>())).ReturnsAsync(validTokenInfo);
-
-            RefreshTokenInfo? invalidRefreshTokenInfo = null;
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(It.IsAny<RefreshToken>(), It.IsAny<CancellationToken>())).ReturnsAsync(invalidRefreshTokenInfo);
-
-            var exception = Assert.ThrowsAsync<RefreshException>(async () => await _identityService.RefreshAsync(JohnCena.Token, SerenaWilliams.RefreshToken, JohnCena.Device, CancellationToken.None));
+            var exception = Assert.ThrowsAsync<RefreshException>(async ()
+                => await _identityService.RefreshAsync(_faker.Token, invalidRefreshToken, _faker.Device, CancellationToken.None));
             Assert.That(exception!.Errors, Has.One.EqualTo(RefreshException.InvalidRefreshTokenMessage));
         }
 
         [Test]
         public async Task RefreshAsync_WhenGivenValidTokenPair_MarksRefreshTokenAsUsed()
         {
-            var lifespanDoesNotMatterHere = new DateTimeRange(new DateTime(2022, 6, 24, 0, 0, 0), new DateTime(2022, 6, 24, 15, 0, 0));
+            _tokenServiceMock.Setup(ts => ts.DescribeAsync(_faker.Token, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.TokenInfo);
+            _tokenServiceMock.Setup(ts => ts.DescribeAsync(_faker.RefreshToken, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.RefreshTokenInfo);
 
-            var token = JohnCena.Token;
-            var tokenInfo = new TokenInfo(token, "fake-jti", JohnCena.UserId, lifespanDoesNotMatterHere);
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(It.IsAny<Token>(), It.IsAny<CancellationToken>())).ReturnsAsync(tokenInfo);
+            await _identityService.RefreshAsync(_faker.Token, _faker.RefreshToken, _faker.Device, CancellationToken.None);
 
-            var refreshToken = JohnCena.RefreshToken;
-            var refreshTokenInfo = new RefreshTokenInfo(refreshToken, "fake-jti", JohnCena.UserId, JohnCena.DeviceId, lifespanDoesNotMatterHere);
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(It.IsAny<RefreshToken>(), It.IsAny<CancellationToken>())).ReturnsAsync(refreshTokenInfo);
-
-            await _identityService.RefreshAsync(token, refreshToken, JohnCena.Device, CancellationToken.None);
-
-            _refreshTokenRepositoryMock.Verify(rtr => rtr.MarkAsUsedAsync(refreshTokenInfo, CancellationToken.None), Times.Once);
+            _refreshTokenRepositoryMock.Verify(rtr => rtr.MarkAsUsedAsync(_faker.RefreshTokenInfo, CancellationToken.None), Times.Once);
         }
 
         [Test]
         public async Task RefreshAsync_WhenGivenValidTokenPair_ReturnsNewTokenPair()
         {
-            var lifespanDoesNotMatterHere = new DateTimeRange(new DateTime(2022, 6, 24, 0, 0, 0), new DateTime(2022, 6, 24, 15, 0, 0));
+            _tokenServiceMock.Setup(ts => ts.DescribeAsync(_faker.Token, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.TokenInfo);
+            _tokenServiceMock.Setup(ts => ts.DescribeAsync(_faker.RefreshToken, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.RefreshTokenInfo);
+            _userRepositoryMock.Setup(ur => ur.GetByIdAsync(_faker.UserId, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_faker.User);
 
-            var token = JohnCena.Token;
-            var tokenInfo = new TokenInfo(token, "fake-jti", JohnCena.UserId, lifespanDoesNotMatterHere);
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(It.IsAny<Token>(), It.IsAny<CancellationToken>())).ReturnsAsync(tokenInfo);
+            var newFaker = new IdentityFaker();
+            var newToken = newFaker.Token;
+            var newRefreshToken = newFaker.RefreshToken;
+            _tokenServiceMock.Setup(ts => ts.CreateAsync(_faker.User, _faker.Device, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((newToken, newRefreshToken));
 
-            var refreshToken = JohnCena.RefreshToken;
-            var refreshTokenInfo = new RefreshTokenInfo(refreshToken, "fake-jti", JohnCena.UserId, JohnCena.DeviceId, lifespanDoesNotMatterHere);
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(It.IsAny<RefreshToken>(), It.IsAny<CancellationToken>())).ReturnsAsync(refreshTokenInfo);
+            var result = await _identityService.RefreshAsync(_faker.Token, _faker.RefreshToken, _faker.Device, CancellationToken.None);
 
-            _userRepositoryMock.Setup(ur => ur.GetByIdAsync(It.IsAny<UserId>(), It.IsAny<CancellationToken>())).ReturnsAsync(JohnCena.User);
-
-            var newToken = Unused.Token;
-            var newRefreshToken = Unused.RefreshToken;
-            _tokenServiceMock.Setup(ts => ts.CreateAsync(It.IsAny<User>(), It.IsAny<Device>(), It.IsAny<CancellationToken>())).ReturnsAsync((newToken, newRefreshToken));
-
-            var result = await _identityService.RefreshAsync(token, refreshToken, JohnCena.Device, CancellationToken.None);
-
-            _tokenServiceMock.Verify(ts => ts.CreateAsync(JohnCena.User, JohnCena.Device, CancellationToken.None), Times.Once);
+            _tokenServiceMock.Verify(ts => ts.CreateAsync(_faker.User, _faker.Device, CancellationToken.None), Times.Once);
             Assert.AreEqual(newToken, result.Token);
             Assert.AreEqual(newRefreshToken, result.RefreshToken);
         }

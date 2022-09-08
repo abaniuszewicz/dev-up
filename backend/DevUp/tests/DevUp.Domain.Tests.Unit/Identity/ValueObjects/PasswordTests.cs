@@ -27,7 +27,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         [Test]
         public void Constructor_WhenGivenValidPassword_AssignsValueProperty()
         {
-            const string value = "lowercaseUPPERCASE#1";
+            const string value = "password";
             var password = new Password(value);
             Assert.AreEqual(password.Value, value);
         }
@@ -35,7 +35,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         [Test]
         public void GetEqualityComponents_WhenCalled_ReturnsPasswordValue()
         {
-            const string value = "lowercaseUPPERCASE#1";
+            const string value = "password";
             var password = new Dummy(value);
 
             var result = password.GetEqualityComponents();
