@@ -23,6 +23,17 @@
                     public const string Login = Url + "/login";
                     public const string Refresh = Url + "/refresh";
                 }
+
+                public static class Teams
+                {
+                    private const string Url = V1.Url + "/teams";
+
+                    public const string Create = Url;
+                    public const string GetAll = Url;
+                    public const string GetById = Url + "/{teamId:guid}";
+                    public const string Update = Url + "/{teamId:guid}";
+                    public const string Delete = Url + "/{teamId:guid}";
+                }
             }
         }
     }
