@@ -16,6 +16,14 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
+        public void Constructor_WhenGivenValidPasswordHash_AssignsValueProperty()
+        {
+            const string value = "r4nd0m-h4$h";
+            var hash = new PasswordHash(value);
+            Assert.AreEqual(hash.Value, value);
+        }
+
+        [Test]
         public void GetEqualityComponents_WhenCalled_ReturnsHashValue()
         {
             const string value = "r4nd0m-h4$h";

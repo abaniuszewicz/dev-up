@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.18.1" />
     <PackageReference Include="NUnit" Version="3.13.2" />
@@ -18,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DevUp.Domain\DevUp.Domain.csproj" />
-    <ProjectReference Include="..\DevUp.Tests.Utilities\DevUp.Tests.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

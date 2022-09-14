@@ -1,4 +1,5 @@
-﻿using DevUp.Domain.Seedwork;
+﻿using Bogus;
+using DevUp.Domain.Seedwork;
 using NUnit.Framework;
 
 namespace DevUp.Domain.Tests.Unit.Seedwork
@@ -20,22 +21,46 @@ namespace DevUp.Domain.Tests.Unit.Seedwork
             }
         }
 
+        private readonly Faker<Dummy> _faker = new Faker<Dummy>()
+            .RuleFor(d => d.String, f => f.Random.String2(5))
+            .CustomInstantiator(f => new Dummy(new DummyId() { Value = f.Random.Number() }));
+
+
         [Test]
-        public void Equality_WhenCompared_ChecksById()
+        public void Equality_ForTheSameIdValues_ReturnsTrue()
         {
-            var dummy =          new Dummy(new DummyId() { Value = 420 }) { String = "doesn't matter" };
-            var sameDummy =      new Dummy(new DummyId() { Value = 420 }) { String = "matters not" };
-            var differentDummy = new Dummy(new DummyId() { Value = 1337 }) { String = "doesn't matter" };
+            var dummy = _faker.Generate();
+            var sameDummy = _faker.Clone()
+                .CustomInstantiator(f => new Dummy(new DummyId() { Value = dummy.Id.Value }))
+                .Generate();
 
             Assert.IsTrue(object.Equals(dummy, sameDummy));
             Assert.IsTrue(dummy.Equals(sameDummy));
             Assert.IsTrue(dummy == sameDummy);
             Assert.IsFalse(dummy != sameDummy);
+        }
+
+        [Test]
+        public void Equality_ForDifferentIdValues_ReturnsFalse()
+        {
+            var dummy = _faker.Generate();
+            var differentDummy = _faker.Clone()
+                .CustomInstantiator(f => new Dummy(new DummyId() { Value = RandomDifferentNumber(f, dummy.Id.Value) }))
+                .Generate();
 
             Assert.IsFalse(object.Equals(dummy, differentDummy));
             Assert.IsFalse(dummy.Equals(differentDummy));
             Assert.IsFalse(dummy == differentDummy);
             Assert.IsTrue(dummy != differentDummy);
+        }
+
+        private static int RandomDifferentNumber(Faker faker, int number)
+        {
+            var differentNumber = faker.Random.Number();
+            while (number == differentNumber)
+                differentNumber = faker.Random.Number();
+
+            return differentNumber;
         }
     }
 }

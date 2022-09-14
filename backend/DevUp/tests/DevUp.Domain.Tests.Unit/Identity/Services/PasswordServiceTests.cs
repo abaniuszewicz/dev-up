@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.Services.Enums;
-using DevUp.Domain.Identity.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using NUnit.Framework;
@@ -12,38 +11,40 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
 {
     public class PasswordServiceTests
     {
-        private static readonly User _user = null;
-        private static readonly CancellationToken CancellationToken = CancellationToken.None;
-        private static readonly Password _password = new Password("lowercaseUPPERCASE#1");
-        private static readonly PasswordHash _hash = new PasswordHash("r4nd0m-h4$h");
-
+        private IdentityFaker _faker;
         private Mock<IPasswordHasher<User>> _hasherMock;
         private PasswordService _passwordService;
+        User? _user;
 
         [SetUp]
         public void SetUp()
         {
+            _faker = new IdentityFaker();
             _hasherMock = new Mock<IPasswordHasher<User>>();
             _passwordService = new PasswordService(_hasherMock.Object);
+            _user = null;
         }
 
         [Test]
         public async Task HashAsync_WhenCalled_ForwardsRequestToHasherAndReturnsItsResult()
         {
-            _hasherMock.Setup(h => h.HashPassword(_user, _password.Value)).Returns(_hash.Value);
+            _hasherMock.Setup(h => h.HashPassword(_user, _faker.Password.Value))
+                .Returns(_faker.PasswordHash.Value);
 
-            var hash = await _passwordService.HashAsync(_password, CancellationToken);
+            var hash = await _passwordService.HashAsync(_faker.Password, CancellationToken.None);
 
-            Assert.AreEqual(_hash, hash);
-            _hasherMock.Verify(h => h.HashPassword(_user, _password.Value));
+            Assert.AreEqual(_faker.PasswordHash, hash);
+            _hasherMock.Verify(h => h.HashPassword(_user, _faker.Password.Value));
         }
 
         [Test]
         public async Task VerifyAsync_ForFailedVerification_ReturnsFailedResult()
         {
-            _hasherMock.Setup(h => h.VerifyHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>())).Returns(PasswordVerificationResult.Failed);
+            var differentPassword = new IdentityFaker().Password;
+            _hasherMock.Setup(h => h.VerifyHashedPassword(_user, _faker.PasswordHash.Value, differentPassword.Value))
+                .Returns(PasswordVerificationResult.Failed);
 
-            var result = await _passwordService.VerifyAsync(_password, _hash, CancellationToken);
+            var result = await _passwordService.VerifyAsync(differentPassword, _faker.PasswordHash, CancellationToken.None);
 
             Assert.AreEqual(PasswordVerifyResult.Failed, result);
         }
@@ -53,9 +54,10 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         [TestCase(PasswordVerificationResult.SuccessRehashNeeded)]
         public async Task VerifyAsync_ForSuccessVerification_ReturnsSuccessResult(PasswordVerificationResult success)
         {
-            _hasherMock.Setup(h => h.VerifyHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>())).Returns(success);
+            _hasherMock.Setup(h => h.VerifyHashedPassword(_user, _faker.PasswordHash.Value, _faker.Password.Value))
+                .Returns(success);
 
-            var result = await _passwordService.VerifyAsync(_password, _hash, CancellationToken);
+            var result = await _passwordService.VerifyAsync(_faker.Password, _faker.PasswordHash, CancellationToken.None);
 
             Assert.AreEqual(PasswordVerifyResult.Success, result);
         }
