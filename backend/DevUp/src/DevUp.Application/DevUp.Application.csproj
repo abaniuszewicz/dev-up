@@ -19,4 +19,8 @@
     <ProjectReference Include="..\DevUp.Domain\DevUp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Organization\Queries\" />
+  </ItemGroup>
+
 </Project>

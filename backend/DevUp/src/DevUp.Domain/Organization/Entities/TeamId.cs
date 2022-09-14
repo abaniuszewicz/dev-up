@@ -7,10 +7,6 @@ namespace DevUp.Domain.Organization.Entities
     {
         public Guid Id { get; }
 
-        public TeamId() : this(Guid.NewGuid())
-        {
-        }
-
         public TeamId(Guid id)
         {
             Id = id;
