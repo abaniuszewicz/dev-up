@@ -7,7 +7,6 @@ using DevUp.Api.Contracts;
 using DevUp.Api.Contracts.V1;
 using DevUp.Api.Contracts.V1.Identity.Requests;
 using DevUp.Api.Contracts.V1.Identity.Responses;
-using DevUp.Domain.Identity.Services.Exceptions;
 using FluentAssertions;
 using Xunit;
 

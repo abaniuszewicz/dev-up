@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using DevUp.Domain.Organization.Entities;
 using DevUp.Domain.Organization.Repositories;
 using DevUp.Domain.Organization.Services.Exceptions;
@@ -15,13 +16,14 @@ namespace DevUp.Domain.Organization.Services
             _teamRepository = teamRepository;
         }
 
-        public async Task<Team> Create(TeamName name)
+        public async Task<Team> CreateAsync(TeamId id, TeamName name, CancellationToken cancellationToken)
         {
-            var existing = await _teamRepository.GetByNameAsync(name);
+            var existing = await _teamRepository.GetByNameAsync(name, cancellationToken);
             if (existing is not null)
                 throw new TeamNameAlreadyTakenException(name);
 
-            return await _teamRepository.CreateAsync(name);
+            var team = new Team(id, name);
+            return await _teamRepository.CreateAsync(team, cancellationToken);
         }
     }
 }

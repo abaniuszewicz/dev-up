@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.Services.Enums;
 using DevUp.Domain.Identity.ValueObjects;
 using Microsoft.AspNetCore.Identity;
