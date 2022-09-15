@@ -5,7 +5,7 @@ namespace DevUp.Domain.Organization.Services.Exceptions
 {
     public sealed class TeamNameAlreadyTakenException : OrganizationValidationException
     {
-        TeamName Name { get; }
+        public TeamName Name { get; }
 
         public TeamNameAlreadyTakenException(TeamName name) 
             : base("Team with this name already exists.")

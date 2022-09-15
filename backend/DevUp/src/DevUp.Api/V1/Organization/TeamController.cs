@@ -4,7 +4,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DevUp.Api.Contracts;
 using DevUp.Api.Contracts.V1.Organization.Requests;
+using DevUp.Api.Contracts.V1.Organization.Responses;
 using DevUp.Application.Organization.Commands;
+using DevUp.Application.Organization.Queries;
+using DevUp.Application.Organization.Queries.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,10 +31,13 @@ namespace DevUp.Api.V1.Organization
             throw new NotImplementedException();
         }
 
-        [HttpGet(Route.Api.V1.Teams.GetById)]
+        [HttpGet(Route.Api.V1.Teams.GetById, Name = nameof(GetTeamById))]
         public async Task<IActionResult> GetTeamById([FromRoute] Guid teamId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var query = new GetTeamQuery() { Id = teamId };
+            var result = await _mediator.Send<TeamQueryResult>(query, cancellationToken);
+            var response = _mapper.Map<TeamResponse>(result);
+            return Ok(response);
         }
 
         [HttpPost(Route.Api.V1.Teams.Create)]
@@ -39,7 +45,7 @@ namespace DevUp.Api.V1.Organization
         {
             var command = _mapper.Map<CreateTeamCommand>(request);
             await _mediator.Send(command, cancellationToken);
-            return CreatedAtAction(nameof(GetTeamById), command.Id);
+            return CreatedAtAction(nameof(GetTeamById), new { command.Id }, null);
         }
 
         [HttpPatch(Route.Api.V1.Teams.Update)]

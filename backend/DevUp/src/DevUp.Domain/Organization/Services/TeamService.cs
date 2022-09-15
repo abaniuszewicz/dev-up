@@ -25,5 +25,14 @@ namespace DevUp.Domain.Organization.Services
             var team = new Team(id, name);
             return await _teamRepository.CreateAsync(team, cancellationToken);
         }
+
+        public async Task<Team> GetAsync(TeamId id, CancellationToken cancellationToken)
+        {
+            var team = await _teamRepository.GetByIdAsync(id, cancellationToken);
+            if (team is null)
+                throw new TeamIdNotFoundException(id);
+
+            return team;
+        }
     }
 }
