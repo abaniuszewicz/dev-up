@@ -31,7 +31,7 @@ namespace DevUp.Api.V1.Organization
             throw new NotImplementedException();
         }
 
-        [HttpGet(Route.Api.V1.Teams.GetById, Name = nameof(GetTeamById))]
+        [HttpGet(Route.Api.V1.Teams.GetById)]
         public async Task<IActionResult> GetTeamById([FromRoute] Guid teamId, CancellationToken cancellationToken)
         {
             var query = new GetTeamQuery() { Id = teamId };
@@ -45,7 +45,7 @@ namespace DevUp.Api.V1.Organization
         {
             var command = _mapper.Map<CreateTeamCommand>(request);
             await _mediator.Send(command, cancellationToken);
-            return CreatedAtAction(nameof(GetTeamById), new { command.Id }, null);
+            return CreatedAtAction(nameof(GetTeamById), new { TeamId = command.Id }, null);
         }
 
         [HttpPatch(Route.Api.V1.Teams.Update)]
