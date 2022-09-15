@@ -2,8 +2,8 @@
 
 namespace DevUp.Infrastructure.Postgres.Migrations
 {
-    [Migration(2022040700001)]
-    public class AddTeamsTable_2022040700001 : Migration
+    [Migration(2022091400001)]
+    public class AddTeamsTable_2022091400001 : Migration
     {
         public override void Up()
         {

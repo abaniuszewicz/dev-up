@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using DevUp.Api.Contracts;
@@ -22,33 +23,33 @@ namespace DevUp.Api.V1.Organization
         }
 
         [HttpGet(Route.Api.V1.Teams.GetAll)]
-        public async Task<IActionResult> GetAllTeams()
+        public async Task<IActionResult> GetAllTeams(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpGet(Route.Api.V1.Teams.GetById)]
-        public async Task<IActionResult> GetTeamById([FromRoute] Guid teamId)
+        public async Task<IActionResult> GetTeamById([FromRoute] Guid teamId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost(Route.Api.V1.Teams.Create)]
-        public async Task<IActionResult> Create([FromBody] CreateTeamRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateTeamRequest request, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<CreateTeamCommand>(request);
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return CreatedAtAction(nameof(GetTeamById), command.Id);
         }
 
         [HttpPatch(Route.Api.V1.Teams.Update)]
-        public async Task<IActionResult> Update([FromRoute] Guid teamId)
+        public async Task<IActionResult> Update([FromRoute] Guid teamId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpDelete(Route.Api.V1.Teams.Delete)]
-        public async Task<IActionResult> Delete([FromRoute] Guid teamId)
+        public async Task<IActionResult> Delete([FromRoute] Guid teamId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

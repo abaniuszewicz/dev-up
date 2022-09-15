@@ -18,7 +18,7 @@ namespace DevUp.Infrastructure.Postgres.Setup
             return connectionName switch
             {
                 DbConnectionName.Identity => _secretProvider.Get("DB_CONNECTION_STRING"),
-                DbConnectionName.Organization => _secretProvider.Get("DB_CONECTION_STRING"),
+                DbConnectionName.Organization => _secretProvider.Get("DB_CONNECTION_STRING"),
                 _ => throw new ArgumentOutOfRangeException(nameof(connectionName))
             };
         }

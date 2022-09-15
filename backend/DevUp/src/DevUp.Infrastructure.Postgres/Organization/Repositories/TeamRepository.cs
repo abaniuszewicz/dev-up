@@ -27,7 +27,7 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
             var sql = @$"SELECT 
                             id {nameof(TeamDto.Id)}, 
                             name {nameof(TeamDto.Name)}
-                        FROM users";
+                        FROM teams";
 
             var dtos = await _connection.QueryAsync<TeamDto>(sql);
             return dtos.Select(_mapper.MapOrNull<Team>).ToList();
@@ -43,7 +43,7 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
             var sql = @$"SELECT 
                             id {nameof(TeamDto.Id)}, 
                             name {nameof(TeamDto.Name)}
-                        FROM users
+                        FROM teams
                         WHERE id=@{nameof(TeamDto.Id)}";
 
             dto = await _connection.QuerySingleOrDefaultAsync<TeamDto>(sql, dto);
@@ -60,7 +60,7 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
             var sql = @$"SELECT 
                             id {nameof(Team.Id)}, 
                             name {nameof(TeamDto.Name)}
-                        FROM users
+                        FROM teams
                         WHERE name=@{nameof(TeamDto.Name)}";
 
             dto = await _connection.QuerySingleOrDefaultAsync<TeamDto>(sql, dto);
