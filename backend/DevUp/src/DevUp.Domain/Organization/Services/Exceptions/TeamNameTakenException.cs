@@ -3,11 +3,11 @@ using DevUp.Domain.Organization.ValueObjects;
 
 namespace DevUp.Domain.Organization.Services.Exceptions
 {
-    public sealed class TeamNameAlreadyTakenException : OrganizationValidationException
+    public sealed class TeamNameTakenException : OrganizationValidationException
     {
         public TeamName Name { get; }
 
-        public TeamNameAlreadyTakenException(TeamName name) 
+        public TeamNameTakenException(TeamName name) 
             : base("Team with this name already exists.")
         {
             Name = name;

@@ -7,7 +7,6 @@ using DevUp.Api.Contracts.V1.Organization.Requests;
 using DevUp.Api.Contracts.V1.Organization.Responses;
 using DevUp.Application.Organization.Commands;
 using DevUp.Application.Organization.Queries;
-using DevUp.Application.Organization.Queries.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,7 +34,7 @@ namespace DevUp.Api.V1.Organization
         public async Task<IActionResult> GetTeamById([FromRoute] Guid teamId, CancellationToken cancellationToken)
         {
             var query = new GetTeamQuery() { Id = teamId };
-            var result = await _mediator.Send<TeamQueryResult>(query, cancellationToken);
+            var result = await _mediator.Send(query, cancellationToken);
             var response = _mapper.Map<TeamResponse>(result);
             return Ok(response);
         }
