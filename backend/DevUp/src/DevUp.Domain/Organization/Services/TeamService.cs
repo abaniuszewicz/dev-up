@@ -37,5 +37,14 @@ namespace DevUp.Domain.Organization.Services
 
             return team;
         }
+
+        public async Task DeleteAsync(TeamId id, CancellationToken cancellationToken)
+        {
+            var team = await _teamRepository.GetByIdAsync(id, cancellationToken);
+            if (team is null)
+                throw new TeamIdNotFoundException(id);
+
+            await _teamRepository.DeleteAsync(team, cancellationToken);
+        }
     }
 }

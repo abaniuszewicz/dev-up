@@ -56,7 +56,9 @@ namespace DevUp.Api.V1.Organization
         [HttpDelete(Route.Api.V1.Teams.Delete)]
         public async Task<IActionResult> Delete([FromRoute] Guid teamId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var command = new DeleteTeamCommand() { Id = teamId };
+            await _mediator.Send(command, cancellationToken);
+            return NoContent();
         }
     }
 }

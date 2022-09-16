@@ -87,5 +87,19 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
             var affectedRows = await _connection.ExecuteAsync(sql, dto);
             return affectedRows == 0 ? null : team;
         }
+
+        public async Task DeleteAsync(Team team, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (team is null)
+                throw new ArgumentNullException(nameof(team));
+
+            var dto = _mapper.Map<TeamDto>(team);
+
+            var sql = @$"DELETE FROM teams
+                         WHERE id=@{nameof(TeamDto.Id)}";
+
+            await _connection.ExecuteAsync(sql, dto);
+        }
     }
 }
