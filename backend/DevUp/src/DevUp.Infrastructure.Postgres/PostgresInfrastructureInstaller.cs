@@ -2,6 +2,7 @@
 using DevUp.Infrastructure.Postgres.Migrations;
 using DevUp.Infrastructure.Postgres.Organization;
 using DevUp.Infrastructure.Postgres.Setup;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DevUp.Infrastructure.Postgres
@@ -15,7 +16,8 @@ namespace DevUp.Infrastructure.Postgres
             services.AddDatabaseMigrator();
 
             services.AddTransient<IDbConnectionFactory, PostgresConnectionFactory>();
-            services.AddAutoMapper(typeof(PostgresInfrastructureInstaller).Assembly);
+            services.AddAutoMapper(typeof(IPostgresInfrastructureMarker).Assembly);
+            services.AddMediatR(typeof(IPostgresInfrastructureMarker));
             return services;
         }
     }

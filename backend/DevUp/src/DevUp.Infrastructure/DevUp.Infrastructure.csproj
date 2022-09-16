@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DevUp.Application\DevUp.Application.csproj" />
     <ProjectReference Include="..\DevUp.Domain\DevUp.Domain.csproj" />
   </ItemGroup>
 

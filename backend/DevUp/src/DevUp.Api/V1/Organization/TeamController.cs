@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -27,7 +28,10 @@ namespace DevUp.Api.V1.Organization
         [HttpGet(Route.Api.V1.Teams.GetAll)]
         public async Task<IActionResult> GetAllTeams(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var query = new GetAllTeamsQuery();
+            var result = await _mediator.Send(query, cancellationToken);
+            var response = _mapper.Map<IEnumerable<TeamResponse>>(result);
+            return Ok(response);
         }
 
         [HttpGet(Route.Api.V1.Teams.GetById)]
