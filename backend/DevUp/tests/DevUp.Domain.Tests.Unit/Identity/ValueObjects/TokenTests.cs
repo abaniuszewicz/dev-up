@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DevUp.Domain.Identity.ValueObjects;
+using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using NUnit.Framework;
 
 namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects

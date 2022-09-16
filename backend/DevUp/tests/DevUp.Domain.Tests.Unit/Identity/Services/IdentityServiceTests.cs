@@ -6,6 +6,7 @@ using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.Services.Enums;
+using DevUp.Domain.Identity.Services.Exceptions;
 using DevUp.Domain.Identity.ValueObjects;
 using Moq;
 using NUnit.Framework;
