@@ -7,10 +7,10 @@ namespace DevUp.Domain.Organization.Entities
 {
     public sealed class Team : Entity<TeamId>
     {
-        private HashSet<Member> _members;
+        private readonly HashSet<Member> _members = new();
 
-        public TeamName Name { get; }
-        public IEnumerable<Member> Members { get; }
+        public TeamName Name { get; private set; }
+        public IEnumerable<Member> Members { get => _members; }
 
         public Team(TeamId id, TeamName name) 
             : base(id)
@@ -24,6 +24,11 @@ namespace DevUp.Domain.Organization.Entities
                 throw new DuplicateMemberException(Id, member.Id);
 
             _members.Add(member);
+        }
+
+        public void ChangeName(TeamName name)
+        {
+            Name = name;
         }
 
         public override string ToString()

@@ -51,10 +51,12 @@ namespace DevUp.Api.V1.Organization
             return CreatedAtAction(nameof(GetTeamById), new { TeamId = command.Id }, null);
         }
 
-        [HttpPatch(Route.Api.V1.Teams.Update)]
-        public async Task<IActionResult> Update([FromRoute] Guid teamId, CancellationToken cancellationToken)
+        [HttpPut(Route.Api.V1.Teams.Update)]
+        public async Task<IActionResult> Update([FromRoute] Guid teamId, [FromBody] UpdateTeamRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var command = _mapper.Map<UpdateTeamCommand>(request, opts => opts.AfterMap((_, c) => c.Id = teamId));
+            await _mediator.Send(command, cancellationToken);
+            return Ok();
         }
 
         [HttpDelete(Route.Api.V1.Teams.Delete)]

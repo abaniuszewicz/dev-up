@@ -2,15 +2,15 @@
 
 namespace DevUp.Application.Organization.Commands.Validators
 {
-    public class CreateTeamCommandValidator : AbstractValidator<CreateTeamCommand>
+    public class UpdateTeamCommandValidator : AbstractValidator<UpdateTeamCommand>
     {
-        public CreateTeamCommandValidator()
+        public UpdateTeamCommandValidator()
         {
             RuleFor(c => c.Id)
                 .NotEmpty();
 
             RuleFor(c => c.Name)
-                .SetValidator(new TeamNameValidator<CreateTeamCommand>());
+                .SetValidator(new TeamNameValidator<UpdateTeamCommand>());
         }
     }
 }

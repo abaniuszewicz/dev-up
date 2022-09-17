@@ -1,4 +1,5 @@
-﻿using DevUp.Application.PipelineBehaviors;
+﻿using DevUp.Application.Organization.Commands;
+using DevUp.Application.PipelineBehaviors;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

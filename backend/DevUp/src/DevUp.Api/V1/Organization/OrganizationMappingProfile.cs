@@ -13,6 +13,8 @@ namespace DevUp.Api.V1.Organization
         {
             CreateMap<CreateTeamRequest, CreateTeamCommand>()
                 .ForMember(d => d.Name, opts => opts.MapFrom(s => s.Name));
+            CreateMap<UpdateTeamRequest, UpdateTeamCommand>()
+                .ForMember(d => d.Name, opts => opts.MapFrom(s => s.Name));
 
             CreateMap<TeamQueryResult, TeamResponse>()
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))

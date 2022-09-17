@@ -11,5 +11,6 @@ namespace DevUp.Domain.Organization.Repositories
         public Task<Team> GetByNameAsync(TeamName name, CancellationToken cancellationToken);
         public Task<Team> CreateAsync(Team team, CancellationToken cancellationToken);
         public Task DeleteAsync(Team team, CancellationToken cancellationToken);
+        public Task UpdateAsync(Team team, CancellationToken cancellationToken);
     }
 }

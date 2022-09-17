@@ -2,7 +2,7 @@
 
 namespace DevUp.Application.Organization.Commands.Validators
 {
-    internal class DeleteTeamCommandValidator : AbstractValidator<DeleteTeamCommand>
+    public class DeleteTeamCommandValidator : AbstractValidator<DeleteTeamCommand>
     {
         public DeleteTeamCommandValidator()
         {

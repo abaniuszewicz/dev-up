@@ -21,18 +21,6 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IReadOnlyList<Team>> GetAllAsync(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var sql = @$"SELECT 
-                            id {nameof(TeamDto.Id)}, 
-                            name {nameof(TeamDto.Name)}
-                        FROM teams";
-
-            var dtos = await _connection.QueryAsync<TeamDto>(sql);
-            return dtos.Select(_mapper.MapOrNull<Team>).ToList();
-        }
-
         public async Task<Team> GetByIdAsync(TeamId id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -97,6 +85,21 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
             var dto = _mapper.Map<TeamDto>(team);
 
             var sql = @$"DELETE FROM teams
+                         WHERE id=@{nameof(TeamDto.Id)}";
+
+            await _connection.ExecuteAsync(sql, dto);
+        }
+
+        public async Task UpdateAsync(Team team, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (team is null)
+                throw new ArgumentNullException(nameof(team));
+
+            var dto = _mapper.Map<TeamDto>(team);
+
+            var sql = $@"UPDATE teams 
+                         SET name=@{nameof(TeamDto.Name)}
                          WHERE id=@{nameof(TeamDto.Id)}";
 
             await _connection.ExecuteAsync(sql, dto);
