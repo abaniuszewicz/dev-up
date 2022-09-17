@@ -28,8 +28,6 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             })
             .Build();
 
-        public SampleRequest SampleRequest { get => new SampleRequest(); }
-
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureLogging(l => l.ClearProviders());

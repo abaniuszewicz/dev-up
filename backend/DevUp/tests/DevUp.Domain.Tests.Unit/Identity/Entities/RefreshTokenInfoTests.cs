@@ -1,4 +1,6 @@
 ﻿using System;
+using Bogus;
+using Bogus.DataSets;
 using DevUp.Domain.Common.Services;
 using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
@@ -10,91 +12,94 @@ namespace DevUp.Domain.Tests.Unit.Identity.Entities
 {
     public class RefreshTokenInfoTests
     {
-        private RefreshToken _refreshToken;
-        private string _jti;
-        private UserId _userId;
-        private DeviceId _deviceId;
-        private DateTimeRange _lifespan;
-        private RefreshTokenInfo _refreshTokenInfo;
-
-        private static readonly DateTime FirstJan2000_8_00 = new DateTime(2000, 1, 1, 8, 0, 0);
-        private static readonly DateTime FirstJan2000_8_15 = new DateTime(2000, 1, 1, 8, 15, 0);
-
-        private static readonly DateTime[] DatesWithinLifespan = new[] { FirstJan2000_8_00, FirstJan2000_8_00.AddMinutes(7).AddSeconds(30), FirstJan2000_8_15 };
-        private static readonly DateTime[] DatesOutsideLifespan = new[] { FirstJan2000_8_00.AddMinutes(-1), FirstJan2000_8_15.AddMinutes(1) };
+        private IdentityFaker _faker;
 
         [SetUp]
         public void SetUp()
         {
-            _refreshToken = new RefreshToken("--valid_refresh_token--");
-            _jti = "jti";
-            _userId = new UserId(Guid.Parse("85f7c00f-47c3-4079-bb5b-7a3e08fb2309"));
-            _deviceId = new DeviceId("123-321");
-            _lifespan = new DateTimeRange(start: FirstJan2000_8_00, end: FirstJan2000_8_15);
-
-            _refreshTokenInfo = new RefreshTokenInfo(_refreshToken, _jti, _userId, _deviceId, _lifespan);
+            _faker = new IdentityFaker();
         }
 
         [Test]
         public void BelongsTo_ForUserWithTheSameId_ReturnsTrue()
         {
-            var sameUser = new User(new UserId(Guid.Parse("85f7c00f-47c3-4079-bb5b-7a3e08fb2309")), new Username("name-is-not-important"));
-            Assert.IsTrue(_refreshTokenInfo.BelongsTo(sameUser));
+            var rti = _faker.RefreshTokenInfo;
+            var user = _faker.User;
+
+            Assert.IsTrue(rti.BelongsTo(user));
         }
 
         [Test]
         public void BelongsTo_ForUserWithDifferentId_ReturnsFalse()
         {
-            var differentUser = new User(new UserId(Guid.Parse("99999999-47c3-4079-bb5b-7a3e08fb2309")), new Username("name-is-not-important"));
-            Assert.IsFalse(_refreshTokenInfo.BelongsTo(differentUser));
+            var rti = _faker.RefreshTokenInfo;
+            var differentUser = new IdentityFaker().User;
+
+            Assert.IsFalse(rti.BelongsTo(differentUser));
         }
 
         [Test]
         public void BelongsTo_ForTokenInfoWithTheSameJti_ReturnsTrue()
         {
-            var sameJtiTokenInfo = new TokenInfo(new Token("header.payload.signature"), _jti, _userId, _lifespan);
-            Assert.IsTrue(_refreshTokenInfo.BelongsTo(sameJtiTokenInfo));
+            var rti = _faker.RefreshTokenInfo;
+            var ti = _faker.TokenInfo;
+
+            Assert.IsTrue(rti.BelongsTo(ti));
         }
 
         [Test]
         public void BelongsTo_ForTokenInfoWithDifferentJti_ReturnsFalse()
         {
-            var differentJtiTokenInfo = new TokenInfo(new Token("header.payload.signature"), "different_jti", _userId, _lifespan);
-            Assert.IsFalse(_refreshTokenInfo.BelongsTo(differentJtiTokenInfo));
+            var rti = _faker.RefreshTokenInfo;
+            var differentTi = new IdentityFaker().TokenInfo;
+
+            Assert.IsFalse(rti.BelongsTo(differentTi));
         }
 
         [Test]
         public void BelongsTo_ForDeviceWithTheSameId_ReturnsTrue()
         {
-            var sameDevice = new Device(new DeviceId("123-321"), "name is not important");
-            Assert.IsTrue(_refreshTokenInfo.BelongsTo(sameDevice));
+            var rti = _faker.RefreshTokenInfo;
+            var device = _faker.Device;
+
+            Assert.IsTrue(rti.BelongsTo(device));
         }
 
         [Test]
         public void BelongsTo_ForDeviceWithDifferentId_ReturnsFalse()
         {
-            var differentDevice = new Device(new DeviceId("999-999"), "name is not important");
-            Assert.IsFalse(_refreshTokenInfo.BelongsTo(differentDevice));
+            var rti = _faker.RefreshTokenInfo;
+            var differentDevice = new IdentityFaker().Device;
+
+            Assert.IsFalse(rti.BelongsTo(differentDevice));
         }
 
         [Test]
-        [TestCaseSource(nameof(DatesWithinLifespan))]
-        public void IsActive_ForDatesWithinLifespan_ReturnsTrue(DateTime date)
+        public void IsActive_ForDatesWithinLifespan_ReturnsTrue()
         {
+            var rti = _faker.RefreshTokenInfo;
             var dateProvider = new Mock<IDateTimeProvider>();
-            dateProvider.Setup(dp => dp.Now).Returns(date);
+            var dates = new[] { rti.Lifespan.Start, new Date().Between(rti.Lifespan.Start, rti.Lifespan.End), rti.Lifespan.End };
 
-            Assert.IsTrue(_refreshTokenInfo.IsActive(dateProvider.Object));
+            foreach (var date in dates)
+            {
+                dateProvider.Setup(dp => dp.Now).Returns(date);
+                Assert.IsTrue(rti.IsActive(dateProvider.Object));
+            }
         }
 
         [Test]
-        [TestCaseSource(nameof(DatesOutsideLifespan))]
-        public void IsActive_ForDatesOutsideLifespan_ReturnsFalse(DateTime date)
+        public void IsActive_ForDatesOutsideLifespan_ReturnsFalse()
         {
+            var rti = _faker.RefreshTokenInfo;
             var dateProvider = new Mock<IDateTimeProvider>();
-            dateProvider.Setup(dp => dp.Now).Returns(date);
+            var dates = new[] { new Date().Recent(1, rti.Lifespan.Start), new Date().Soon(1, rti.Lifespan.End) };
 
-            Assert.IsFalse(_refreshTokenInfo.IsActive(dateProvider.Object));
+            foreach (var date in dates)
+            {
+                dateProvider.Setup(dp => dp.Now).Returns(date);
+                Assert.IsFalse(rti.IsActive(dateProvider.Object));
+            }
         }
     }
 }

@@ -42,8 +42,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 ### Backend
 - [x] [AutoMapper](https://github.com/AutoMapper/AutoMapper)
+- [x] [Bogus](https://github.com/bchavez/Bogus) 
 - [x] [Dapper](https://github.com/DapperLib/Dapper)
+- [x] [FluentAssertions](https://github.com/fluentassertions/fluentassertions) 
 - [x] [FluentMigrator](https://github.com/fluentmigrator/fluentmigrator)
+- [x] [FluentValidation](https://github.com/FluentValidation/FluentValidation)
+- [x] [Humanizer](https://github.com/Humanizr/Humanizer)  
+- [x] [MediatR](https://github.com/jbogard/MediatR) 
 - [x] [Moq](https://github.com/moq/moq)
 - [x] [NUnit](https://github.com/nunit/nunit)
+- [x] [Refit](https://github.com/reactiveui/refit) 
 - [x] [Serilog](https://github.com/serilog/serilog)
+- [x] [Testcontainers](https://github.com/testcontainers/testcontainers-dotnet) 
+- [x] [xUnit](https://github.com/xunit/xunit) 
