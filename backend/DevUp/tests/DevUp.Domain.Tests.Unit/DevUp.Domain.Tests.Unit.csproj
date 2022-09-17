@@ -21,4 +21,9 @@
     <ProjectReference Include="..\..\src\DevUp.Domain\DevUp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Organization\Entities\" />
+    <Folder Include="Organization\Services\" />
+  </ItemGroup>
+
 </Project>
