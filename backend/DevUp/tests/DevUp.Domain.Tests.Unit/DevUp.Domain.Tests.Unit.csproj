@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Organization\Entities\" />
     <Folder Include="Organization\Services\" />
   </ItemGroup>
 
