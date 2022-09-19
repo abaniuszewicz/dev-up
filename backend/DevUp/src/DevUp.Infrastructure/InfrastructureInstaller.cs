@@ -1,7 +1,4 @@
-﻿using DevUp.Domain.Common.Services;
-using DevUp.Infrastructure.Identity;
-using DevUp.Infrastructure.Logging;
-using DevUp.Infrastructure.System;
+﻿using DevUp.Infrastructure.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DevUp.Infrastructure

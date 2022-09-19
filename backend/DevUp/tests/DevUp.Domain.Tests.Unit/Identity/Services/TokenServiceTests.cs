@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using DevUp.Domain.Common.Services;
 using DevUp.Domain.Common.Types;
-using DevUp.Domain.Identity;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.Services.Exceptions;
-using Microsoft.IdentityModel.Tokens;
+using DevUp.Domain.Identity.Setup;
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 
@@ -20,7 +20,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         private Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
         private Mock<IDeviceRepository> _deviceRepositoryMock;
         private Mock<IDateTimeProvider> _dateProviderMock;
-        private Mock<IJwtSettings> _jwtSettingsMock;
+        private IOptions<AuthenticationOptions> _authenticationOptions;
 
         private ITokenService _tokenService;
 
@@ -32,9 +32,16 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
             _refreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
             _deviceRepositoryMock = new Mock<IDeviceRepository>();
             _dateProviderMock = new Mock<IDateTimeProvider>();
-            _jwtSettingsMock = new Mock<IJwtSettings>();
 
-            _tokenService = new TokenService(_userRepositoryMock.Object, _refreshTokenRepositoryMock.Object, _deviceRepositoryMock.Object, _dateProviderMock.Object, _jwtSettingsMock.Object);
+            var expiry = _faker.Faker.Date.Timespan();
+            _authenticationOptions = Options.Create(new AuthenticationOptions()
+            {
+                TokenExpiry = expiry,
+                RefreshTokenExpiry = 5 * expiry,
+                SigningKey = _faker.Faker.Random.String2(32)
+            });
+
+            _tokenService = new TokenService(_userRepositoryMock.Object, _refreshTokenRepositoryMock.Object, _deviceRepositoryMock.Object, _dateProviderMock.Object, _authenticationOptions);
         }
 
         [Test]
@@ -42,14 +49,6 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         {
             _dateProviderMock.Setup(dp => dp.Now)
                 .Returns(_faker.Faker.Date.Soon());
-            _jwtSettingsMock.Setup(jwts => jwts.JwtExpiryMs)
-                .Returns(_faker.Faker.Random.UShort(1, 500));
-            _jwtSettingsMock.Setup(jwts => jwts.JwtRefreshExpiryMs)
-                .Returns(_faker.Faker.Random.UShort(501, 5000));
-            _jwtSettingsMock.Setup(jwts => jwts.Secret)
-                .Returns(_faker.Faker.Random.Bytes(40));
-            _jwtSettingsMock.Setup(jwts => jwts.TokenValidationParameters)
-                .Returns(new TokenValidationParameters() { IssuerSigningKey = new SymmetricSecurityKey(_jwtSettingsMock.Object.Secret) });
 
             await _tokenService.CreateAsync(_faker.User, _faker.Device, CancellationToken.None);
 
@@ -57,7 +56,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
 
             var expectedLifetime = new DateTimeRange(
                 _dateProviderMock.Object.Now,
-                _dateProviderMock.Object.Now.AddMilliseconds(_jwtSettingsMock.Object.JwtRefreshExpiryMs));
+                _dateProviderMock.Object.Now.Add(_authenticationOptions.Value.RefreshTokenExpiry));
             _refreshTokenRepositoryMock.Verify(rtr => rtr.AddAsync(
                 It.Is<RefreshTokenInfo>(rti => rti.Lifespan == expectedLifetime && rti.UserId == _faker.UserId && rti.DeviceId == _faker.DeviceId), 
                 It.IsAny<CancellationToken>())

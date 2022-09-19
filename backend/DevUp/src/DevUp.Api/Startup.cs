@@ -21,12 +21,12 @@ namespace DevUp.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDomain();
+            services.AddDomain(Configuration);
             services.AddApplication();
             services.AddApi();
             services.AddInfrastructure();
             services.AddHttpInfrastructure();
-            services.AddPostgresInfrastructure();
+            services.AddPostgresInfrastructure(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
