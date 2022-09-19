@@ -2,7 +2,7 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DevUp.Domain.Identity
+namespace DevUp.Domain.Identity.Setup
 {
     public sealed class AuthenticationOptions
     {

@@ -1,4 +1,4 @@
-﻿namespace DevUp.Infrastructure.Postgres
+﻿namespace DevUp.Infrastructure.Postgres.Setup
 {
     internal sealed class PostgresOptions
     {

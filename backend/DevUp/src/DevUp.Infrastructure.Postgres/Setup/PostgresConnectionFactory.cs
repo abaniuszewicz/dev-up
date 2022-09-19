@@ -1,23 +1,23 @@
 ﻿using System.Data;
-using DevUp.Domain.Common.Services;
+using Microsoft.Extensions.Options;
 using Npgsql;
 
 namespace DevUp.Infrastructure.Postgres.Setup
 {
     internal class PostgresConnectionFactory : IDbConnectionFactory
     {
-        private readonly ISecretProvider _secretProvider;
+        private readonly PostgresOptions _postgresOptions;
 
-        public PostgresConnectionFactory(ISecretProvider secretProvider)
+        public PostgresConnectionFactory(IOptions<PostgresOptions> postgresOptions)
         {
-            _secretProvider = secretProvider;
+            _postgresOptions = postgresOptions.Value;
         }
 
         public string GetConnectionString(DbConnectionName connectionName)
         {
             return connectionName switch
             {
-                DbConnectionName.Identity => _secretProvider.Get("DB_CONNECTION_STRING"),
+                DbConnectionName.Identity => _postgresOptions.ConnectionString,
                 _ => throw new ArgumentOutOfRangeException(nameof(connectionName))
             };
         }
