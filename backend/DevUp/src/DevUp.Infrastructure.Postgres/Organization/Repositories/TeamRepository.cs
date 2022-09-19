@@ -32,7 +32,7 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
                             id {nameof(TeamDto.Id)}, 
                             name {nameof(TeamDto.Name)}
                         FROM teams
-                        WHERE id=@{nameof(TeamDto.Id)}";
+                        WHERE id = @{nameof(TeamDto.Id)}";
 
             dto = await _connection.QuerySingleOrDefaultAsync<TeamDto>(sql, dto);
             return _mapper.MapOrNull<Team>(dto);
@@ -49,7 +49,7 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
                             id {nameof(Team.Id)}, 
                             name {nameof(TeamDto.Name)}
                         FROM teams
-                        WHERE name=@{nameof(TeamDto.Name)}";
+                        WHERE name = @{nameof(TeamDto.Name)}";
 
             dto = await _connection.QuerySingleOrDefaultAsync<TeamDto>(sql, dto);
             return _mapper.MapOrNull<Team>(dto);
@@ -85,7 +85,7 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
             var dto = _mapper.Map<TeamDto>(team);
 
             var sql = @$"DELETE FROM teams
-                         WHERE id=@{nameof(TeamDto.Id)}";
+                         WHERE id = @{nameof(TeamDto.Id)}";
 
             await _connection.ExecuteAsync(sql, dto);
         }
@@ -99,8 +99,8 @@ namespace DevUp.Infrastructure.Postgres.Organization.Repositories
             var dto = _mapper.Map<TeamDto>(team);
 
             var sql = $@"UPDATE teams 
-                         SET name=@{nameof(TeamDto.Name)}
-                         WHERE id=@{nameof(TeamDto.Id)}";
+                         SET name = @{nameof(TeamDto.Name)}
+                         WHERE id = @{nameof(TeamDto.Id)}";
 
             await _connection.ExecuteAsync(sql, dto);
         }

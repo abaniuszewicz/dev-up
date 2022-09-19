@@ -1,10 +1,5 @@
-﻿using System;
-using Bogus;
-using Bogus.DataSets;
+﻿using Bogus.DataSets;
 using DevUp.Domain.Common.Services;
-using DevUp.Domain.Common.Types;
-using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.ValueObjects;
 using Moq;
 using NUnit.Framework;
 
