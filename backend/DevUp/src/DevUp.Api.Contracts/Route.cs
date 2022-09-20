@@ -33,6 +33,10 @@
                     public const string GetById = Url + "/{teamId:guid}";
                     public const string Update = Url + "/{teamId:guid}";
                     public const string Delete = Url + "/{teamId:guid}";
+
+                    public static string GetByIdFactory(Guid guid) => GetById.Replace("{teamId:guid}", guid.ToString());
+                    public static string UpdateFactory(Guid guid) => Update.Replace("{teamId:guid}", guid.ToString());
+                    public static string DeleteFactory(Guid guid) => Delete.Replace("{teamId:guid}", guid.ToString());
                 }
             }
         }

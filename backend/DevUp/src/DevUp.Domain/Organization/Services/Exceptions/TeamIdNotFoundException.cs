@@ -3,7 +3,7 @@ using DevUp.Domain.Organization.Exceptions;
 
 namespace DevUp.Domain.Organization.Services.Exceptions
 {
-    public sealed class TeamIdNotFoundException : OrganizationValidationException
+    public sealed class TeamIdNotFoundException : OrganizationNotFoundException
     {
         public TeamId Id { get; }
 

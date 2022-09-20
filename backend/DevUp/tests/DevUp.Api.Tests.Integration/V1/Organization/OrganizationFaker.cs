@@ -25,7 +25,7 @@ namespace DevUp.Api.Tests.Integration.V1.Organization
 
             UpdateTeamRequest = new UpdateTeamRequest
             {
-                Name = CreateTeamRequest.Name
+                Name = GetTeamName()
             };
         }
 

@@ -11,12 +11,12 @@ using Xunit;
 
 namespace DevUp.Api.Tests.Integration.V1.Organization
 {
-    public class TeamControllerTests : IClassFixture<TeamApiFactory>
+    public class TeamControllerTests_GetAll : IClassFixture<TeamApiFactory>
     {
         private readonly OrganizationFaker _faker;
         private readonly HttpClient _apiClient;
-        
-        public TeamControllerTests(TeamApiFactory teamApiFactory)
+
+        public TeamControllerTests_GetAll(TeamApiFactory teamApiFactory)
         {
             _faker = new OrganizationFaker();
             _apiClient = teamApiFactory.CreateClient();
@@ -26,9 +26,9 @@ namespace DevUp.Api.Tests.Integration.V1.Organization
         public async Task GetAll_WhenThereAreNoTeams_ReturnsEmptyArray()
         {
             var result = await _apiClient.GetAsync(Route.Api.V1.Teams.GetAll);
-            var response = await result.Content.ReadFromJsonAsync<IEnumerable<TeamResponse>>();
 
             result.Should().HaveStatusCode(HttpStatusCode.OK);
+            var response = await result.Content.ReadFromJsonAsync<IEnumerable<TeamResponse>>();
             response.Should().BeEmpty();
         }
 
@@ -43,12 +43,20 @@ namespace DevUp.Api.Tests.Integration.V1.Organization
             }
 
             var result = await _apiClient.GetAsync(Route.Api.V1.Teams.GetAll);
-            var response = await result.Content.ReadFromJsonAsync<IEnumerable<TeamResponse>>();
 
             result.Should().HaveStatusCode(HttpStatusCode.OK);
+            var response = await result.Content.ReadFromJsonAsync<IEnumerable<TeamResponse>>();
             response.Should().NotBeEmpty();
             response.Should().HaveCountGreaterOrEqualTo(teams.Length);
-            response.Select(r => r.Name).Should().BeEquivalentTo(teams.Select(t => t.Name));
+            teams.Select(t => t.Name).Should().BeSubsetOf(response!.Select(r => r.Name));
+
+            // cleanup for other tests
+            foreach (var team in response!)
+            {
+                var url = Route.Api.V1.Teams.DeleteFactory(team.Id);
+                var deleteResult = await _apiClient.DeleteAsync(url);
+                deleteResult.Should().HaveStatusCode(HttpStatusCode.NoContent);
+            }
         }
     }
 }
