@@ -27,7 +27,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
                .RuleFor(ao => ao.SigningKey, f => f.Random.String2(32));
 
         private readonly TestcontainerDatabase _dbContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
-            .WithDatabase(new PostgreSqlTestcontainerConfiguration()
+            .WithDatabase(new PostgreSqlTestcontainerConfiguration("postgres:latest")
             {
                 Database = "test_postgres",
                 Username = "test_postgres",

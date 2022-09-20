@@ -9,13 +9,8 @@ using Xunit;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using Microsoft.Extensions.Hosting;
 using DevUp.Infrastructure.Postgres.Migrations;
-using DevUp.Domain.Organization.Repositories;
-using DevUp.Domain.Organization.Entities;
-using DevUp.Domain.Organization.ValueObjects;
-using System.Threading;
 using DevUp.Api.Tests.Integration.Common;
 using DevUp.Infrastructure.Postgres.Setup;
 
@@ -24,7 +19,7 @@ namespace DevUp.Api.Tests.Integration.V1.Organization
     public class TeamApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     {
         private readonly TestcontainerDatabase _dbContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
-            .WithDatabase(new PostgreSqlTestcontainerConfiguration()
+            .WithDatabase(new PostgreSqlTestcontainerConfiguration("postgres:latest")
             {
                 Database = "test_postgres",
                 Username = "test_postgres",
@@ -47,17 +42,7 @@ namespace DevUp.Api.Tests.Integration.V1.Organization
 
         protected override IHost CreateHost(IHostBuilder builder)
         {
-            var host = base.CreateHost(builder).MigrateUp();
-
-            using var scope = host.Services.CreateScope();
-            var teamRepository = scope.ServiceProvider.GetRequiredService<ITeamRepository>();
-
-            var teamToCreate = new Team(new TeamId(Guid.NewGuid()), new TeamName("whatever"));
-            var createdTeam = teamRepository.CreateAsync(teamToCreate, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
-            var retrievedTeam = teamRepository.GetByIdAsync(teamToCreate.Id, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
-            Assert.Equal(createdTeam, retrievedTeam);
-
-            return host;
+            return base.CreateHost(builder).MigrateUp();
         }
 
         public async Task InitializeAsync()

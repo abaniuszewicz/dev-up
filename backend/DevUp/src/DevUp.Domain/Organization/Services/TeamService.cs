@@ -18,10 +18,11 @@ namespace DevUp.Domain.Organization.Services
 
         public async Task<Team> CreateAsync(TeamId id, TeamName name, CancellationToken cancellationToken)
         {
-            var (byId, byName) = (_teamRepository.GetByIdAsync(id, cancellationToken), _teamRepository.GetByNameAsync(name, cancellationToken));
-            await Task.WhenAll(byId, byName);
+            var byId = _teamRepository.GetByIdAsync(id, cancellationToken);
             if (byId.Result is not null)
                 throw new TeamIdTakenException(id);
+
+            var byName = _teamRepository.GetByNameAsync(name, cancellationToken);
             if (byName.Result is not null)
                 throw new TeamNameTakenException(name);
 

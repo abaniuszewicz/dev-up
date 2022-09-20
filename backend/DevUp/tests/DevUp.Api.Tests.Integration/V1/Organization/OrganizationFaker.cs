@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Bogus;
 using DevUp.Api.Contracts.V1.Organization.Requests;
 
@@ -30,7 +31,8 @@ namespace DevUp.Api.Tests.Integration.V1.Organization
 
         private string GetTeamName()
         {
-            var teamName = Faker.Company.CompanyName();
+            var job = Faker.Name.JobArea().ToLowerInvariant();
+            var teamName = string.Concat(job.Where(c => c >= 'a' && c <= 'z'));
             while (AlreadyUsedTeamNames.Contains(teamName))
             {
                 var suffixLength = Faker.Random.Byte(1, 3);

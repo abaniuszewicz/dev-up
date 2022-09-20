@@ -36,10 +36,11 @@ namespace DevUp.Api.Tests.Integration.V1.Organization
         public async Task GetAll_WhenCalled_ReturnsAllExistingTeams()
         {
             var teams = Enumerable.Range(0, 3).Select(_ => new OrganizationFaker().CreateTeamRequest).ToArray();
-            var tasks = teams.Select(team => _apiClient.PostAsJsonAsync(Route.Api.V1.Teams.Create, team));
-            await Task.WhenAll(tasks);
-            if (tasks.Any(task => !task.Result.IsSuccessStatusCode))
-                Assert.True(false, "One of registration request didn't succeed.");
+            foreach (var team in teams)
+            {
+                var createdResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Teams.Create, team);
+                createdResult.Should().HaveStatusCode(HttpStatusCode.Created);
+            }
 
             var result = await _apiClient.GetAsync(Route.Api.V1.Teams.GetAll);
             var response = await result.Content.ReadFromJsonAsync<IEnumerable<TeamResponse>>();
