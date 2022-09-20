@@ -10,7 +10,9 @@ using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.Services.Exceptions;
+using DevUp.Domain.Identity.Setup;
 using DevUp.Domain.Identity.ValueObjects;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 using static DevUp.Domain.Identity.Services.Exceptions.TokenValidationException;
@@ -25,19 +27,19 @@ namespace DevUp.Domain.Identity.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IDeviceRepository _deviceRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IJwtSettings _jwtSettings;
+        private readonly AuthenticationOptions _authenticationOptions;
 
         public TokenService(IUserRepository userRepository,
             IRefreshTokenRepository refreshTokenRepository,
             IDeviceRepository deviceRepository,
             IDateTimeProvider dateTimeProvider, 
-            IJwtSettings jwtSettings)
+            IOptions<AuthenticationOptions> authenticationOptions)
         {
             _userRepository = userRepository;
             _refreshTokenRepository = refreshTokenRepository;
             _deviceRepository = deviceRepository;
             _dateTimeProvider = dateTimeProvider;
-            _jwtSettings = jwtSettings;
+            _authenticationOptions = authenticationOptions.Value;
         }
 
         public async Task<(Token, RefreshToken)> CreateAsync(User user, Device device, CancellationToken cancellationToken)
@@ -46,7 +48,7 @@ namespace DevUp.Domain.Identity.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jti = Guid.NewGuid().ToString();
-            var tokenLifespan = new DateTimeRange(now, now.AddMilliseconds(_jwtSettings.JwtExpiryMs));
+            var tokenLifespan = new DateTimeRange(now, now.Add(_authenticationOptions.TokenExpiry));
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(new[]
@@ -56,7 +58,7 @@ namespace DevUp.Domain.Identity.Services
                 }),
                 NotBefore = tokenLifespan.Start,
                 Expires = tokenLifespan.End,
-                SigningCredentials = new SigningCredentials(_jwtSettings.TokenValidationParameters.IssuerSigningKey, SecurityAlghoritm)
+                SigningCredentials = new SigningCredentials(_authenticationOptions.GetTokenValidationParameters().IssuerSigningKey, SecurityAlghoritm)
             };
 
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
@@ -65,7 +67,7 @@ namespace DevUp.Domain.Identity.Services
             var tokenInfo = new TokenInfo(token, jti, user.Id, tokenLifespan);
 
             var refreshToken = new RefreshToken();
-            var refreshTokenLifespan = new DateTimeRange(now, now.AddMilliseconds(_jwtSettings.JwtRefreshExpiryMs));
+            var refreshTokenLifespan = new DateTimeRange(now, now.Add(_authenticationOptions.RefreshTokenExpiry));
             var refreshTokenInfo = new RefreshTokenInfo(refreshToken, jti, user.Id, device.Id, refreshTokenLifespan);
 
             await _deviceRepository.AddAsync(device, cancellationToken);
@@ -76,7 +78,7 @@ namespace DevUp.Domain.Identity.Services
         public async Task<TokenInfo> DescribeAsync(Token token, CancellationToken cancellationToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var result = await tokenHandler.ValidateTokenAsync(token.Value, _jwtSettings.TokenValidationParameters);
+            var result = await tokenHandler.ValidateTokenAsync(token.Value, _authenticationOptions.GetTokenValidationParameters());
             if (!result.IsValid)
                 return null;
             

@@ -7,17 +7,24 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using Microsoft.AspNetCore.TestHost;
 using DotNet.Testcontainers.Configurations;
-using System;
 using Microsoft.Extensions.Hosting;
 using DevUp.Infrastructure.Postgres.Migrations;
-using System.Globalization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using DevUp.Infrastructure.Postgres.Setup;
+using Microsoft.Extensions.DependencyInjection;
+using DevUp.Api.Tests.Integration.Common;
+using DevUp.Domain.Identity.Setup;
+using Bogus;
+using System;
 
 namespace DevUp.Api.Tests.Integration.V1.Identity
 {
     public class IdentityApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     {
-        public const int JWT_EXPIRY_MS = 1000;
-        public const int JWT_REFRESH_EXPIRY_MS = 5000;
+        private static readonly Faker<AuthenticationOptions> AuthenticationOptionsFaker = new Faker<AuthenticationOptions>()
+               .RuleFor(ao => ao.TokenExpiry, f => f.Date.BetweenTimeOnly(new TimeOnly(0, 0, 1), new TimeOnly(0, 0, 2)).ToTimeSpan())
+               .RuleFor(ao => ao.RefreshTokenExpiry, (f, ao) => 5 * ao.TokenExpiry)
+               .RuleFor(ao => ao.SigningKey, f => f.Random.String2(32));
 
         private readonly TestcontainerDatabase _dbContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
             .WithDatabase(new PostgreSqlTestcontainerConfiguration()
@@ -28,18 +35,22 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             })
             .Build();
 
+        public AuthenticationOptions AuthenticationOptions { get; private set; }
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureLogging(l => l.ClearProviders());
             builder.ConfigureTestServices(services =>
             {
-                // swap any registered services here (.RemoveAll<T>() + AddXyz<T>(fake))
-            });
+                services.RemoveAll<IDbConnectionFactory>();
+                services.AddSingleton<IDbConnectionFactory>(new TestcontainerDbConnectionFactory(_dbContainer));
 
-            Environment.SetEnvironmentVariable("JWT_SECRET", "random-30-char-long-secret-key");
-            Environment.SetEnvironmentVariable("JWT_EXPIRY_MS", JWT_EXPIRY_MS.ToString(CultureInfo.InvariantCulture));
-            Environment.SetEnvironmentVariable("JWT_REFRESH_EXPIRY_MS", JWT_REFRESH_EXPIRY_MS.ToString(CultureInfo.InvariantCulture));
-            Environment.SetEnvironmentVariable("DB_CONNECTION_STRING", _dbContainer.ConnectionString);
+                services.PostConfigure<AuthenticationOptions>(ao =>
+                {
+                    AuthenticationOptionsFaker.Populate(ao);
+                    AuthenticationOptions = ao;
+                });
+            });
 
             base.ConfigureWebHost(builder);
         }

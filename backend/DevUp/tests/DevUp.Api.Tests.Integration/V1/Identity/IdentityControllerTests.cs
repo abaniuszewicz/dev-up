@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -96,7 +96,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             var oldTokenPair = await loginResult.Content.ReadFromJsonAsync<IdentityResponse>();
 
             // wait for token expiration. refresh token will still be active
-            await Task.Delay(IdentityApiFactory.JWT_EXPIRY_MS + 1);
+            await Task.Delay(_apiFactory.AuthenticationOptions.TokenExpiry);
 
             // refresh and grab new token pair
             var refreshRequest = new RefreshUserRequest() 
@@ -143,7 +143,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             var oldTokenPair = await loginResult.Content.ReadFromJsonAsync<IdentityResponse>();
 
             // wait for token expiration. both token and refresh token should expire
-            var delayMs = Math.Max(IdentityApiFactory.JWT_EXPIRY_MS, IdentityApiFactory.JWT_REFRESH_EXPIRY_MS) + 1;
+            var delayMs = new[] { _apiFactory.AuthenticationOptions.TokenExpiry, _apiFactory.AuthenticationOptions.RefreshTokenExpiry }.Max();
             await Task.Delay(delayMs);
 
             // try refreshing
