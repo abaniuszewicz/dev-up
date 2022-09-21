@@ -14,12 +14,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace DevUp.Api.V1.Organization
 {
     [ApiController]
-    public class TeamController : ControllerBase
+    public class TeamsController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public TeamController(IMapper mapper, IMediator mediator)
+        public TeamsController(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
             _mediator = mediator;
