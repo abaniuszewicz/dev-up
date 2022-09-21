@@ -18,6 +18,7 @@ namespace DevUp.Infrastructure.Postgres.Setup
             return connectionName switch
             {
                 DbConnectionName.Identity => _postgresOptions.ConnectionString,
+                DbConnectionName.Organization => _postgresOptions.ConnectionString,
                 _ => throw new ArgumentOutOfRangeException(nameof(connectionName))
             };
         }

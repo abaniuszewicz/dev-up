@@ -16,8 +16,8 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
 
         public RefreshTokenRepository(IDbConnectionFactory connectionFactory, IMapper mapper)
         {
-            _connection = connectionFactory?.Create(DbConnectionName.Identity) ?? throw new ArgumentNullException(nameof(connectionFactory));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _connection = connectionFactory.Create(DbConnectionName.Identity);
+            _mapper = mapper;
         }
 
         public async Task<RefreshTokenInfo?> AddAsync(RefreshTokenInfo refreshToken, CancellationToken cancellationToken)

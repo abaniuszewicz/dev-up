@@ -2,6 +2,7 @@
 {
     public enum DbConnectionName
     {
-        Identity
+        Identity,
+        Organization
     }
 }
