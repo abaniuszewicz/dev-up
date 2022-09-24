@@ -38,6 +38,14 @@
                     public static string UpdateFactory(Guid guid) => Update.Replace("{teamId:guid}", guid.ToString());
                     public static string DeleteFactory(Guid guid) => Delete.Replace("{teamId:guid}", guid.ToString());
                 }
+
+                public static class TeamMembers
+                {
+                    private const string Url = V1.Url + "/teams/{teamId:guid}/members";
+
+                    public const string Create = Url;
+                    public const string Update = Url + "/{memberId:guid}";
+                }
             }
         }
     }

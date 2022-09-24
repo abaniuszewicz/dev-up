@@ -8,6 +8,7 @@ namespace DevUp.Domain.Organization.Entities
     {
         public UserId UserId { get; }
         public Role Role { get; private set; }
+        public TeamId TeamId { get; set; }
 
         public Member(MemberId memberId, UserId userId, Role role) 
             : base(memberId)

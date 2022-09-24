@@ -9,6 +9,7 @@ namespace DevUp.Infrastructure.Postgres.Organization
         public static IServiceCollection AddPostgresOrganization(this IServiceCollection services)
         {
             services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IMemberRepository, MemberRepository>();
             return services;
         }
     }

@@ -20,6 +20,10 @@ namespace DevUp.Api.V1.Organization
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Name, opts => opts.MapFrom(s => s.Name))
                 .ForMember(d => d.Members, opts => opts.MapFrom(s => Array.Empty<MemberResponse>()));
+
+            CreateMap<CreateJoinTeamRequest, CreateJoinTeamCommand>()
+                .ForMember(d => d.SenderId, opts => opts.MapFrom(s => Guid.Parse(s.SenderId)))
+                .ForMember(d => d.ReceiverId, opts => opts.MapFrom(s => Guid.Parse(s.ReceiverId)));
         }
     }
 }

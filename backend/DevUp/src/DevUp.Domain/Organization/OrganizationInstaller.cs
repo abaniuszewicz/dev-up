@@ -8,6 +8,7 @@ namespace DevUp.Domain.Organization
         public static IServiceCollection AddOrganization(this IServiceCollection services)
         {
             services.AddScoped<ITeamService, TeamService>();
+            services.AddScoped<IMemberService, MemberService>();
             return services;
         }
     }

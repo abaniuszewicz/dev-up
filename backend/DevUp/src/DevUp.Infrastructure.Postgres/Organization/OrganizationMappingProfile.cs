@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevUp.Application.Organization.Queries.Results;
+using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Organization.Entities;
 using DevUp.Domain.Organization.ValueObjects;
 using DevUp.Infrastructure.Postgres.Organization.Dtos;
@@ -19,6 +20,16 @@ namespace DevUp.Infrastructure.Postgres.Organization
                 .ForMember(d => d.Name, opts => opts.MapFrom(s => s.Name));
 
             CreateMap<TeamDto, Team>().ConvertUsing(s => new Team(new TeamId(s.Id), new TeamName(s.Name)));
+
+            CreateMap<MemberInvitation, MemberInvitationDto>()
+                .ForMember(d => d.SenderId, opts => opts.MapFrom(s => s.Id.SenderId))
+                .ForMember(d => d.ReceiverId, opts => opts.MapFrom(s => s.Id.ReceiverId))
+                .ForMember(d => d.TeamId, opts => opts.MapFrom(s => s.TeamId));
+
+            CreateMap<MemberDto, Member>()
+                .ForMember(d => d.Id, opts => opts.MapFrom(s => Guid.NewGuid()))
+                .ForMember(d => d.UserId, opts => opts.MapFrom(s => s.UserId))
+                .ForMember(d => d.TeamId, opts => opts.MapFrom(s => s.TeamId));
         }
     }
 }
