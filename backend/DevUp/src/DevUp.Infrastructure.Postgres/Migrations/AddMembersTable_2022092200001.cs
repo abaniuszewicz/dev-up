@@ -12,12 +12,14 @@ namespace DevUp.Infrastructure.Postgres.Migrations
                     .AsGuid()
                     .NotNullable()
                     .ForeignKey("users", "id")
-                    .PrimaryKey()
                 .WithColumn("team_id")
                     .AsGuid()
                     .NotNullable()
-                    .ForeignKey("teams", "id")
-                    .PrimaryKey();
+                    .ForeignKey("teams", "id");
+
+            Create.UniqueConstraint()
+                .OnTable("members")
+                .Columns("user_id", "team_id");
         }
 
         public override void Down()

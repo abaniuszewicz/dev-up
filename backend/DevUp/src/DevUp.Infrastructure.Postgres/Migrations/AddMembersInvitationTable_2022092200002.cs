@@ -11,17 +11,18 @@ namespace DevUp.Infrastructure.Postgres.Migrations
                 .WithColumn("sender_id")
                     .AsGuid()
                     .ForeignKey("users", "id")
-                    .PrimaryKey()
                 .WithColumn("receiver_id")
                     .AsGuid()
                     .ForeignKey("users", "id")
-                    .PrimaryKey()
                 .WithColumn("team_id")
                     .AsGuid()
-                    .ForeignKey("teams", "id")
-                    .PrimaryKey();
-                //.WithColumn("valid_due")
-                //    .AsDateTime();
+                    .ForeignKey("teams", "id");
+            //.WithColumn("valid_due")
+            //    .AsDateTime();
+
+            Create.UniqueConstraint()
+                .OnTable("members_invitations")
+                .Columns("sender_id", "receiver_id", "team_id");
         }
 
         public override void Down()
