@@ -6,6 +6,7 @@ using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Infrastructure.Postgres.Identity.Dtos;
+using DevUp.Infrastructure.Postgres.Identity.Repositories.Exceptions;
 using DevUp.Infrastructure.Postgres.Setup;
 
 namespace DevUp.Infrastructure.Postgres.Identity.Repositories
@@ -21,7 +22,7 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<User?> CreateAsync(Username username, PasswordHash passwordHash, CancellationToken cancellationToken)
+        public async Task<User> CreateAsync(Username username, PasswordHash passwordHash, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (username is null)
@@ -45,7 +46,10 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
                         )";
 
             var affectedRows = await _connection.ExecuteAsync(sql, dto);
-            return affectedRows == 0 ? null : user;
+            if (affectedRows == 0)
+                throw new UserNotPersistedException(dto);
+
+            return user;
         }
 
         public async Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken)
