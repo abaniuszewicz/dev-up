@@ -82,7 +82,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
 
             result.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-            response!.Errors.Should().ContainSingle(e => e == LoginException.InvalidUsernameMessage);
+            response!.Errors.Should().ContainSingle(e => e == "i should not leak");
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
 
             result.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-            var expectedErrors = new[] { RefreshException.InvalidTokenMessage, RefreshException.InvalidRefreshTokenMessage };
+            var expectedErrors = new[] { "i should not leak", "i should not leak too" };
             response!.Errors.Should().BeEquivalentTo(expectedErrors);
         }
 
@@ -157,7 +157,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             var refreshResponse = await refreshResult.Content.ReadFromJsonAsync<ErrorResponse>();
 
             refreshResult.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-            refreshResponse!.Errors.Should().ContainSingle(e => e == TokenValidationException.RefreshTokenNotActiveMessage);
+            refreshResponse!.Errors.Should().ContainSingle(e => e == "i should not leak");
         }
     }
 }

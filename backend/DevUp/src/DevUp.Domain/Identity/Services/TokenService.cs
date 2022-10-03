@@ -88,7 +88,7 @@ namespace DevUp.Domain.Identity.Services
             var userGuid = Guid.Parse(userIdClaim);
             var userId = new UserId(userGuid);
 
-            var deviceIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.ValueType == JwtCustomClaimNames.DeviceId)?.Value;
+            var deviceIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == JwtCustomClaimNames.DeviceId)?.Value;
             var deviceGuid = Guid.Parse(deviceIdClaim);
             var deviceId = new DeviceId(deviceGuid);
 
