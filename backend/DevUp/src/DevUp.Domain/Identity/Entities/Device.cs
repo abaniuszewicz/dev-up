@@ -1,4 +1,5 @@
-﻿using DevUp.Domain.Seedwork;
+﻿using System.Collections.Generic;
+using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
