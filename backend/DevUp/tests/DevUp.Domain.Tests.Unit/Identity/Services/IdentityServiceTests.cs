@@ -34,30 +34,14 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         }
 
         [Test]
-        public void RegisterAsync_WhenUsernameTaken_ThrowsRegisterException()
+        public void RegisterAsync_WhenUsernameTaken_ThrowsUsernameTakenException()
         {
             var user = _faker.User;
             _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
-            var exception = Assert.ThrowsAsync<RegisterException>(async () 
+            var exception = Assert.ThrowsAsync<UsernameTakenException>(async () 
                 => await _identityService.RegisterAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None));
-            Assert.That(exception!.Errors, Has.One.EqualTo(RegisterException.UsernameTakenMessage));
-        }
-
-        [Test]
-        public void RegisterAsync_WhenFailedToStoreNewlyCreatedUser_ThrowsRegisterException()
-        {
-            _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
-                .ReturnsAsync((User?)null);
-            _passwordServiceMock.Setup(ps => ps.HashAsync(_faker.Password, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_faker.PasswordHash);
-            _userRepositoryMock.Setup(ur => ur.CreateAsync(_faker.Username, _faker.PasswordHash, It.IsAny<CancellationToken>()))
-                .ReturnsAsync((User?)null);
-
-            var exception = Assert.ThrowsAsync<RegisterException>(async () 
-                => await _identityService.RegisterAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None));
-            Assert.That(exception!.Errors, Has.One.EqualTo(RegisterException.CreationFailedMessage));
         }
 
         [Test]
@@ -79,31 +63,29 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         }
 
         [Test]
-        public void LoginAsync_WhenGivenNotRegisteredUsername_ThrowsLoginException()
+        public void LoginAsync_WhenGivenNotRegisteredUsername_ThrowsUsernameNotFoundException()
         {
             _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User?)null);
 
-            var exception = Assert.ThrowsAsync<LoginException>(async () 
+            var exception = Assert.ThrowsAsync<UsernameNotFoundException>(async () 
                 => await _identityService.LoginAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None));
-            Assert.That(exception!.Errors, Has.One.EqualTo(LoginException.InvalidUsernameMessage));
         }
 
         [Test]
-        public void LoginAsync_WhenFailedToRetrievePasswordHash_ThrowsLoginException()
+        public void LoginAsync_WhenFailedToRetrievePasswordHash_ThrowsPasswordHashNotFoundException()
         {
             _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_faker.User);
             _userRepositoryMock.Setup(ur => ur.GetPasswordHashAsync(_faker.User, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((PasswordHash?)null);
 
-            var exception = Assert.ThrowsAsync<LoginException>(async () 
+            var exception = Assert.ThrowsAsync<PasswordHashNotFoundException>(async () 
                 => await _identityService.LoginAsync(_faker.Username, _faker.Password, _faker.Device, CancellationToken.None));
-            Assert.That(exception!.Errors, Has.One.EqualTo(LoginException.HashNotFoundMessage));
         }
 
         [Test]
-        public void LoginAsync_WhenGivenInvalidPassword_ThrowsLoginException()
+        public void LoginAsync_WhenGivenInvalidPassword_ThrowsInvalidPasswordException()
         {
             _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(_faker.Username, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_faker.User);
@@ -113,9 +95,8 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
             _passwordServiceMock.Setup(ps => ps.VerifyAsync(differentPassword, _faker.PasswordHash, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(PasswordVerifyResult.Failed);
 
-            var exception = Assert.ThrowsAsync<LoginException>(async () 
+            var exception = Assert.ThrowsAsync<InvalidPasswordException>(async () 
                 => await _identityService.LoginAsync(_faker.Username, differentPassword, _faker.Device, CancellationToken.None));
-            Assert.That(exception!.Errors, Has.One.EqualTo(LoginException.InvalidPasswordMessage));
         }
 
         [Test]
@@ -134,31 +115,6 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
             Assert.NotNull(result);
             Assert.AreEqual(result.Token, _faker.Token);
             Assert.AreEqual(result.RefreshToken, _faker.RefreshToken);
-        }
-
-        [Test]
-        public void RefreshAsync_WhenGivenInvalidToken_ThrowsRefreshException()
-        {
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(_faker.Token, It.IsAny<CancellationToken>()))
-                .ReturnsAsync((TokenInfo?)null);
-
-            var exception = Assert.ThrowsAsync<RefreshException>(async () 
-                => await _identityService.RefreshAsync(_faker.Token, _faker.RefreshToken, _faker.Device, CancellationToken.None));
-            Assert.That(exception!.Errors, Has.One.EqualTo(RefreshException.InvalidTokenMessage));
-        }
-
-        [Test]
-        public void RefreshAsync_WhenGivenInvalidRefreshToken_ThrowsRefreshException()
-        {
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(_faker.Token, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_faker.TokenInfo);
-            var invalidRefreshToken = new IdentityFaker().RefreshToken;
-            _tokenServiceMock.Setup(ts => ts.DescribeAsync(invalidRefreshToken, It.IsAny<CancellationToken>()))
-                .ReturnsAsync((RefreshTokenInfo?)null);
-
-            var exception = Assert.ThrowsAsync<RefreshException>(async ()
-                => await _identityService.RefreshAsync(_faker.Token, invalidRefreshToken, _faker.Device, CancellationToken.None));
-            Assert.That(exception!.Errors, Has.One.EqualTo(RefreshException.InvalidRefreshTokenMessage));
         }
 
         [Test]
