@@ -134,7 +134,23 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
         }
 
         [Fact]
-        public async Task Refresh_WhenProvidedWithInvalidTokenPair_ReturnsBadRequestWithGenericMessage()
+        public async Task Refresh_WhenProvidedWithInvalidTokenPairThatHasInvalidTokenFormat_ReturnsBadRequestWithDetailedMessage()
+        {
+            var refreshRequest = new RefreshUserRequest()
+            {
+                Token = "missing dot separation",
+                RefreshToken = "1234abcd!@#$",
+                Device = _faker.LoginUserRequest.Device
+            };
+            var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
+            result.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+
+            var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
+            response!.Errors.Should().ContainSingle(e => e == "Token is not a valid jwt token.");
+        }
+
+        [Fact]
+        public async Task Refresh_WhenProvidedWithInvalidTokenPairThatHasValidTokenFormat_ReturnsBadRequestWithGenericMessage()
         {
             var refreshRequest = new RefreshUserRequest()
             {
