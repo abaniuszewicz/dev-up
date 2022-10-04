@@ -134,6 +134,35 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
         }
 
         [Fact]
+        public async Task Refresh_WhenTryingToReuseValidTokenPairOnAnotherDevice_ReturnsBadRequestWithGenericMessage()
+        {
+            // register
+            await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, _faker.RegisterUserRequest);
+
+            // login and grab token pair
+            var loginResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, _faker.LoginUserRequest);
+            var oldTokenPair = await loginResult.Content.ReadFromJsonAsync<IdentityResponse>();
+
+            // wait for token expiration. refresh token will still be active
+            await Task.Delay(_apiFactory.AuthenticationOptions.TokenExpiry);
+
+            // refresh and grab new token pair
+            var differentDevice = new IdentityFaker().LoginUserRequest.Device;
+            var refreshRequest = new RefreshUserRequest()
+            {
+                Token = oldTokenPair!.Token!,
+                RefreshToken = oldTokenPair.RefreshToken!,
+                Device = differentDevice
+            };
+
+            var refreshResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
+            refreshResult.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+
+            var response = await refreshResult.Content.ReadFromJsonAsync<ErrorResponse>();
+            response!.Errors.Should().ContainSingle(e => e == "Invalid request.");
+        }
+
+        [Fact]
         public async Task Refresh_WhenProvidedWithInvalidTokenPairThatHasInvalidTokenFormat_ReturnsBadRequestWithDetailedMessage()
         {
             var refreshRequest = new RefreshUserRequest()
