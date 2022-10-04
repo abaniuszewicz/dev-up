@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DevUp.Api
 {
-    public static class ApiInstaller
+    internal static class ApiInstaller
     {
         public static IServiceCollection AddApi(this IServiceCollection services)
         {
@@ -14,9 +14,9 @@ namespace DevUp.Api
             services.AddEndpointsApiExplorer();
             services.AddRouting();
             services.AddAutoMapper(typeof(IApiMarker).Assembly);
-            services.AddSingleton<ValidationErrorHandler>();
-            services.AddSingleton<NotFoundErrorHandler>();
+            services.AddSingleton<ApplicationErrorHandler>();
             services.AddSingleton<InfrastructureErrorHandler>();
+            services.AddSingleton<DomainErrorHandler>();
             return services;
         }
 
@@ -25,9 +25,9 @@ namespace DevUp.Api
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-            app.UseMiddleware<ValidationErrorHandler>();
-            app.UseMiddleware<NotFoundErrorHandler>();
+            app.UseMiddleware<ApplicationErrorHandler>();
             app.UseMiddleware<InfrastructureErrorHandler>();
+            app.UseMiddleware<DomainErrorHandler>();
             app.UseEndpoints(opt => opt.MapControllers());
             return app;
         }
