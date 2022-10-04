@@ -3,7 +3,7 @@ using DevUp.Domain.Identity.Exceptions;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public sealed class DeviceIdNotFoundException : IdentityDataValidationException
+    public sealed class DeviceIdNotFoundException : IdentityNotFoundException
     {
         public DeviceId DeviceId { get; }
 

@@ -98,7 +98,7 @@ namespace DevUp.Domain.Identity.Services
         public async Task<RefreshTokenInfo> DescribeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
         {
             return await _refreshTokenRepository.GetByIdAsync(refreshToken, cancellationToken)
-                ?? throw new RefreshTokenDescriptionException();
+                ?? throw new RefreshTokenInfoNotFoundException();
         }
 
         public async Task ValidateAsync(TokenInfo token, RefreshTokenInfo refreshToken, Device currentDevice, CancellationToken cancellationToken)

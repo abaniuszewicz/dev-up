@@ -3,7 +3,7 @@ using DevUp.Domain.Identity.ValueObjects;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public class InvalidPasswordException : IdentityDataValidationException
+    public class InvalidPasswordException : IdentityBusinessRuleValidationException
     {
         public Username Username { get; }
 

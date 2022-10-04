@@ -4,7 +4,7 @@ using DevUp.Domain.Identity.ValueObjects;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public sealed class TokenMismatchException : IdentityException
+    public sealed class TokenMismatchException : IdentityBusinessRuleValidationException
     {
         public string JtiFromToken { get; }
         public string JtiFromRefreshToken { get; }

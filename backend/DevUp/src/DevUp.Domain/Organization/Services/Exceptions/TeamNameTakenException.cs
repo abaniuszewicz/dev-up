@@ -3,7 +3,7 @@ using DevUp.Domain.Organization.ValueObjects;
 
 namespace DevUp.Domain.Organization.Services.Exceptions
 {
-    public sealed class TeamNameTakenException : OrganizationDataValidationException
+    public sealed class TeamNameTakenException : OrganizationBusinessRuleValidationException
     {
         public TeamName Name { get; }
 

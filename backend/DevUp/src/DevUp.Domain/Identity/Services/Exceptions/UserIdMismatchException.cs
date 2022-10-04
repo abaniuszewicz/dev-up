@@ -3,7 +3,7 @@ using DevUp.Domain.Identity.Exceptions;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public sealed class UserIdMismatchException : IdentityException
+    public sealed class UserIdMismatchException : IdentityBusinessRuleValidationException
     {
         public UserId UserIdFromToken { get; }
         public UserId UserIdFromRefreshToken { get; }

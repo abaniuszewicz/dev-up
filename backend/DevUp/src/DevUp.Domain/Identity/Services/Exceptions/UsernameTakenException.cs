@@ -3,7 +3,7 @@ using DevUp.Domain.Identity.ValueObjects;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public class UsernameTakenException : IdentityDataValidationException
+    public class UsernameTakenException : IdentityBusinessRuleValidationException
     {
         public Username Username { get; }
 

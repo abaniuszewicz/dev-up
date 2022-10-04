@@ -3,12 +3,12 @@ using DevUp.Domain.Identity.Exceptions;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public sealed class RefreshTokenUsedException : IdentityBusinessRuleValidationException
+    public sealed class RefreshTokenInfoNotFoundException : IdentityNotFoundException
     {
         public RefreshToken RefreshToken { get; }
 
-        public RefreshTokenUsedException(RefreshToken refreshToken)
-            : base("Refresh token has been already used.")
+        public RefreshTokenInfoNotFoundException(RefreshToken refreshToken) 
+            : base("Refresh token info with this value does not exist.")
         {
             RefreshToken = refreshToken;
         }

@@ -91,7 +91,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
             _refreshTokenRepositoryMock.Setup(rtr => rtr.GetByIdAsync(_faker.RefreshToken, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((RefreshTokenInfo?)null);
 
-            Assert.ThrowsAsync<RefreshTokenDescriptionException>(async ()
+            Assert.ThrowsAsync<RefreshTokenInfoNotFoundException>(async ()
                 => await _tokenService.DescribeAsync(_faker.RefreshToken, CancellationToken.None));
         }
 

@@ -3,7 +3,7 @@ using DevUp.Domain.Identity.Exceptions;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public sealed class DeviceIdMismatchException : IdentityException
+    public sealed class DeviceIdMismatchException : IdentityBusinessRuleValidationException
     {
         public DeviceId DeviceIdFromToken { get; }
         public DeviceId DeviceIdFromRefreshToken { get; }
