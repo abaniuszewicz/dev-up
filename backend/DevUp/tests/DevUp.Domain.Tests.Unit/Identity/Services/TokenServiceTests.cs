@@ -86,7 +86,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         }
 
         [Test]
-        public void DescribeAsync_WhenCalledWithRefreshTokenThatDoesNotExistInRepository_ThrowsRefreshTokenDescriptionException()
+        public void DescribeAsync_WhenCalledWithRefreshTokenThatDoesNotExistInRepository_ThrowsRefreshTokenInfoNotFoundException()
         {
             _refreshTokenRepositoryMock.Setup(rtr => rtr.GetByIdAsync(_faker.RefreshToken, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((RefreshTokenInfo?)null);

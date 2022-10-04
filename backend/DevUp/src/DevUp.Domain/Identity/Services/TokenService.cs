@@ -78,7 +78,7 @@ namespace DevUp.Domain.Identity.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var result = await tokenHandler.ValidateTokenAsync(token.Value, _authenticationOptions.GetTokenValidationParameters());
             if (!result.IsValid)
-                throw new TokenDescriptionException(result.Exception);
+                throw new TokenDescriptionException(token, result.Exception);
 
             var jwtSecurityToken = (JwtSecurityToken)result.SecurityToken;
             var jti = jwtSecurityToken.Id;
@@ -98,7 +98,7 @@ namespace DevUp.Domain.Identity.Services
         public async Task<RefreshTokenInfo> DescribeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
         {
             return await _refreshTokenRepository.GetByIdAsync(refreshToken, cancellationToken)
-                ?? throw new RefreshTokenInfoNotFoundException();
+                ?? throw new RefreshTokenInfoNotFoundException(refreshToken);
         }
 
         public async Task ValidateAsync(TokenInfo token, RefreshTokenInfo refreshToken, Device currentDevice, CancellationToken cancellationToken)
@@ -107,15 +107,15 @@ namespace DevUp.Domain.Identity.Services
             if (!refreshToken.BelongsTo(token))
                 throw new TokenMismatchException(token, refreshToken);
             if (refreshToken.Invalidated)
-                throw new RefreshTokenInvalidatedException();
+                throw new RefreshTokenInvalidatedException(refreshToken.Id);
             if (refreshToken.Used)
-                throw new RefreshTokenUsedException();
+                throw new RefreshTokenUsedException(refreshToken.Id);
 
             // have tokens expired
             if (token.IsActive(_dateTimeProvider))
-                throw new TokenStillActiveException(token.Lifespan, _dateTimeProvider);
+                throw new TokenStillActiveException(token, _dateTimeProvider);
             if (!refreshToken.IsActive(_dateTimeProvider))
-                throw new RefreshTokenNotActiveException(refreshToken.Lifespan, _dateTimeProvider);
+                throw new RefreshTokenNotActiveException(refreshToken, _dateTimeProvider);
 
             // do tokens belong to a valid user
             var user = await _userRepository.GetByIdAsync(token.UserId, cancellationToken);
