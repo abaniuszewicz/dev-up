@@ -3,8 +3,10 @@ using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Domain.Identity.Exceptions
 {
-    public abstract class IdentityDataValidationException : DomainDataValidationException
+    public abstract class IdentityDataValidationException : DomainDataValidationException, IIdentityException
     {
+        public virtual bool CanLeak { get; } = true;
+
         public IdentityDataValidationException(string error) 
             : base(error)
         {

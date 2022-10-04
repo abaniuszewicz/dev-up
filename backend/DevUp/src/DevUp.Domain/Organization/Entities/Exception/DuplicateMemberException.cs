@@ -2,7 +2,7 @@
 
 namespace DevUp.Domain.Organization.Entities.Exception
 {
-    public sealed class DuplicateMemberException : OrganizationException
+    public sealed class DuplicateMemberException : OrganizationBusinessRuleValidationException
     {
         public TeamId TeamId { get; }
         public MemberId MemberId { get; }

@@ -7,6 +7,8 @@ namespace DevUp.Domain.Identity.Services.Exceptions
     {
         public Username Username { get; }
 
+        public override bool CanLeak { get; } = true;
+
         public UsernameTakenException(Username username) 
             : base("User with this username already exist.")
         {

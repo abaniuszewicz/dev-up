@@ -3,7 +3,7 @@ using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Domain.Organization.Exceptions
 {
-    public abstract class OrganizationDataValidationException : DomainDataValidationException
+    public abstract class OrganizationDataValidationException : DomainDataValidationException, IOrganizationException
     {
         protected OrganizationDataValidationException(string error) 
             : base(error)
