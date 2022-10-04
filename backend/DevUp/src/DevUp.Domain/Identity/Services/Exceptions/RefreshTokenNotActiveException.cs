@@ -5,7 +5,7 @@ using DevUp.Domain.Identity.Exceptions;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public sealed class RefreshTokenNotActiveException : IdentityValidationException
+    public sealed class RefreshTokenNotActiveException : IdentityDataValidationException
     {
         public DateTimeRange Lifespan { get; }
         public DateTime Now { get; }

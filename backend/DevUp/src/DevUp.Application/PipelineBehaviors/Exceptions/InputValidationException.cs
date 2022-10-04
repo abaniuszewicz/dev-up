@@ -2,7 +2,7 @@
 
 namespace DevUp.Application.PipelineBehaviors.Exceptions
 {
-    internal sealed class InputValidationException : DomainValidationException
+    internal sealed class InputValidationException : DomainDataValidationException
     {
         public InputValidationException(string error) 
             : base(error)

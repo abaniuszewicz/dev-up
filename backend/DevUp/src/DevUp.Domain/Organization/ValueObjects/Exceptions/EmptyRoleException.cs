@@ -2,7 +2,7 @@
 
 namespace DevUp.Domain.Organization.ValueObjects.Exceptions
 {
-    public class EmptyRoleException : OrganizationValidationException
+    public class EmptyRoleException : OrganizationDataValidationException
     {
         public EmptyRoleException() 
             : base("Role cannot be empty.")

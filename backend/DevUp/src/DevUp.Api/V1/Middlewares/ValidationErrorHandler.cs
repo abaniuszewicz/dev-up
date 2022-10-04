@@ -14,7 +14,7 @@ namespace DevUp.Api.V1.Middlewares
             {
                 await next(context);
             }
-            catch (DomainValidationException exception)
+            catch (DomainDataValidationException exception)
             {
                 var code = exception.GetType().Name
                     .Underscore()

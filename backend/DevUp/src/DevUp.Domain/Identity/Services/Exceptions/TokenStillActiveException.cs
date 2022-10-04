@@ -5,7 +5,7 @@ using DevUp.Domain.Identity.Exceptions;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public sealed class TokenStillActiveException : IdentityValidationException
+    public sealed class TokenStillActiveException : IdentityDataValidationException
     {
         public DateTimeRange Lifespan { get; }
         public DateTime Now { get; }

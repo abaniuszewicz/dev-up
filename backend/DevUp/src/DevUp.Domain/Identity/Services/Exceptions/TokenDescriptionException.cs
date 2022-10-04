@@ -3,7 +3,7 @@ using DevUp.Domain.Identity.Exceptions;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public class TokenDescriptionException : IdentityValidationException
+    public class TokenDescriptionException : IdentityDataValidationException
     {
         public Exception Exception { get; }
 
