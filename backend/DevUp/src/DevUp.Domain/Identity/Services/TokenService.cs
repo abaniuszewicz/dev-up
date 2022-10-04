@@ -18,8 +18,6 @@ namespace DevUp.Domain.Identity.Services
 {
     internal class TokenService : ITokenService
     {
-        private const string SecurityAlghoritm = SecurityAlgorithms.HmacSha256;
-
         private readonly IUserRepository _userRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IDeviceRepository _deviceRepository;
@@ -56,7 +54,7 @@ namespace DevUp.Domain.Identity.Services
                 }),
                 NotBefore = tokenLifespan.Start,
                 Expires = tokenLifespan.End,
-                SigningCredentials = new SigningCredentials(_authenticationOptions.GetTokenValidationParameters().IssuerSigningKey, SecurityAlghoritm)
+                SigningCredentials = _authenticationOptions.GetSigningCredentials()
             };
 
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);

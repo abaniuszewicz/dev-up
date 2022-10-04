@@ -8,6 +8,7 @@ using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.Services.Exceptions;
 using DevUp.Domain.Identity.Setup;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 using NUnit.Framework;
 
@@ -38,7 +39,8 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
             {
                 TokenExpiry = expiry,
                 RefreshTokenExpiry = 5 * expiry,
-                SigningKey = _faker.Faker.Random.String2(32)
+                SigningKey = _faker.Faker.Random.String2(32),
+                Algorithm = _faker.Faker.PickRandom(SecurityAlgorithms.HmacSha256, SecurityAlgorithms.HmacSha512)
             });
 
             _tokenService = new TokenService(_userRepositoryMock.Object, _refreshTokenRepositoryMock.Object, _deviceRepositoryMock.Object, _dateProviderMock.Object, _authenticationOptions);
