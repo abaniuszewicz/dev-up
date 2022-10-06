@@ -1,10 +1,10 @@
 ﻿using DevUp.Domain.Identity.Exceptions;
 
-namespace DevUp.Domain.Identity.Entities.Exceptions
+namespace DevUp.Domain.Identity.ValueObjects.Exceptions
 {
     public sealed class EmptyRefreshTokenException : IdentityDataValidationException
     {
-        public EmptyRefreshTokenException() 
+        public EmptyRefreshTokenException()
             : base("Refresh token cannot be empty.")
         {
         }

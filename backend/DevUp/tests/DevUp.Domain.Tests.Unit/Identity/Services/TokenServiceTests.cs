@@ -68,18 +68,18 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         [Test]
         public async Task DescribeAsync_WhenCalledWithRefreshToken_FetchesDescribedValueFromRepository()
         {
-            _refreshTokenRepositoryMock.Setup(rtr => rtr.GetByIdAsync(_faker.RefreshToken, It.IsAny<CancellationToken>()))
+            _refreshTokenRepositoryMock.Setup(rtr => rtr.GetByIdAsync(_faker.RefreshTokenInfoId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_faker.RefreshTokenInfo);
 
             await _tokenService.DescribeAsync(_faker.RefreshToken, CancellationToken.None);
 
-            _refreshTokenRepositoryMock.Verify(rtr => rtr.GetByIdAsync(_faker.RefreshToken, CancellationToken.None), Times.Once);
+            _refreshTokenRepositoryMock.Verify(rtr => rtr.GetByIdAsync(_faker.RefreshTokenInfoId, CancellationToken.None), Times.Once);
         }
 
         [Test]
         public async Task DescribeAsync_WhenCalledWithRefreshTokenThatExistsInRepository_ReturnsDescribedValue()
         {
-            _refreshTokenRepositoryMock.Setup(rtr => rtr.GetByIdAsync(_faker.RefreshToken, It.IsAny<CancellationToken>()))
+            _refreshTokenRepositoryMock.Setup(rtr => rtr.GetByIdAsync(_faker.RefreshTokenInfoId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_faker.RefreshTokenInfo);
 
             var result = await _tokenService.DescribeAsync(_faker.RefreshToken, CancellationToken.None);
@@ -90,10 +90,10 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         [Test]
         public void DescribeAsync_WhenCalledWithRefreshTokenThatDoesNotExistInRepository_ThrowsRefreshTokenInfoNotFoundException()
         {
-            _refreshTokenRepositoryMock.Setup(rtr => rtr.GetByIdAsync(_faker.RefreshToken, It.IsAny<CancellationToken>()))
+            _refreshTokenRepositoryMock.Setup(rtr => rtr.GetByIdAsync(_faker.RefreshTokenInfoId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((RefreshTokenInfo?)null);
 
-            Assert.ThrowsAsync<RefreshTokenInfoNotFoundException>(async ()
+            Assert.ThrowsAsync<RefreshTokenInfoIdNotFoundException>(async ()
                 => await _tokenService.DescribeAsync(_faker.RefreshToken, CancellationToken.None));
         }
 
@@ -137,7 +137,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
                 .ReturnsAsync(_faker.User);
 
             var differentUserId = new IdentityFaker().UserId;
-            var refreshTokenInfo = new RefreshTokenInfo(_faker.RefreshToken, _faker.RefreshTokenInfo.Jti,
+            var refreshTokenInfo = new RefreshTokenInfo(_faker.RefreshTokenInfoId, _faker.RefreshTokenInfo.Jti,
                 differentUserId, _faker.DeviceId, _faker.RefreshTokenInfo.Lifespan);
 
             var exception = Assert.ThrowsAsync<UserIdMismatchException>(async () 
@@ -214,7 +214,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.Services
         public void ValidateAsync_WhenRefreshTokenWasIssuedForDifferentDevice_ThrowsDeviceIdMismatchException()
         {
             var differentDeviceId = new IdentityFaker().DeviceId;
-            var rti = new RefreshTokenInfo(_faker.RefreshToken, _faker.TokenInfo.Jti, _faker.UserId, differentDeviceId, _faker.RefreshTokenInfo.Lifespan);
+            var rti = new RefreshTokenInfo(_faker.RefreshTokenInfoId, _faker.TokenInfo.Jti, _faker.UserId, differentDeviceId, _faker.RefreshTokenInfo.Lifespan);
             var now = _faker.Faker.Date.Between(_faker.TokenInfo.Lifespan.End, _faker.RefreshTokenInfo.Lifespan.End);
             _dateProviderMock.Setup(dp => dp.Now)
                 .Returns(now);

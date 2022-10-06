@@ -54,13 +54,13 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
                 throw new TokenNotPersistedException(dto);
         }
 
-        public async Task<RefreshTokenInfo?> GetByIdAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
+        public async Task<RefreshTokenInfo?> GetByIdAsync(RefreshTokenInfoId refreshToken, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (refreshToken is null)
                 throw new ArgumentNullException(nameof(refreshToken));
 
-            var dto = new RefreshTokenDto() { Token = refreshToken.Value };
+            var dto = new RefreshTokenDto() { Token = refreshToken.RefreshToken.Value };
             var sql = @$"SELECT 
                             token {nameof(RefreshTokenDto.Token)}, 
                             jti {nameof(RefreshTokenDto.Jti)}, 

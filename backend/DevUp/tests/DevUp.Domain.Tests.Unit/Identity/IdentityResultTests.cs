@@ -1,5 +1,4 @@
 ﻿using DevUp.Domain.Identity;
-using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.ValueObjects;
 using NUnit.Framework;
 

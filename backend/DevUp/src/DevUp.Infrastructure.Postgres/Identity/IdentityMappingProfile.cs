@@ -14,7 +14,7 @@ namespace DevUp.Infrastructure.Postgres.Identity
                 .ForMember(d => d.Username, opt => opt.MapFrom(s => s.Username.Value))
                 .ForMember(d => d.PasswordHash, opt => opt.Ignore());
             CreateMap<RefreshTokenInfo, RefreshTokenDto>()
-                .ForMember(d => d.Token, opt => opt.MapFrom(s => s.Id.Value))
+                .ForMember(d => d.Token, opt => opt.MapFrom(s => s.Id.RefreshToken))
                 .ForMember(d => d.Jti, opt => opt.MapFrom(s => s.Jti))
                 .ForMember(d => d.UserId, opt => opt.MapFrom(s => s.UserId.Id))
                 .ForMember(d => d.CreationDate, opt => opt.MapFrom(s => s.Lifespan.Start))
@@ -36,7 +36,7 @@ namespace DevUp.Infrastructure.Postgres.Identity
         {
             public RefreshTokenInfo Convert(RefreshTokenDto dto, RefreshTokenInfo refreshToken, ResolutionContext context)
             {
-                return new RefreshTokenInfo(new(dto.Token), dto.Jti, new(dto.UserId), new(dto.DeviceId), new(dto.CreationDate, dto.ExpiryDate))
+                return new RefreshTokenInfo(new(new(dto.Token)), dto.Jti, new(dto.UserId), new(dto.DeviceId), new(dto.CreationDate, dto.ExpiryDate))
                 {
                     Used = dto.Used,
                     Invalidated = dto.Invalidated

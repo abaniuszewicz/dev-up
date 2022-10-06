@@ -60,15 +60,15 @@ namespace DevUp.Domain.Identity.Services
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
             var jwt = tokenHandler.WriteToken(securityToken);
             var token = new Token(jwt);
-            var tokenInfo = new TokenInfo(token, jti, user.Id, device.Id, tokenLifespan);
 
             var refreshToken = new RefreshToken();
+            var refreshTokenInfoId = new RefreshTokenInfoId(refreshToken);
             var refreshTokenLifespan = new DateTimeRange(now, now.Add(_authenticationOptions.RefreshTokenExpiry));
-            var refreshTokenInfo = new RefreshTokenInfo(refreshToken, jti, user.Id, device.Id, refreshTokenLifespan);
+            var refreshTokenInfo = new RefreshTokenInfo(refreshTokenInfoId, jti, user.Id, device.Id, refreshTokenLifespan);
 
             await _deviceRepository.AddAsync(device, cancellationToken);
             await _refreshTokenRepository.AddAsync(refreshTokenInfo, cancellationToken);
-            return (tokenInfo.Token, refreshTokenInfo.Id);
+            return (token, refreshToken);
         }
 
         public async Task<TokenInfo> DescribeAsync(Token token, CancellationToken cancellationToken)
@@ -95,8 +95,9 @@ namespace DevUp.Domain.Identity.Services
 
         public async Task<RefreshTokenInfo> DescribeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
         {
-            return await _refreshTokenRepository.GetByIdAsync(refreshToken, cancellationToken)
-                ?? throw new RefreshTokenInfoNotFoundException(refreshToken);
+            var id = new RefreshTokenInfoId(refreshToken);
+            return await _refreshTokenRepository.GetByIdAsync(id, cancellationToken)
+                ?? throw new RefreshTokenInfoIdNotFoundException(id);
         }
 
         public async Task ValidateAsync(TokenInfo token, RefreshTokenInfo refreshToken, Device currentDevice, CancellationToken cancellationToken)
@@ -132,9 +133,10 @@ namespace DevUp.Domain.Identity.Services
 
         public async Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
         {
-            var refreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(refreshToken, cancellationToken);
+            var id = new RefreshTokenInfoId(refreshToken);
+            var refreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(id, cancellationToken);
             if (refreshTokenInfo is null)
-                throw new RefreshTokenInfoNotFoundException(refreshToken);
+                throw new RefreshTokenInfoIdNotFoundException(id);
 
             await _refreshTokenRepository.InvalidateChainAsync(refreshTokenInfo, cancellationToken);
         }

@@ -5,9 +5,9 @@ namespace DevUp.Domain.Identity.Services.Exceptions
 {
     public sealed class RefreshTokenUsedException : IdentityBusinessRuleValidationException
     {
-        public RefreshToken RefreshToken { get; }
+        public RefreshTokenInfoId RefreshToken { get; }
 
-        public RefreshTokenUsedException(RefreshToken refreshToken)
+        public RefreshTokenUsedException(RefreshTokenInfoId refreshToken)
             : base("Refresh token has been already used.")
         {
             RefreshToken = refreshToken;

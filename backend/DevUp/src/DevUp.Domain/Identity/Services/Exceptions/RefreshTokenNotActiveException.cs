@@ -8,7 +8,7 @@ namespace DevUp.Domain.Identity.Services.Exceptions
 {
     public sealed class RefreshTokenNotActiveException : IdentityBusinessRuleValidationException
     {
-        public RefreshToken RefreshToken { get; }
+        public RefreshTokenInfoId RefreshToken { get; }
         public DateTimeRange Lifespan { get; }
         public DateTime Now { get; }
 

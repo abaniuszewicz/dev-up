@@ -5,7 +5,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
-    public class RefreshTokenInfo : Entity<RefreshToken>
+    public class RefreshTokenInfo : Entity<RefreshTokenInfoId>
     {
         public string Jti { get; }
         public UserId UserId { get; }
@@ -14,7 +14,7 @@ namespace DevUp.Domain.Identity.Entities
         public bool Used { get; set; }
         public bool Invalidated { get; set; }
 
-        public RefreshTokenInfo(RefreshToken token, string jti, UserId userId, DeviceId deviceId, DateTimeRange lifespan) : base(token)
+        public RefreshTokenInfo(RefreshTokenInfoId token, string jti, UserId userId, DeviceId deviceId, DateTimeRange lifespan) : base(token)
         {
             Jti = jti;
             UserId = userId;

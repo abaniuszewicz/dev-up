@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
-using DevUp.Domain.Identity.Entities.Exceptions;
+using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using DevUp.Domain.Seedwork;
 
-namespace DevUp.Domain.Identity.Entities
+namespace DevUp.Domain.Identity.ValueObjects
 {
-    public class RefreshToken : EntityId
+    public class RefreshToken : ValueObject
     {
         public string Value { get; }
 
-        internal RefreshToken() : this(GetRandomString())
+        internal RefreshToken()
+            : this(GetRandomString())
         {
         }
 
@@ -19,24 +21,9 @@ namespace DevUp.Domain.Identity.Entities
             Value = token;
         }
 
-        public override string ToString()
-        {
-            return Value;
-        }
-
-        public override bool Equals(EntityId other)
-        {
-            return other is RefreshToken refreshTokenId && Value == refreshTokenId.Value;
-        }
-
-        public override int GetHashCode()
-        {
-            return Value.GetHashCode();
-        }
-
         private void Validate(string refreshToken)
         {
-            if (string.IsNullOrEmpty(refreshToken))
+            if (string.IsNullOrWhiteSpace(refreshToken))
                 throw new EmptyRefreshTokenException();
         }
 
@@ -46,6 +33,16 @@ namespace DevUp.Domain.Identity.Entities
             using var generator = RandomNumberGenerator.Create();
             generator.GetBytes(randomNumber);
             return Convert.ToBase64String(randomNumber);
+        }
+
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Value;
         }
     }
 }

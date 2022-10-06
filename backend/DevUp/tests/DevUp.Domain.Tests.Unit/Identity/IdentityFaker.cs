@@ -24,6 +24,7 @@ namespace DevUp.Domain.Tests.Unit.Identity
         public Token Token { get; }
         public TokenInfo TokenInfo { get; }
         public RefreshToken RefreshToken { get; }
+        public RefreshTokenInfoId RefreshTokenInfoId { get; }
         public RefreshTokenInfo RefreshTokenInfo { get; }
 
         public IdentityFaker()
@@ -41,7 +42,8 @@ namespace DevUp.Domain.Tests.Unit.Identity
             Token = new Token(Regex.Replace("{header}.{payload}.{signature}", "{.+?}", _ => RandomString()));
             TokenInfo = new TokenInfo(Token, Faker.Random.Guid().ToString(), UserId, DeviceId, RandomDateRange(now, 1, now));
             RefreshToken = new RefreshToken(RandomString());
-            RefreshTokenInfo = new RefreshTokenInfo(RefreshToken, TokenInfo.Jti, UserId, DeviceId, RandomDateRange(now, 5, TokenInfo.Lifespan.End));
+            RefreshTokenInfoId = new RefreshTokenInfoId(RefreshToken);
+            RefreshTokenInfo = new RefreshTokenInfo(RefreshTokenInfoId, TokenInfo.Jti, UserId, DeviceId, RandomDateRange(now, 5, TokenInfo.Lifespan.End));
         }
 
         private DateTimeRange RandomDateRange(DateTime now, int days, DateTime refDate)

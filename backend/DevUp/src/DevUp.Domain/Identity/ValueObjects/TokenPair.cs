@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.Entities.Exceptions;
 using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using DevUp.Domain.Seedwork;
 

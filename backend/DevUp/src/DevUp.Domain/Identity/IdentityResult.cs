@@ -1,5 +1,4 @@
-﻿using DevUp.Domain.Identity.Entities;
-using DevUp.Domain.Identity.ValueObjects;
+﻿using DevUp.Domain.Identity.ValueObjects;
 
 namespace DevUp.Domain.Identity
 {
