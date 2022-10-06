@@ -26,6 +26,7 @@ namespace DevUp.Domain.Tests.Unit.Identity
         public RefreshToken RefreshToken { get; }
         public RefreshTokenInfoId RefreshTokenInfoId { get; }
         public RefreshTokenInfo RefreshTokenInfo { get; }
+        public TokenPair TokenPair { get; }
 
         public IdentityFaker()
         {
@@ -44,6 +45,7 @@ namespace DevUp.Domain.Tests.Unit.Identity
             RefreshToken = new RefreshToken(RandomString());
             RefreshTokenInfoId = new RefreshTokenInfoId(RefreshToken);
             RefreshTokenInfo = new RefreshTokenInfo(RefreshTokenInfoId, TokenInfo.Jti, UserId, DeviceId, RandomDateRange(now, 5, TokenInfo.Lifespan.End));
+            TokenPair = new TokenPair(Token, RefreshToken);
         }
 
         private DateTimeRange RandomDateRange(DateTime now, int days, DateTime refDate)

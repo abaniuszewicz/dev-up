@@ -6,7 +6,7 @@ namespace DevUp.Application.Identity
     {
         public IdentityMappingProfile()
         {
-            CreateMap<TokenPair, TokenPair>()
+            CreateMap<Domain.Identity.ValueObjects.TokenPair, TokenPair>()
                 .ForMember(tp => tp.Token, m => m.MapFrom(ir => ir.Token.Value))
                 .ForMember(tp => tp.RefreshToken, m => m.MapFrom(ir => ir.RefreshToken.Value));
         }
