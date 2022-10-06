@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DevUp.Domain.Identity;
 
 namespace DevUp.Application.Identity
 {
@@ -7,7 +6,7 @@ namespace DevUp.Application.Identity
     {
         public IdentityMappingProfile()
         {
-            CreateMap<IdentityResult, TokenPair>()
+            CreateMap<TokenPair, TokenPair>()
                 .ForMember(tp => tp.Token, m => m.MapFrom(ir => ir.Token.Value))
                 .ForMember(tp => tp.RefreshToken, m => m.MapFrom(ir => ir.RefreshToken.Value));
         }

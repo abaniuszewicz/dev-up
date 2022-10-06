@@ -7,8 +7,7 @@ namespace DevUp.Domain.Identity.Services
 {
     public interface IIdentityService
     {
-        public Task<IdentityResult> RegisterAsync(Username username, Password password, Device device, CancellationToken cancellationToken);
-        public Task<IdentityResult> LoginAsync(Username username, Password password, Device device, CancellationToken cancellationToken);
-        public Task<IdentityResult> RefreshAsync(Token token, RefreshToken refreshToken, Device device, CancellationToken cancellationToken);
+        public Task<TokenPair> RegisterAsync(Username username, Password password, Device device, CancellationToken cancellationToken);
+        public Task<TokenPair> LoginAsync(Username username, Password password, Device device, CancellationToken cancellationToken);
     }
 }

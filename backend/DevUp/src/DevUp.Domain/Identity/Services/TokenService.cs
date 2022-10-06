@@ -37,7 +37,7 @@ namespace DevUp.Domain.Identity.Services
             _authenticationOptions = authenticationOptions.Value;
         }
 
-        public async Task<(Token, RefreshToken)> CreateAsync(User user, Device device, CancellationToken cancellationToken)
+        public async Task<TokenPair> CreateAsync(UserId userId, DeviceId deviceId, CancellationToken cancellationToken)
         {
             var now = _dateTimeProvider.Now;
 
@@ -48,9 +48,9 @@ namespace DevUp.Domain.Identity.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, jti),
-                    new Claim(JwtCustomClaimNames.DeviceId, device.Id.ToString())
+                    new Claim(JwtCustomClaimNames.DeviceId, deviceId.ToString())
                 }),
                 NotBefore = tokenLifespan.Start,
                 Expires = tokenLifespan.End,
@@ -64,14 +64,35 @@ namespace DevUp.Domain.Identity.Services
             var refreshToken = new RefreshToken();
             var refreshTokenInfoId = new RefreshTokenInfoId(refreshToken);
             var refreshTokenLifespan = new DateTimeRange(now, now.Add(_authenticationOptions.RefreshTokenExpiry));
-            var refreshTokenInfo = new RefreshTokenInfo(refreshTokenInfoId, jti, user.Id, device.Id, refreshTokenLifespan);
+            var refreshTokenInfo = new RefreshTokenInfo(refreshTokenInfoId, jti, userId, deviceId, refreshTokenLifespan);
 
-            await _deviceRepository.AddAsync(device, cancellationToken);
             await _refreshTokenRepository.AddAsync(refreshTokenInfo, cancellationToken);
-            return (token, refreshToken);
+            return new TokenPair(token, refreshToken);
         }
 
-        public async Task<TokenInfo> DescribeAsync(Token token, CancellationToken cancellationToken)
+        public async Task<TokenPair> RefreshAsync(TokenPair tokenPair, Device device, CancellationToken cancellationToken)
+        {
+            var tokenInfo = await DescribeAsync(tokenPair.Token, cancellationToken);
+            var refreshTokenInfoId = new RefreshTokenInfoId(tokenPair.RefreshToken);
+            var refreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(refreshTokenInfoId, cancellationToken)
+                ?? throw new RefreshTokenInfoIdNotFoundException(refreshTokenInfoId);
+
+            await ValidateAsync(tokenInfo, refreshTokenInfo, device, cancellationToken);
+            await _refreshTokenRepository.MarkAsUsedAsync(refreshTokenInfo, cancellationToken);
+            return await CreateAsync(tokenInfo.UserId, tokenInfo.DeviceId, cancellationToken);
+        }
+
+        public async Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
+        {
+            var id = new RefreshTokenInfoId(refreshToken);
+            var refreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(id, cancellationToken);
+            if (refreshTokenInfo is null)
+                throw new RefreshTokenInfoIdNotFoundException(id);
+
+            await _refreshTokenRepository.InvalidateChainAsync(refreshTokenInfo, cancellationToken);
+        }
+
+        private async Task<TokenInfo> DescribeAsync(Token token, CancellationToken cancellationToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var result = await tokenHandler.ValidateTokenAsync(token.Value, _authenticationOptions.GetTokenValidationParameters());
@@ -93,14 +114,7 @@ namespace DevUp.Domain.Identity.Services
             return new TokenInfo(token, jti, userId, deviceId, lifespan);
         }
 
-        public async Task<RefreshTokenInfo> DescribeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
-        {
-            var id = new RefreshTokenInfoId(refreshToken);
-            return await _refreshTokenRepository.GetByIdAsync(id, cancellationToken)
-                ?? throw new RefreshTokenInfoIdNotFoundException(id);
-        }
-
-        public async Task ValidateAsync(TokenInfo token, RefreshTokenInfo refreshToken, Device currentDevice, CancellationToken cancellationToken)
+        private async Task ValidateAsync(TokenInfo token, RefreshTokenInfo refreshToken, Device currentDevice, CancellationToken cancellationToken)
         {
             // should tokens be validated
             if (!refreshToken.BelongsTo(token))
@@ -131,14 +145,5 @@ namespace DevUp.Domain.Identity.Services
                 throw new DeviceIdMismatchException(token.DeviceId, refreshToken.DeviceId, currentDevice.Id);
         }
 
-        public async Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
-        {
-            var id = new RefreshTokenInfoId(refreshToken);
-            var refreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(id, cancellationToken);
-            if (refreshTokenInfo is null)
-                throw new RefreshTokenInfoIdNotFoundException(id);
-
-            await _refreshTokenRepository.InvalidateChainAsync(refreshTokenInfo, cancellationToken);
-        }
     }
 }
