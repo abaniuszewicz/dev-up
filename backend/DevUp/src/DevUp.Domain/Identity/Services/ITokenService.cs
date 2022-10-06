@@ -11,6 +11,6 @@ namespace DevUp.Domain.Identity.Services
         public Task<TokenInfo> DescribeAsync(Token token, CancellationToken cancellationToken);
         public Task<RefreshTokenInfo> DescribeAsync(RefreshToken refreshToken, CancellationToken cancellationToken);
         public Task ValidateAsync(TokenInfo token, RefreshTokenInfo refreshToken, Device device, CancellationToken cancellationToken);
-        public Task Invalidate(RefreshToken refreshToken, Device device, CancellationToken cancellationToken);
+        public Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken);
     }
 }

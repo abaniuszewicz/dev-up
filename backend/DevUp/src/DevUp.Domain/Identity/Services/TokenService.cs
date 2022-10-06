@@ -129,5 +129,10 @@ namespace DevUp.Domain.Identity.Services
             if (new[] { device, currentDevice }.Any(d => !refreshToken.BelongsTo(d)))
                 throw new DeviceIdMismatchException(token.DeviceId, refreshToken.DeviceId, currentDevice.Id);
         }
+
+        public Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
