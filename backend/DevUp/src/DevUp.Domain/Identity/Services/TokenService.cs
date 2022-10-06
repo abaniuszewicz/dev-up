@@ -132,7 +132,11 @@ namespace DevUp.Domain.Identity.Services
 
         public async Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var refreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(refreshToken, cancellationToken);
+            if (refreshTokenInfo is null)
+                throw new RefreshTokenInfoNotFoundException(refreshToken);
+
+            await _refreshTokenRepository.InvalidateChainAsync(refreshTokenInfo, cancellationToken);
         }
     }
 }
