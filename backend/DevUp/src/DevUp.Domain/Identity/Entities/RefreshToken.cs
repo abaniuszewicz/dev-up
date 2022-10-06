@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using DevUp.Domain.Identity.Entities.Exceptions;
 using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
@@ -14,7 +15,8 @@ namespace DevUp.Domain.Identity.Entities
 
         public RefreshToken(string token)
         {
-            Value = token ?? throw new ArgumentNullException(nameof(token));
+            Validate(token);
+            Value = token;
         }
 
         public override string ToString()
@@ -30,6 +32,12 @@ namespace DevUp.Domain.Identity.Entities
         public override int GetHashCode()
         {
             return Value.GetHashCode();
+        }
+
+        private void Validate(string refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+                throw new EmptyRefreshTokenException();
         }
 
         private static string GetRandomString()
