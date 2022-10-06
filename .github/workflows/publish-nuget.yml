@@ -1,0 +1,28 @@
+name: Publish nuget
+
+on:
+  workflow_run:
+    workflows: ["Build and test backend"]
+    branches: [ "master" ]
+    types: [ "completed" ]
+
+jobs:
+  publish-nuget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ahmadnassri/action-workflow-run-wait@v1
+        with:
+          timeout: 120000
+      - name: Build
+        run: dotnet build DevUp.sln
+        working-directory: ./backend/DevUp/
+      - name: Pack contracts
+        run: dotnet pack -o ./../packages
+        working-directory: ./backend/DevUp/src/DevUp.Api.Contracts/
+      - name: Pack sdk
+        run: dotnet pack -o ./../packages
+        working-directory: ./backend/DevUp/src/DevUp.Api.Sdk/
+      - name: Push package to GitHub.com
+        run: dotnet nuget push --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/abaniuszewicz/index.json *.nupkg
+        working-directory: ./backend/DevUp/src/packages/
