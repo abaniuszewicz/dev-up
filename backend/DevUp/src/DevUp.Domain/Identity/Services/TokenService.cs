@@ -130,7 +130,7 @@ namespace DevUp.Domain.Identity.Services
                 throw new DeviceIdMismatchException(token.DeviceId, refreshToken.DeviceId, currentDevice.Id);
         }
 
-        public Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
+        public async Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

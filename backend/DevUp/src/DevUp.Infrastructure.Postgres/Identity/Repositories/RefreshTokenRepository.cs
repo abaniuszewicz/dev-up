@@ -52,16 +52,6 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
             return affectedRows == 0 ? null : refreshToken;
         }
 
-        public Task DeleteAsync(RefreshTokenInfo refreshToken, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IReadOnlyList<RefreshTokenInfo>> GetAllAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<RefreshTokenInfo?> GetByIdAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -122,6 +112,11 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
 
             var affectedRows = await _connection.ExecuteAsync(sql, dto);
             return affectedRows == 0 ? null : refreshToken;
+        }
+
+        public async Task InvalidateChainAsync(RefreshTokenInfo refreshToken, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }
