@@ -1,4 +1,5 @@
-﻿using DevUp.Domain.Seedwork;
+﻿using System;
+using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
@@ -9,6 +10,11 @@ namespace DevUp.Domain.Identity.Entities
         public DeviceId(string id)
         {
             Id = id;
+        }
+
+        public DeviceId(Guid id)
+            : this(id.ToString())
+        {
         }
 
         public override string ToString()

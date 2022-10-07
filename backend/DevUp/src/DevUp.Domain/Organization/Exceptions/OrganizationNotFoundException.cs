@@ -3,7 +3,7 @@ using DevUp.Domain.Seedwork.Exceptions;
 
 namespace DevUp.Domain.Organization.Exceptions
 {
-    public class OrganizationNotFoundException : DomainNotFoundException
+    public class OrganizationNotFoundException : DomainNotFoundException, IOrganizationException
     {
         public OrganizationNotFoundException(string error) 
             : base(error)

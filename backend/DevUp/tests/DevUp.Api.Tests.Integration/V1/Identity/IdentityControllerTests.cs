@@ -7,7 +7,6 @@ using DevUp.Api.Contracts;
 using DevUp.Api.Contracts.V1;
 using DevUp.Api.Contracts.V1.Identity.Requests;
 using DevUp.Api.Contracts.V1.Identity.Responses;
-using DevUp.Domain.Identity.Services.Exceptions;
 using FluentAssertions;
 using Xunit;
 
@@ -30,15 +29,15 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
         public async Task Register_WhenGivenValidRequest_ReturnsTokenPair()
         {
             var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, _faker.RegisterUserRequest);
-            var response = await result.Content.ReadFromJsonAsync<IdentityResponse>();
-
             result.Should().HaveStatusCode(HttpStatusCode.OK);
+
+            var response = await result.Content.ReadFromJsonAsync<IdentityResponse>();
             response!.Token.Should().NotBeEmpty();
             response.RefreshToken.Should().NotBeEmpty();
         }
 
         [Fact]
-        public async Task Register_WhenGivenInvalidRequest_ReturnsBadRequest()
+        public async Task Register_WhenGivenInvalidRequest_ReturnsBadRequestWithValidationErrors()
         {
             var invalidRequest = new RegisterUserRequest()
             {
@@ -48,10 +47,9 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             };
 
             var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, invalidRequest);
-            var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
-
             result.Should().HaveStatusCode(HttpStatusCode.BadRequest);
 
+            var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
             var expectedErrors = new[] 
             {
                 $"'{nameof(RegisterUserRequest.Username)}' may only contain lowercase letters or hyphens.",
@@ -61,28 +59,48 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
         }
 
         [Fact]
+        public async Task Register_WhenGivenDuplicateUsername_ReturnsBadRequestWithDetailedError()
+        {
+            var otherFaker = new IdentityFaker();
+            var duplicatedUsernameRegisterRequest = new RegisterUserRequest()
+            {
+                Username = _faker.RegisterUserRequest.Username,
+                Password = otherFaker.RegisterUserRequest.Password,
+                Device = otherFaker.RegisterUserRequest.Device,
+            };
+
+            var nonDuplicatedResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, _faker.RegisterUserRequest);
+            nonDuplicatedResult.Should().HaveStatusCode(HttpStatusCode.OK);
+
+            var duplicatedResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, duplicatedUsernameRegisterRequest);
+            duplicatedResult.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+
+            var response = await duplicatedResult.Content.ReadFromJsonAsync<ErrorResponse>();
+            response!.Errors.Should().ContainSingle(e => e == "User with this username already exist.");
+        }
+
+        [Fact]
         public async Task Login_WhenGivenValidCredentialsOfAnExistingUser_ReturnsTokenPair()
         {
-            var faker = new IdentityFaker();
-            var resultReg = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, faker.RegisterUserRequest);
+            var resultReg = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, _faker.RegisterUserRequest);
 
-            var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, faker.LoginUserRequest);
-            var response = await result.Content.ReadFromJsonAsync<IdentityResponse>();
-
+            var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, _faker.LoginUserRequest);
             result.Should().HaveStatusCode(HttpStatusCode.OK);
+
+            var response = await result.Content.ReadFromJsonAsync<IdentityResponse>();
             response!.Token.Should().NotBeEmpty();
             response.RefreshToken.Should().NotBeEmpty();
         }
 
         [Fact]
-        public async Task Login_WhenGivenInvalidCredentials_ReturnsBadRequest()
+        public async Task Login_WhenGivenInvalidCredentials_ReturnsBadRequestWithGenericMessage()
         {
             // try to login without registering
             var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, _faker.LoginUserRequest);
-            var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
-
             result.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-            response!.Errors.Should().ContainSingle(e => e == LoginException.InvalidUsernameMessage);
+
+            var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
+            response!.Errors.Should().ContainSingle(e => e == "Invalid request.");
         }
 
         [Fact]
@@ -106,9 +124,9 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
                 Device = _faker.LoginUserRequest.Device 
             };
             var refreshResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
-            var newTokenPair = await refreshResult.Content.ReadFromJsonAsync<IdentityResponse>();
-
             refreshResult.Should().HaveStatusCode(HttpStatusCode.OK);
+
+            var newTokenPair = await refreshResult.Content.ReadFromJsonAsync<IdentityResponse>();
             newTokenPair!.Token.Should().NotBeEmpty();
             newTokenPair.RefreshToken.Should().NotBeEmpty();
             newTokenPair.Token.Should().NotBe(oldTokenPair.Token);
@@ -116,7 +134,52 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
         }
 
         [Fact]
-        public async Task Refresh_WhenProvidedWithInvalidTokenPair_ReturnsBadRequest()
+        public async Task Refresh_WhenTryingToReuseValidTokenPairOnAnotherDevice_ReturnsBadRequestWithGenericMessage()
+        {
+            // register
+            await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, _faker.RegisterUserRequest);
+
+            // login and grab token pair
+            var loginResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, _faker.LoginUserRequest);
+            var oldTokenPair = await loginResult.Content.ReadFromJsonAsync<IdentityResponse>();
+
+            // wait for token expiration. refresh token will still be active
+            await Task.Delay(_apiFactory.AuthenticationOptions.TokenExpiry);
+
+            // refresh and grab new token pair
+            var differentDevice = new IdentityFaker().LoginUserRequest.Device;
+            var refreshRequest = new RefreshUserRequest()
+            {
+                Token = oldTokenPair!.Token!,
+                RefreshToken = oldTokenPair.RefreshToken!,
+                Device = differentDevice
+            };
+
+            var refreshResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
+            refreshResult.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+
+            var response = await refreshResult.Content.ReadFromJsonAsync<ErrorResponse>();
+            response!.Errors.Should().ContainSingle(e => e == "Invalid request.");
+        }
+
+        [Fact]
+        public async Task Refresh_WhenProvidedWithInvalidTokenPairThatHasInvalidTokenFormat_ReturnsBadRequestWithDetailedMessage()
+        {
+            var refreshRequest = new RefreshUserRequest()
+            {
+                Token = "missing dot separation",
+                RefreshToken = "1234abcd!@#$",
+                Device = _faker.LoginUserRequest.Device
+            };
+            var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
+            result.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+
+            var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
+            response!.Errors.Should().ContainSingle(e => e == "Token is not a valid jwt token.");
+        }
+
+        [Fact]
+        public async Task Refresh_WhenProvidedWithInvalidTokenPairThatHasValidTokenFormat_ReturnsBadRequestWithGenericMessage()
         {
             var refreshRequest = new RefreshUserRequest()
             {
@@ -125,15 +188,14 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
                 Device = _faker.LoginUserRequest.Device
             };
             var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
-            var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
-
             result.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-            var expectedErrors = new[] { RefreshException.InvalidTokenMessage, RefreshException.InvalidRefreshTokenMessage };
-            response!.Errors.Should().BeEquivalentTo(expectedErrors);
+
+            var response = await result.Content.ReadFromJsonAsync<ErrorResponse>();
+            response!.Errors.Should().ContainSingle(e => e == "Invalid request.");
         }
 
         [Fact]
-        public async Task Refresh_WhenProvidedWithValidTokenPairAfterBothTokenAndRefreshTokenHaveExpired_ReturnsBadRequest()
+        public async Task Refresh_WhenProvidedWithValidTokenPairAfterBothTokenAndRefreshTokenHaveExpired_ReturnsBadRequestWithGenericMessage()
         {
             // register
             await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, _faker.RegisterUserRequest);
@@ -154,10 +216,10 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
                 Device = _faker.LoginUserRequest.Device 
             };
             var refreshResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
-            var refreshResponse = await refreshResult.Content.ReadFromJsonAsync<ErrorResponse>();
-
             refreshResult.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-            refreshResponse!.Errors.Should().ContainSingle(e => e == TokenValidationException.RefreshTokenNotActiveMessage);
+
+            var refreshResponse = await refreshResult.Content.ReadFromJsonAsync<ErrorResponse>();
+            refreshResponse!.Errors.Should().ContainSingle(e => e == "Invalid request.");
         }
     }
 }

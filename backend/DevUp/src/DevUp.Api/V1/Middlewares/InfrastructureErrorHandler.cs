@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DevUp.Api.V1.Middlewares
 {
-    internal sealed class InfrastructureErrorHandler : IMiddleware
+    internal sealed class InfrastructureErrorHandler : ErrorHandler
     {
         private readonly ILogger<InfrastructureErrorHandler> _logger;
 
@@ -15,7 +15,7 @@ namespace DevUp.Api.V1.Middlewares
             _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
             {
@@ -24,11 +24,11 @@ namespace DevUp.Api.V1.Middlewares
             catch (InfrastructureException exception)
             {
                 _logger.LogError(exception, "Infrastructure error occurred during processing request with trade id {traceId}. Reason: {reason}", context.TraceIdentifier, exception.Message);
-                var error = new ErrorResponse("error", "An internal server error occurred.");
 
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsJsonAsync(error);
+                var response = new ErrorResponse("infrastructure", "An internal server error occurred.");
+                var statusCode = StatusCodes.Status500InternalServerError;
+
+                await WriteErrorResponse(context, statusCode, response);
             }
         }
     }

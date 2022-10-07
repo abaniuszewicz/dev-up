@@ -2,7 +2,7 @@
 
 namespace DevUp.Domain.Organization.ValueObjects
 {
-    public class EmptyMemberNameException : OrganizationValidationException
+    public class EmptyMemberNameException : OrganizationDataValidationException
     {
         public EmptyMemberNameException()
             : base("Member name cannot be empty.")

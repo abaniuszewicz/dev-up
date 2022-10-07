@@ -39,7 +39,7 @@ namespace DevUp.Domain.Tests.Unit.Identity
             DeviceId = new DeviceId(Faker.Random.Guid().ToString());
             Device = new Device(DeviceId, RandomDeviceName());
             Token = new Token(Regex.Replace("{header}.{payload}.{signature}", "{.+?}", _ => RandomString()));
-            TokenInfo = new TokenInfo(Token, Faker.Random.Guid().ToString(), UserId, RandomDateRange(now, 1, now));
+            TokenInfo = new TokenInfo(Token, Faker.Random.Guid().ToString(), UserId, DeviceId, RandomDateRange(now, 1, now));
             RefreshToken = new RefreshToken(RandomString());
             RefreshTokenInfo = new RefreshTokenInfo(RefreshToken, TokenInfo.Jti, UserId, DeviceId, RandomDateRange(now, 5, TokenInfo.Lifespan.End));
         }

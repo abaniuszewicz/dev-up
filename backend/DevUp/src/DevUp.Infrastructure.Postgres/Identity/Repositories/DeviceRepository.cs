@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using AutoMapper;
 using Dapper;
+using DevUp.Domain.Common.Extensions;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Infrastructure.Postgres.Identity.Dtos;
@@ -51,9 +52,21 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Device> GetByIdAsync(DeviceId id, CancellationToken cancellationToken)
+        public async Task<Device> GetByIdAsync(DeviceId id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            if (id is null)
+                throw new ArgumentNullException(nameof(id));
+
+            var dto = new DeviceDto() { Id = id.Id };
+            var sql = @$"SELECT 
+                            id {nameof(DeviceDto.Id)}, 
+                            name {nameof(DeviceDto.Name)}
+                        FROM devices
+                        WHERE id=@{nameof(DeviceDto.Id)}";
+
+            dto = await _connection.QuerySingleOrDefaultAsync<DeviceDto>(sql, dto);
+            return _mapper.MapOrNull<Device>(dto);
         }
 
         public Task<Device> UpdateAsync(Device device, CancellationToken cancellationToken)

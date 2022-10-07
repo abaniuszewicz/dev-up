@@ -24,7 +24,7 @@ namespace DevUp.Application.PipelineBehaviors
                 .ToArray();
 
             if (errors.Any())
-                throw new InputValidationException(errors);
+                throw new ApplicationValidationException(errors);
 
             return next();
         }
