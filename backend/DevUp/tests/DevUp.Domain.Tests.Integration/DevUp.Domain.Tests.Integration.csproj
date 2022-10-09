@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DevUp.Domain\DevUp.Domain.csproj" />
+    <ProjectReference Include="..\..\src\DevUp.Infrastructure\DevUp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

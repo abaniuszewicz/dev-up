@@ -34,9 +34,10 @@ namespace DevUp.Infrastructure.Identity.Repositories
             return Task.CompletedTask;
         }
 
-        public Task UpdateAsync(RefreshTokenInfo refreshTokenInfo, CancellationToken cancellationToken)
+        public async Task UpdateAsync(RefreshTokenInfo refreshTokenInfo, CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            _refreshTokens.TryRemove(refreshTokenInfo.Id, out _);
+            await AddAsync(refreshTokenInfo, cancellationToken);
         }
     }
 }
