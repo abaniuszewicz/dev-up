@@ -126,9 +126,9 @@ namespace DevUp.Domain.Identity.Services
 
             // have tokens expired
             if (token.IsActive(_dateTimeProvider))
-                throw new TokenStillActiveException(token, _dateTimeProvider);
+                throw new TokenNotExpiredException(token, _dateTimeProvider);
             if (!refreshToken.IsActive(_dateTimeProvider))
-                throw new RefreshTokenNotActiveException(refreshToken, _dateTimeProvider);
+                throw new RefreshTokenExpiredException(refreshToken, _dateTimeProvider);
 
             // do tokens belong to a valid user
             var user = await _userRepository.GetByIdAsync(token.UserId, cancellationToken);
