@@ -8,7 +8,6 @@ using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.Services;
 using DevUp.Domain.Identity.Services.Exceptions;
 using DevUp.Domain.Identity.Setup;
-using DevUp.Domain.Identity.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
