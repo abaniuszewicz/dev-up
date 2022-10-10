@@ -8,8 +8,8 @@ namespace DevUp.Infrastructure.Postgres.Migrations
         public override void Up()
         {
             Alter.Table("refresh_tokens")
-                .AddColumn("previous").AsAnsiString().ForeignKey("refresh_tokens", "token")
-                .AddColumn("next").AsAnsiString().ForeignKey("refresh_tokens", "token");
+                .AddColumn("previous").AsAnsiString().Nullable()
+                .AddColumn("next").AsAnsiString().Nullable();
 
             Create.ForeignKey()
                 .FromTable("refresh_tokens").ForeignColumn("previous")

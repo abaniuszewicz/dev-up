@@ -119,6 +119,33 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
             refreshToken.Used = true;
         }
 
+        public async Task ChainAsync(RefreshTokenInfoId oldRefreshTokenInfoId, RefreshTokenInfoId newRefreshTokenInfoId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (oldRefreshTokenInfoId is null)
+                throw new ArgumentNullException(nameof(oldRefreshTokenInfoId));
+            if (newRefreshTokenInfoId is null)
+                throw new ArgumentNullException(nameof(newRefreshTokenInfoId));
+
+            var oldDto = new RefreshTokenDto() { Token = oldRefreshTokenInfoId.RefreshToken.Value, Next = newRefreshTokenInfoId.RefreshToken.Value };
+            var oldSql = $@"UPDATE refresh_tokens
+                            SET next = @{nameof(RefreshTokenDto.Next)}
+                            WHERE token = @{nameof(RefreshTokenDto.Token)}";
+
+            var oldAffectedRows = await _connection.ExecuteAsync(oldSql, oldDto);
+            if (oldAffectedRows == 0)
+                throw new TokenNotPersistedException(oldDto);
+
+            var newDto = new RefreshTokenDto() { Token = newRefreshTokenInfoId.RefreshToken.Value, Previous = oldRefreshTokenInfoId.RefreshToken.Value };
+            var newSql = $@"UPDATE refresh_tokens
+                            SET previous = @{nameof(RefreshTokenDto.Previous)}
+                            WHERE token = @{nameof(RefreshTokenDto.Token)}";
+
+            var newAffectedRows = await _connection.ExecuteAsync(newSql, newDto);
+            if (newAffectedRows == 0)
+                throw new TokenNotPersistedException(newDto);
+        }
+
         public async Task InvalidateChainAsync(RefreshTokenInfo refreshToken, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
