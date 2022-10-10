@@ -11,5 +11,6 @@ namespace DevUp.Domain.Identity.Repositories
         public Task UpdateAsync(RefreshTokenInfo refreshTokenInfo, CancellationToken cancellationToken);
         public Task MarkAsUsedAsync(RefreshTokenInfo refreshTokenInfo, CancellationToken cancellationToken);
         public Task InvalidateChainAsync(RefreshTokenInfo refreshTokenInfo, CancellationToken cancellationToken);
+        public Task ChainAsync(RefreshTokenInfoId oldRefreshTokenInfoId, RefreshTokenInfoId newRefreshTokenInfoId, CancellationToken cancellationToken);
     }
 }

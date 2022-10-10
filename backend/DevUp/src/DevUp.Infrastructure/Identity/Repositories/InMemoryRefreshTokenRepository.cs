@@ -23,6 +23,11 @@ namespace DevUp.Infrastructure.Identity.Repositories
             return Task.FromResult(refreshTokenInfo);
         }
 
+        public Task ChainAsync(RefreshTokenInfoId oldRefreshTokenInfoId, RefreshTokenInfoId newRefreshTokenInfoId, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task InvalidateChainAsync(RefreshTokenInfo refreshTokenInfo, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();

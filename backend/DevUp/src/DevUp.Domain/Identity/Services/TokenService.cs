@@ -70,16 +70,20 @@ namespace DevUp.Domain.Identity.Services
             return new TokenPair(token, refreshToken);
         }
 
-        public async Task<TokenPair> RefreshAsync(TokenPair tokenPair, Device device, CancellationToken cancellationToken)
+        public async Task<TokenPair> RefreshAsync(TokenPair oldTokenPair, Device device, CancellationToken cancellationToken)
         {
-            var tokenInfo = await DescribeAsync(tokenPair.Token, cancellationToken);
-            var refreshTokenInfoId = new RefreshTokenInfoId(tokenPair.RefreshToken);
-            var refreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(refreshTokenInfoId, cancellationToken)
-                ?? throw new RefreshTokenInfoIdNotFoundException(refreshTokenInfoId);
+            var oldTokenInfo = await DescribeAsync(oldTokenPair.Token, cancellationToken);
+            var oldRefreshTokenInfoId = new RefreshTokenInfoId(oldTokenPair.RefreshToken);
+            var oldRefreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(oldRefreshTokenInfoId, cancellationToken)
+                ?? throw new RefreshTokenInfoIdNotFoundException(oldRefreshTokenInfoId);
 
-            await ValidateAsync(tokenInfo, refreshTokenInfo, device, cancellationToken);
-            await _refreshTokenRepository.MarkAsUsedAsync(refreshTokenInfo, cancellationToken);
-            return await CreateAsync(tokenInfo.UserId, tokenInfo.DeviceId, cancellationToken);
+            await ValidateAsync(oldTokenInfo, oldRefreshTokenInfo, device, cancellationToken);
+            await _refreshTokenRepository.MarkAsUsedAsync(oldRefreshTokenInfo, cancellationToken);
+            var newTokenPair = await CreateAsync(oldTokenInfo.UserId, oldTokenInfo.DeviceId, cancellationToken);
+            var newRefreshTokenInfoId = new RefreshTokenInfoId(newTokenPair.RefreshToken);
+            await _refreshTokenRepository.ChainAsync(oldRefreshTokenInfoId, newRefreshTokenInfoId, cancellationToken);
+
+            return newTokenPair;
         }
 
         public async Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
