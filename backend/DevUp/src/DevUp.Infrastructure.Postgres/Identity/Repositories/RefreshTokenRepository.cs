@@ -109,7 +109,7 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
 
             var dto = _mapper.Map<RefreshTokenDto>(refreshToken);
             var sql = @$"UPDATE refresh_tokens
-                        SET used = @{nameof(RefreshTokenDto.Used)}
+                        SET used = TRUE
                         WHERE token = @{nameof(RefreshTokenDto.Token)}";
 
             var affectedRows = await _connection.ExecuteAsync(sql, dto);
@@ -153,7 +153,20 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
                 throw new ArgumentNullException(nameof(refreshToken));
 
             var dto = _mapper.Map<RefreshTokenDto>(refreshToken);
-            var sql = @$"";
+            var sql = @$"WITH RECURSIVE chain AS (
+                                SELECT token
+                                FROM refresh_tokens
+                                WHERE token = @{nameof(RefreshTokenDto.Token)}
+                            UNION ALL
+                                SELECT rt.token
+                                FROM chain c 
+                                    JOIN refresh_tokens rt 
+                                    ON c.token = rt.next
+                         )
+                         UPDATE refresh_tokens rt
+                         SET invalidated = TRUE
+                         FROM chain c
+                         WHERE c.token = rt.token";
 
             var affectedRows = await _connection.ExecuteAsync(sql, dto);
             if (affectedRows == 0)
