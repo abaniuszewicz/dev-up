@@ -5,9 +5,9 @@ namespace DevUp.Domain.Identity.Services.Exceptions
 {
     public sealed class RefreshTokenInvalidatedException : IdentityBusinessRuleValidationException
     {
-        public RefreshToken RefreshToken { get; }
+        public RefreshTokenInfoId RefreshToken { get; }
 
-        public RefreshTokenInvalidatedException(RefreshToken refreshToken)
+        public RefreshTokenInvalidatedException(RefreshTokenInfoId refreshToken)
             : base("Refresh token has been invalidated.")
         {
             RefreshToken = refreshToken;

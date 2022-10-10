@@ -22,7 +22,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
     public class IdentityApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     {
         private static readonly Faker<AuthenticationOptions> AuthenticationOptionsFaker = new Faker<AuthenticationOptions>()
-               .RuleFor(ao => ao.TokenExpiry, f => f.Date.BetweenTimeOnly(new TimeOnly(0, 0, 1), new TimeOnly(0, 0, 2)).ToTimeSpan())
+               .RuleFor(ao => ao.TokenExpiry, RandomTimespan)
                .RuleFor(ao => ao.RefreshTokenExpiry, (f, ao) => 5 * ao.TokenExpiry)
                .RuleFor(ao => ao.SigningKey, f => f.Random.String2(32));
 
@@ -68,6 +68,13 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
         public new async Task DisposeAsync()
         {
             await _dbContainer.DisposeAsync();
+        }
+
+        private static TimeSpan RandomTimespan(Faker faker)
+        {
+            var min = TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(1));
+            var max = TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(2));
+            return faker.Date.BetweenTimeOnly(min, max).ToTimeSpan();
         }
     }
 }

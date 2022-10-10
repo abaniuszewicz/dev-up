@@ -3,7 +3,7 @@ using DevUp.Infrastructure.Postgres.Identity.Dtos;
 
 namespace DevUp.Infrastructure.Postgres.Identity.Repositories.Exceptions
 {
-    internal class UserNotPersistedException : InfrastructureException
+    internal sealed class UserNotPersistedException : InfrastructureException
     {
         public UserDto User { get; }
 
