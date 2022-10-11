@@ -33,7 +33,7 @@ namespace DevUp.Api.Tests.Integration.V1.Organization
             builder.ConfigureTestServices(services =>
             {
                 services.RemoveAll<IDbConnectionFactory>();
-                services.AddSingleton<IDbConnectionFactory>(new TestcontainerDbConnectionFactory(_dbContainer));
+                services.AddSingleton<IDbConnectionFactory>(new TestcontainersDbConnectionFactory(_dbContainer));
             });
 
             base.ConfigureWebHost(builder);

@@ -5,11 +5,11 @@ using Npgsql;
 
 namespace DevUp.Api.Tests.Integration.Common
 {
-    internal class TestcontainerDbConnectionFactory : IDbConnectionFactory
+    internal class TestcontainersDbConnectionFactory : IDbConnectionFactory
     {
         private readonly TestcontainerDatabase _database;
 
-        public TestcontainerDbConnectionFactory(TestcontainerDatabase database)
+        public TestcontainersDbConnectionFactory(TestcontainerDatabase database)
         {
             _database = database;
         }
