@@ -14,7 +14,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
 {
     public class IdentityControllerTests_Refresh : IClassFixture<IdentityApiFactory>
     {
-        private IdentityFaker _faker;
+        private readonly IdentityFaker _faker;
         private readonly IdentityApiFactory _apiFactory;
         private readonly HttpClient _apiClient;
 
@@ -137,6 +137,38 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
                 RefreshToken = oldTokenPair.RefreshToken!,
                 Device = _faker.LoginUserRequest.Device
             };
+            var refreshResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
+            refreshResult.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+
+            var refreshResponse = await refreshResult.Content.ReadFromJsonAsync<ErrorResponse>();
+            refreshResponse!.Errors.Should().ContainSingle(e => e == "Invalid request.");
+        }
+
+        [Fact]
+        public async Task Refresh_WhenRefreshTokenWasRevokedAndSomeoneTriesToUseItAgain_ReturnsBadRequestWithGenericMessage()
+        {
+            // register
+            await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, _faker.RegisterUserRequest);
+
+            // login and grab token pair
+            var loginResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Login, _faker.LoginUserRequest);
+            var tokenPair = await loginResult.Content.ReadFromJsonAsync<IdentityResponse>();
+
+            // wait for token expiration. refresh token will still be active
+            await Task.Delay(_apiFactory.AuthenticationOptions.TokenExpiry);
+
+            // revoke refresh token
+            var revokeRequest = new RevokeTokenRequest() { RefreshToken = tokenPair!.RefreshToken };
+            await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Revoke, revokeRequest);
+
+            // try refreshing
+            var refreshRequest = new RefreshUserRequest()
+            {
+                Token = tokenPair.Token!,
+                RefreshToken = tokenPair.RefreshToken!,
+                Device = _faker.LoginUserRequest.Device
+            };
+
             var refreshResult = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Refresh, refreshRequest);
             refreshResult.Should().HaveStatusCode(HttpStatusCode.BadRequest);
 
