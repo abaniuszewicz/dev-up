@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Bogus;
 using DevUp.Domain.Identity.Entities;
@@ -47,7 +45,8 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
         [Fact]
         public async Task RevokeAsync_WhenCalledForChainWithOnlyOneToken_InvalidatesThatSingleToken()
         {
-            var tokenPair = await CreateTokenPair(_deviceFaker);
+            var user = await _userRepository.CreateAsync(_usernameFaker, _passwordHashFaker, CancellationToken.None);
+            var tokenPair = await CreateTokenPair(user, _deviceFaker);
 
             var rtiBeforeInvalidation = await _refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
             rtiBeforeInvalidation.Invalidated.Should().BeFalse();
@@ -61,9 +60,10 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
         [Fact]
         public async Task RevokeAsync_WhenCalledForChainWithMultipleTokens_InvalidatesAllThatWereIssuedAfterRequestedTokenToInvalidate()
         {
+            var user = await _userRepository.CreateAsync(_usernameFaker, _passwordHashFaker, CancellationToken.None);
             var device = _deviceFaker.Generate();
 
-            var pair1 = await CreateTokenPair(device); ;       // should not get invalidated
+            var pair1 = await CreateTokenPair(user, device); // should not get invalidated
             var pair2 = await RefreshTokenPair(pair1, device); // should not get invalidated
             var pair3 = await RefreshTokenPair(pair2, device); // <--- invalidate this, should get invalidated
             var pair4 = await RefreshTokenPair(pair3, device); // should get invalidated
@@ -83,9 +83,33 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             rti5.Invalidated.Should().BeTrue();
         }
 
-        private async Task<TokenPair> CreateTokenPair(Device device)
+        [Fact]
+        public async Task RevokeAsync_WhenThereAreMultipleChainsForTheSameUserAndDevice_InvalidatesOnlyThatChainThatWasRequestedAndLeavesOtherIntact()
         {
             var user = await _userRepository.CreateAsync(_usernameFaker, _passwordHashFaker, CancellationToken.None);
+            var device = _deviceFaker.Generate();
+
+            var chain1_pair1 = await CreateTokenPair(user, device);
+            var chain1_pair2 = await RefreshTokenPair(chain1_pair1, device);
+
+            var chain2_pair1 = await CreateTokenPair(user, device);
+            var chain2_pair2 = await RefreshTokenPair(chain2_pair1, device);
+
+            await _tokenService.RevokeAsync(chain1_pair1.RefreshToken, CancellationToken.None);
+
+            var chain1_rti1 = await _refreshTokenRepository.GetByIdAsync(new(chain1_pair1.RefreshToken), CancellationToken.None);
+            chain1_rti1.Invalidated.Should().BeTrue();
+            var chain1_rti2 = await _refreshTokenRepository.GetByIdAsync(new(chain1_pair2.RefreshToken), CancellationToken.None);
+            chain1_rti2.Invalidated.Should().BeTrue();
+
+            var chain2_rti1 = await _refreshTokenRepository.GetByIdAsync(new(chain2_pair1.RefreshToken), CancellationToken.None);
+            chain2_rti1.Invalidated.Should().BeFalse();
+            var chain2_rti2 = await _refreshTokenRepository.GetByIdAsync(new(chain2_pair2.RefreshToken), CancellationToken.None);
+            chain2_rti2.Invalidated.Should().BeFalse();
+        }
+
+        private async Task<TokenPair> CreateTokenPair(User user, Device device)
+        {
             await _deviceRepository.AddAsync(device, CancellationToken.None);
 
             var tokenPair = await _tokenService.CreateAsync(user.Id, device.Id, CancellationToken.None);
