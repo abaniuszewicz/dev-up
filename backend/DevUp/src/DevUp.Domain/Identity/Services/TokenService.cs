@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DevUp.Domain.Common.Services;
 using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
+using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.Services.Exceptions;
 using DevUp.Domain.Identity.Setup;
@@ -77,7 +78,16 @@ namespace DevUp.Domain.Identity.Services
             var oldRefreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(oldRefreshTokenInfoId, cancellationToken)
                 ?? throw new RefreshTokenInfoIdNotFoundException(oldRefreshTokenInfoId);
 
-            await ValidateAsync(oldTokenInfo, oldRefreshTokenInfo, device, cancellationToken);
+            try
+            {
+                await ValidateAsync(oldTokenInfo, oldRefreshTokenInfo, device, cancellationToken);
+            }
+            catch (Exception exception) when (exception is IIdentityException)
+            {
+                await RevokeAsync(oldTokenPair.RefreshToken, cancellationToken);
+                throw;
+            }
+
             await _refreshTokenRepository.MarkAsUsedAsync(oldRefreshTokenInfo, cancellationToken);
             var newTokenPair = await CreateAsync(oldTokenInfo.UserId, oldTokenInfo.DeviceId, cancellationToken);
             var newRefreshTokenInfoId = new RefreshTokenInfoId(newTokenPair.RefreshToken);
