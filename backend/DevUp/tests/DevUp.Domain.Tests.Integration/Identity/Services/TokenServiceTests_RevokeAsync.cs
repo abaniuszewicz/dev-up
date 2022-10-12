@@ -47,7 +47,7 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
         [Fact]
         public async Task RevokeAsync_WhenCalledForChainWithOnlyOneToken_InvalidatesThatSingleToken()
         {
-            var tokenPair = await CreateTokenPair();
+            var tokenPair = await CreateTokenPair(_deviceFaker);
 
             var rtiBeforeInvalidation = await _refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
             rtiBeforeInvalidation.Invalidated.Should().BeFalse();
@@ -59,12 +59,12 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
         }
 
         [Fact]
-        public async Task RevokeAsync_WhenCalledForChainWithMultipleTokens_InvalidatesAllThatComeAfterRequestedTokenToInvalidate()
+        public async Task RevokeAsync_WhenCalledForChainWithMultipleTokens_InvalidatesAllThatWereIssuedAfterRequestedTokenToInvalidate()
         {
             var device = _deviceFaker.Generate();
 
-            var pair1 = await CreateTokenPair(device); ;       // ok
-            var pair2 = await RefreshTokenPair(pair1, device); // ok
+            var pair1 = await CreateTokenPair(device); ;       // should not get invalidated
+            var pair2 = await RefreshTokenPair(pair1, device); // should not get invalidated
             var pair3 = await RefreshTokenPair(pair2, device); // <--- invalidate this, should get invalidated
             var pair4 = await RefreshTokenPair(pair3, device); // should get invalidated
             var pair5 = await RefreshTokenPair(pair4, device); // should get invalidated
@@ -83,10 +83,9 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             rti5.Invalidated.Should().BeTrue();
         }
 
-        private async Task<TokenPair> CreateTokenPair(Device? customDevice = null)
+        private async Task<TokenPair> CreateTokenPair(Device device)
         {
             var user = await _userRepository.CreateAsync(_usernameFaker, _passwordHashFaker, CancellationToken.None);
-            var device = customDevice ?? _deviceFaker;
             await _deviceRepository.AddAsync(device, CancellationToken.None);
 
             var tokenPair = await _tokenService.CreateAsync(user.Id, device.Id, CancellationToken.None);

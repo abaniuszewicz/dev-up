@@ -154,14 +154,13 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
 
             var dto = _mapper.Map<RefreshTokenDto>(refreshToken);
             var sql = @$"WITH RECURSIVE chain AS (
-                                SELECT token
+                                SELECT token, next
                                 FROM refresh_tokens
                                 WHERE token = @{nameof(RefreshTokenDto.Token)}
                             UNION ALL
-                                SELECT rt.token
-                                FROM chain c 
-                                    JOIN refresh_tokens rt 
-                                    ON c.token = rt.next
+                                SELECT rt.token, rt.next
+                                FROM refresh_tokens rt, chain c 
+                                WHERE c.next = rt.token
                          )
                          UPDATE refresh_tokens rt
                          SET invalidated = TRUE
