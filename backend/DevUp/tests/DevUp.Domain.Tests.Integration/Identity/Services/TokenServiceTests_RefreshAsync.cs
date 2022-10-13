@@ -50,7 +50,7 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenRefreshTokenWasIssuedForDifferentToken_ThrowsTokenMismatchException()
+        public async Task RefreshAsync_WhenRefreshTokenWasIssuedForDifferentToken_ThrowsTokenMismatchExceptionAndInvalidatesRefreshToken()
         {
             var user = await CreateUser();
             var device = await CreateDevice();
@@ -65,6 +65,8 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             var refresh = async () => await _tokenService.RefreshAsync(tokenPair, device, CancellationToken.None);
 
             await refresh.Should().ThrowAsync<TokenMismatchException>();
+            var rtiAfterRefreshAttempt = await _refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
+            rtiAfterRefreshAttempt.Invalidated.Should().BeTrue();
         }
 
         [Fact]
@@ -84,7 +86,7 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenRefreshTokenWasAlreadyUsed_ThrowsRefreshTokenUsedException()
+        public async Task RefreshAsync_WhenRefreshTokenWasAlreadyUsed_ThrowsRefreshTokenUsedExceptionAndInvalidatesRefreshToken()
         {
             var user = await CreateUser();
             var device = await CreateDevice();
@@ -97,10 +99,12 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             var refresh = async () => await _tokenService.RefreshAsync(tokenPair, device, CancellationToken.None);
 
             await refresh.Should().ThrowAsync<RefreshTokenUsedException>();
+            var rtiAfterRefreshAttempt = await _refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
+            rtiAfterRefreshAttempt.Invalidated.Should().BeTrue();
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenTokenHasNotExpiredYet_ThrowsTokenNotExpiredException()
+        public async Task RefreshAsync_WhenTokenHasNotExpiredYet_ThrowsTokenNotExpiredExceptionAndInvalidatesRefreshToken()
         {
             var user = await CreateUser();
             var device = await CreateDevice();
@@ -112,7 +116,7 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenRefreshTokenHasExpired_ThrowsRefreshTokenExpiredException()
+        public async Task RefreshAsync_WhenRefreshTokenHasExpired_ThrowsRefreshTokenExpiredExceptionAndInvalidatesRefreshToken()
         {
             var user = await CreateUser();
             var device = await CreateDevice();
@@ -122,10 +126,12 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             var refresh = async () => await _tokenService.RefreshAsync(tokenPair, device, CancellationToken.None);
 
             await refresh.Should().ThrowAsync<RefreshTokenExpiredException>();
+            var rtiAfterRefreshAttempt = await _refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
+            rtiAfterRefreshAttempt.Invalidated.Should().BeTrue();
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenTokenPointsToNonExistingUser_ThrowsUserIdNotFoundException()
+        public async Task RefreshAsync_WhenTokenPointsToNonExistingUser_ThrowsUserIdNotFoundExceptionAndInvalidatesRefreshToken()
         {
             // this cannot be achieved through postgres repository due to FK constraint that enforces data integrity
             var userRepository = new InMemoryUserRepository();
@@ -144,10 +150,12 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             var refresh = async () => await tokenService.RefreshAsync(tokenPair, device, CancellationToken.None);
 
             await refresh.Should().ThrowAsync<UserIdNotFoundException>();
+            var rtiAfterRefreshAttempt = await refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
+            rtiAfterRefreshAttempt.Invalidated.Should().BeTrue();
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenRefreshTokenPointsToDifferentUserThanToken_ThrowsUserIdMismatchException()
+        public async Task RefreshAsync_WhenRefreshTokenPointsToDifferentUserThanToken_ThrowsUserIdMismatchExceptionAndInvalidatesRefreshToken()
         {
             var user = await CreateUser();
             var differentUser = await CreateUser();
@@ -160,10 +168,12 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             var refresh = async () => await _tokenService.RefreshAsync(tokenPair, device, CancellationToken.None);
 
             await refresh.Should().ThrowAsync<UserIdMismatchException>();
+            var rtiAfterRefreshAttempt = await _refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
+            rtiAfterRefreshAttempt.Invalidated.Should().BeTrue();
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenTokenPointsToNonExistingDevice_ThrowsDeviceIdNotFoundException()
+        public async Task RefreshAsync_WhenTokenPointsToNonExistingDevice_ThrowsDeviceIdNotFoundExceptionAndInvalidatesRefreshToken()
         {
             // this cannot be achieved through postgres repository due to FK constraint that enforces data integrity
             var userRepository = new InMemoryUserRepository();
@@ -181,10 +191,12 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             var refresh = async () => await tokenService.RefreshAsync(tokenPair, device, CancellationToken.None);
 
             await refresh.Should().ThrowAsync<DeviceIdNotFoundException>();
+            var rtiAfterRefreshAttempt = await refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
+            rtiAfterRefreshAttempt.Invalidated.Should().BeTrue();
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenRefreshTokenPointsToDifferentDeviceThanToken_ThrowsDeviceIdMismatchException()
+        public async Task RefreshAsync_WhenRefreshTokenPointsToDifferentDeviceThanToken_ThrowsDeviceIdMismatchExceptionAndInvalidatesRefreshToken()
         {
             var user = await CreateUser();
             var device = await CreateDevice();
@@ -197,10 +209,12 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             var refresh = async () => await _tokenService.RefreshAsync(tokenPair, device, CancellationToken.None);
 
             await refresh.Should().ThrowAsync<DeviceIdMismatchException>();
+            var rtiAfterRefreshAttempt = await _refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
+            rtiAfterRefreshAttempt.Invalidated.Should().BeTrue();
         }
 
         [Fact]
-        public async Task RefreshAsync_WhenTryingToRefreshFromDifferentDeviceThanTokenWasIssuedFor_ThrowsDeviceIdMismatchException()
+        public async Task RefreshAsync_WhenTryingToRefreshFromDifferentDeviceThanTokenWasIssuedFor_ThrowsDeviceIdMismatchExceptionAndInvalidatesRefreshToken()
         {
             var user = await CreateUser();
             var device = await CreateDevice();
@@ -210,6 +224,8 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
             var refresh = async () => await _tokenService.RefreshAsync(tokenPair, differentDevice, CancellationToken.None);
 
             await refresh.Should().ThrowAsync<DeviceIdMismatchException>();
+            var rtiAfterRefreshAttempt = await _refreshTokenRepository.GetByIdAsync(new(tokenPair.RefreshToken), CancellationToken.None);
+            rtiAfterRefreshAttempt.Invalidated.Should().BeTrue();
         }
 
         private async Task<User> CreateUser()

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using DevUp.Domain.Identity.Entities;
@@ -26,7 +25,7 @@ namespace DevUp.Infrastructure.Identity.Repositories
             return Task.FromResult(dto?.RefreshTokenInfo);
         }
 
-        public async Task ChainAsync(RefreshTokenInfoId oldRefreshTokenInfoId, RefreshTokenInfoId newRefreshTokenInfoId, CancellationToken cancellationToken)
+        public Task ChainAsync(RefreshTokenInfoId oldRefreshTokenInfoId, RefreshTokenInfoId newRefreshTokenInfoId, CancellationToken cancellationToken)
         {
             if (!_refreshTokens.TryGetValue(oldRefreshTokenInfoId, out var oldDto))
                 throw new RefreshTokenInfoIdNotFoundException(oldRefreshTokenInfoId);
@@ -35,12 +34,15 @@ namespace DevUp.Infrastructure.Identity.Repositories
 
             oldDto.Next = newRefreshTokenInfoId;
             newDto.Previous = oldRefreshTokenInfoId;
+            return Task.CompletedTask;
         }
 
         public Task InvalidateChainAsync(RefreshTokenInfo refreshTokenInfo, CancellationToken cancellationToken)
         {
+            if (!_refreshTokens.TryGetValue(refreshTokenInfo.Id, out var dto))
+                throw new RefreshTokenInfoIdNotFoundException(refreshTokenInfo.Id);
+
             refreshTokenInfo.Invalidated = true;
-            _refreshTokens.TryGetValue(refreshTokenInfo.Id, out var dto);
             while (dto?.Next is not null)
             {
                 dto.RefreshTokenInfo.Invalidated = true;
