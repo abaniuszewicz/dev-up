@@ -27,7 +27,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
                 Password = Faker.Internet.Password(passwordLength, prefix: "lowUPP1$"),
                 Device = new DeviceRequest()
                 {
-                    Id = Faker.Random.Guid().ToString(),
+                    Id = Faker.Random.Guid(),
                     Name = RandomDeviceName()
                 }
             };

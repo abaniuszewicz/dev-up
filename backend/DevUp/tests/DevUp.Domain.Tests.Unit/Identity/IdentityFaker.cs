@@ -37,7 +37,7 @@ namespace DevUp.Domain.Tests.Unit.Identity
             Password = new Password(Faker.Internet.Password());
             PasswordHash = new PasswordHash(Faker.Random.Hash());
             User = new User(UserId, Username);
-            DeviceId = new DeviceId(Faker.Random.Guid().ToString());
+            DeviceId = new DeviceId(Faker.Random.Guid());
             DeviceName = new DeviceName(RandomDeviceName());
             Device = new Device(DeviceId, DeviceName);
             Token = new Token(Regex.Replace("{header}.{payload}.{signature}", "{.+?}", _ => RandomString()));

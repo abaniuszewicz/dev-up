@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -43,7 +44,7 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             {
                 Username = "BAD-",
                 Password = "i'm-G00d-and-$tr0ng-p4ssworD",
-                Device = new DeviceRequest() { Id = "i'm ok", Name = "i'm ok" }
+                Device = new DeviceRequest() { Id = Guid.NewGuid(), Name = "i'm ok" }
             };
 
             var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, invalidRequest);
