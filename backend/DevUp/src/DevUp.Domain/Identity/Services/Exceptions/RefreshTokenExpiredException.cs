@@ -6,14 +6,14 @@ using DevUp.Domain.Identity.Exceptions;
 
 namespace DevUp.Domain.Identity.Services.Exceptions
 {
-    public sealed class RefreshTokenNotActiveException : IdentityBusinessRuleValidationException
+    public sealed class RefreshTokenExpiredException : IdentityBusinessRuleValidationException
     {
-        public RefreshToken RefreshToken { get; }
+        public RefreshTokenInfoId RefreshToken { get; }
         public DateTimeRange Lifespan { get; }
         public DateTime Now { get; }
 
-        public RefreshTokenNotActiveException(RefreshTokenInfo refreshTokenInfo, IDateTimeProvider dateTimeProvider)
-            : base("Refresh token is not active.")
+        public RefreshTokenExpiredException(RefreshTokenInfo refreshTokenInfo, IDateTimeProvider dateTimeProvider)
+            : base("Refresh token has expired.")
         {
             RefreshToken = refreshTokenInfo.Id;
             Lifespan = refreshTokenInfo.Lifespan;

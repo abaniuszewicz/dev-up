@@ -1,4 +1,5 @@
 ﻿using DevUp.Domain.Organization.ValueObjects;
+using DevUp.Domain.Organization.ValueObjects.Exceptions;
 using NUnit.Framework;
 
 namespace DevUp.Domain.Tests.Unit.Organization.ValueObjects

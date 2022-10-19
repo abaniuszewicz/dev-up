@@ -12,35 +12,35 @@ namespace DevUp.Domain.Identity.Services
     internal class IdentityService : IIdentityService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IPasswordService _passwordService;
         private readonly ITokenService _tokenService;
+        private readonly IDeviceRepository _deviceRepository;
 
         public IdentityService(
             IUserRepository userRepository,
-            IRefreshTokenRepository refreshTokenRepository,
+            IDeviceRepository deviceRepository,
             IPasswordService passwordService,
             ITokenService tokenService)
         {
             _userRepository = userRepository;
-            _refreshTokenRepository = refreshTokenRepository;
+            _deviceRepository = deviceRepository;
             _passwordService = passwordService;
             _tokenService = tokenService;
         }
 
-        public async Task<IdentityResult> RegisterAsync(Username username, Password password, Device device, CancellationToken cancellationToken)
+        public async Task<TokenPair> RegisterAsync(Username username, Password password, Device device, CancellationToken cancellationToken)
         {
             var existingUser = await _userRepository.GetByUsernameAsync(username, cancellationToken);
             if (existingUser is not null)
                 throw new UsernameTakenException(username);
 
+            await _deviceRepository.AddAsync(device, cancellationToken);
             var passwordHash = await _passwordService.HashAsync(password, cancellationToken);
             var createdUser = await _userRepository.CreateAsync(username, passwordHash, cancellationToken);
-            (var token, var refreshToken) = await _tokenService.CreateAsync(createdUser, device, cancellationToken);
-            return new IdentityResult(token, refreshToken);
+            return await _tokenService.CreateAsync(createdUser.Id, device.Id, cancellationToken);
         }
 
-        public async Task<IdentityResult> LoginAsync(Username username, Password password, Device device, CancellationToken cancellationToken)
+        public async Task<TokenPair> LoginAsync(Username username, Password password, Device device, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetByUsernameAsync(username, cancellationToken);
             if (user is null)
@@ -54,21 +54,7 @@ namespace DevUp.Domain.Identity.Services
             if (verificationResult == PasswordVerifyResult.Failed)
                 throw new InvalidPasswordException(username);
 
-            (var token, var refreshToken) = await _tokenService.CreateAsync(user, device, cancellationToken);
-            return new IdentityResult(token, refreshToken);
-        }
-
-        public async Task<IdentityResult> RefreshAsync(Token token, RefreshToken refreshToken, Device device, CancellationToken cancellationToken)
-        {
-            var tokenInfo = await _tokenService.DescribeAsync(token, cancellationToken);
-            var refreshTokenInfo = await _tokenService.DescribeAsync(refreshToken, cancellationToken);
-
-            await _tokenService.ValidateAsync(tokenInfo, refreshTokenInfo, device, cancellationToken);
-            await _refreshTokenRepository.MarkAsUsedAsync(refreshTokenInfo, cancellationToken);
-            var user = await _userRepository.GetByIdAsync(tokenInfo.UserId, cancellationToken);
-
-            (var newToken, var newRefreshToken) = await _tokenService.CreateAsync(user, device, cancellationToken);
-            return new IdentityResult(newToken, newRefreshToken);
+            return await _tokenService.CreateAsync(user.Id, device.Id, cancellationToken);
         }
     }
 }

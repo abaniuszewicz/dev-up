@@ -28,6 +28,9 @@ namespace DevUp.Api.V1.Identity
                 .ForMember(c => c.DeviceId, m => m.MapFrom(r => r.Device.Id))
                 .ForMember(c => c.DeviceName, m => m.MapFrom(r => r.Device.Name));
 
+            CreateMap<RevokeTokenRequest, RevokeTokenCommand>()
+                .ForMember(c => c.RefreshToken, m => m.MapFrom(r => r.RefreshToken));
+
             CreateMap<TokenPair, IdentityResponse>()
                 .ForMember(r => r.Token, m => m.MapFrom(tp => tp.Token))
                 .ForMember(r => r.RefreshToken, m => m.MapFrom(tp => tp.RefreshToken));

@@ -1,6 +1,6 @@
 ﻿using DevUp.Domain.Organization.Exceptions;
 
-namespace DevUp.Domain.Organization.ValueObjects
+namespace DevUp.Domain.Organization.ValueObjects.Exceptions
 {
     public class EmptyMemberNameException : OrganizationDataValidationException
     {
