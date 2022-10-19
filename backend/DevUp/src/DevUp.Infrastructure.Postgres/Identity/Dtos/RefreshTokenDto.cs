@@ -7,7 +7,7 @@
         public Guid UserId { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime ExpiryDate { get; set; }
-        public string DeviceId { get; set; }
+        public Guid DeviceId { get; set; }
         public bool Used { get; set; }
         public bool Invalidated { get; set; }
     }
