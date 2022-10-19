@@ -41,8 +41,8 @@ namespace DevUp.Api.Tests.Integration.V1.Identity
             var invalidRequest = new RegisterUserRequest()
             {
                 Username = "BAD-",
-                Password = "i'm-G00d-and-$tr0ng-p4ssworD",
-                Device = new DeviceRequest() { Id = "i'm ok", Name = "i'm ok" }
+                Password = _faker.RegisterUserRequest.Password,
+                Device = _faker.RegisterUserRequest.Device
             };
 
             var result = await _apiClient.PostAsJsonAsync(Route.Api.V1.Identity.Register, invalidRequest);

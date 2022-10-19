@@ -23,7 +23,7 @@ namespace DevUp.Application.Identity.Commands.Handlers
         {
             var token = new Token(request.Token);
             var refreshToken = new RefreshToken(request.RefreshToken);
-            var device = new Device(new DeviceId(request.DeviceId), request.DeviceName);
+            var device = new Device(new(request.DeviceId), new(request.DeviceName));
 
             var tokenPair = await _tokenService.RefreshAsync(new(token, refreshToken), device, cancellationToken);
             var tokenPairToStore = _mapper.Map<TokenPair>(tokenPair);

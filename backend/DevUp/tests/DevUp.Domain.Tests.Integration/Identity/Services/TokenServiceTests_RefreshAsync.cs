@@ -17,7 +17,7 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
     public class TokenServiceTests_RefreshAsync : IClassFixture<TokenServiceFactory>
     {
         private readonly Faker<User> _userFaker = new Faker<User>().CustomInstantiator(f => new(new(f.Random.Guid()), new(f.Person.UserName)));
-        private readonly Faker<Device> _deviceFaker = new Faker<Device>().CustomInstantiator(f => new(new(f.Random.Guid()), $"{f.Person.FirstName} PC"));
+        private readonly Faker<Device> _deviceFaker = new Faker<Device>().CustomInstantiator(f => new(new(f.Random.Guid()), new($"{f.Person.FirstName} PC")));
         private readonly Faker<Username> _usernameFaker = new Faker<Username>().CustomInstantiator(f => new(f.Internet.UserName()));
         private readonly Faker<PasswordHash> _passwordHashFaker = new Faker<PasswordHash>().CustomInstantiator(f => new(f.Random.Hash()));
 

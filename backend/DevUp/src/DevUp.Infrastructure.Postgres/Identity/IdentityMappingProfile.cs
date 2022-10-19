@@ -29,7 +29,7 @@ namespace DevUp.Infrastructure.Postgres.Identity
             CreateMap<UserDto, User>().ConvertUsing(s => new User(new(s.Id), new(s.Username)));
             CreateMap<RefreshTokenDto, RefreshTokenInfo>().ConvertUsing<RefreshTokenMapper>();
             CreateMap<UserDto, PasswordHash>().ConvertUsing(s => new PasswordHash(s.PasswordHash));
-            CreateMap<DeviceDto, Device>().ConvertUsing(s => new Device(new(s.Id), s.Name));
+            CreateMap<DeviceDto, Device>().ConvertUsing(s => new Device(new(s.Id), new(s.Name)));
         }
 
         private class RefreshTokenMapper : ITypeConverter<RefreshTokenDto, RefreshTokenInfo>

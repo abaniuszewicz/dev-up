@@ -23,7 +23,7 @@ namespace DevUp.Application.Identity.Commands.Handlers
         {
             var username = new Username(request.Username);
             var password = new Password(request.Password);
-            var device = new Device(new DeviceId(request.DeviceId), request.DeviceName);
+            var device = new Device(new(request.DeviceId), new(request.DeviceName));
 
             var identityResult = await _identityService.LoginAsync(username, password, device, cancellationToken);
             var tokenPair = _mapper.Map<TokenPair>(identityResult);

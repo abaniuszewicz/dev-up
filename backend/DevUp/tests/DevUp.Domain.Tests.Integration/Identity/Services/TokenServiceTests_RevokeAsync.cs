@@ -13,7 +13,7 @@ namespace DevUp.Domain.Tests.Integration.Identity.Services
 {
     public class TokenServiceTests_RevokeAsync : IClassFixture<TokenServiceFactory>
     {
-        private readonly Faker<Device> _deviceFaker = new Faker<Device>().CustomInstantiator(f => new(new(f.Random.Guid()), $"{f.Person.FirstName} (iPhone)"));
+        private readonly Faker<Device> _deviceFaker = new Faker<Device>().CustomInstantiator(f => new(new(f.Random.Guid()), new($"{f.Person.FirstName} (iPhone)")));
         private readonly Faker<Username> _usernameFaker = new Faker<Username>().CustomInstantiator(f => new(f.Internet.UserName()));
         private readonly Faker<PasswordHash> _passwordHashFaker = new Faker<PasswordHash>().CustomInstantiator(f => new(f.Random.Hash()));
 
