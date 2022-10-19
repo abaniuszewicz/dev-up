@@ -3,7 +3,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
-    public class PasswordHash : ValueObject
+    public sealed class PasswordHash : ValueObject
     {
         public string Value { get; }
 

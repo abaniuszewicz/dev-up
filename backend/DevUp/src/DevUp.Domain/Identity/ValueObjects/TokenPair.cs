@@ -16,7 +16,7 @@ namespace DevUp.Domain.Identity.ValueObjects
             RefreshToken = refreshToken;
         }
 
-        private void Validate(Token token, RefreshToken refreshToken)
+        private static void Validate(Token token, RefreshToken refreshToken)
         {
             if (token is null)
                 throw new EmptyTokenException();

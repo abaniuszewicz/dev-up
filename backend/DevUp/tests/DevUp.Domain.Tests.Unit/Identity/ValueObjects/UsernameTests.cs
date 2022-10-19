@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DevUp.Domain.Identity.ValueObjects;
+﻿using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using NUnit.Framework;
 
@@ -7,15 +6,6 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
 {
     public class UsernameTests
     {
-        private class Dummy : Username
-        {
-            public Dummy(string username) : base(username)
-            {
-            }
-
-            public new IEnumerable<object> GetEqualityComponents() => base.GetEqualityComponents();
-        }
-
         [Test]
         [TestCase(null)]
         [TestCase("")]
@@ -34,14 +24,12 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        public void GetEqualityComponents_WhenCalled_ReturnsUsernameValue()
+        public void Equality_WhenCompared_ChecksByValue()
         {
-            const string value = "valid-username";
-            var username = new Dummy(value);
+            var username1 = new Username("valid-username");
+            var username2 = new Username("valid-username");
 
-            var result = username.GetEqualityComponents();
-
-            Assert.That(result, Has.One.EqualTo(value));
+            Assert.AreEqual(username1, username2);
         }
     }
 }

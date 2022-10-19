@@ -3,7 +3,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
-    public class RefreshTokenInfoId : EntityId
+    public sealed class RefreshTokenInfoId : EntityId
     {
         public RefreshToken RefreshToken { get; }
 

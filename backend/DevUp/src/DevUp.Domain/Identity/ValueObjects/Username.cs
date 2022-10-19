@@ -4,7 +4,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
-    public class Username : ValueObject
+    public sealed class Username : ValueObject
     {
         public string Value { get; set; }
 

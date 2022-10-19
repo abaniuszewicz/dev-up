@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using DevUp.Domain.Common.Services;
-using DevUp.Domain.Common.Types;
-using DevUp.Domain.Identity.Entities;
+﻿using DevUp.Domain.Common.Services;
 using DevUp.Domain.Identity.ValueObjects;
 using Moq;
 using NUnit.Framework;
@@ -10,15 +7,6 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
 {
     public class TokenInfoTests
     {
-        private class Dummy : TokenInfo
-        {
-            public Dummy(Token token, string jti, UserId userId, DeviceId deviceId, DateTimeRange lifespan) : base(token, jti, userId, deviceId, lifespan)
-            {
-            }
-
-            public new IEnumerable<object> GetEqualityComponents() => base.GetEqualityComponents();
-        }
-
         private IdentityFaker _faker;
 
         [SetUp]
@@ -77,13 +65,13 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        public void GetEqualityComponents_WhenCalled_ReturnsTokenValue()
+        public void Equality_WhenCompared_ChecksByTokenValue()
         {
-            var tokenInfo = new Dummy(_faker.TokenInfo.Token, _faker.TokenInfo.Jti, _faker.TokenInfo.UserId, _faker.TokenInfo.DeviceId, _faker.TokenInfo.Lifespan);
+            var differentFaker = new IdentityFaker();
+            var tokenInfo1 = new TokenInfo(_faker.TokenInfo.Token, _faker.TokenInfo.Jti, _faker.TokenInfo.UserId, _faker.TokenInfo.DeviceId, _faker.TokenInfo.Lifespan);
+            var tokenInfo2 = new TokenInfo(_faker.TokenInfo.Token, differentFaker.TokenInfo.Jti, differentFaker.TokenInfo.UserId, differentFaker.TokenInfo.DeviceId, differentFaker.TokenInfo.Lifespan);
 
-            var result = tokenInfo.GetEqualityComponents();
-
-            Assert.That(result, Has.One.EqualTo(_faker.TokenInfo.Token));
+            Assert.AreEqual(tokenInfo1, tokenInfo2);
         }
     }
 }

@@ -3,7 +3,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
-    public class UserId : EntityId
+    public sealed class UserId : EntityId
     {
         public Guid Id { get; }
 

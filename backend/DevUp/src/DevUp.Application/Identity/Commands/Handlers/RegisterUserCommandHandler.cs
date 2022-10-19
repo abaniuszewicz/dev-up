@@ -6,7 +6,7 @@ using MediatR;
 
 namespace DevUp.Application.Identity.Commands.Handlers
 {
-    internal class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
+    internal sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
     {
         private readonly IIdentityService _identityService;
         private readonly IMapper _mapper;
