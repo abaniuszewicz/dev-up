@@ -2,7 +2,7 @@
 
 namespace DevUp.Domain.Identity.ValueObjects.Exceptions
 {
-    public sealed class EmptyRefreshTokenException : IdentityDataValidationException
+    internal sealed class EmptyRefreshTokenException : IdentityDataValidationException
     {
         public EmptyRefreshTokenException()
             : base("Refresh token cannot be empty.")

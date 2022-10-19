@@ -3,7 +3,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
-    public class Device : Entity<DeviceId>
+    public sealed class Device : Entity<DeviceId>
     {
         public DeviceName Name { get; }
 

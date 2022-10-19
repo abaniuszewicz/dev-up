@@ -4,7 +4,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
-    public class DeviceName : ValueObject
+    public sealed class DeviceName : ValueObject
     {
         public string Value { get; }
 

@@ -6,7 +6,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
-    public class RefreshToken : ValueObject
+    public sealed class RefreshToken : ValueObject
     {
         public string Value { get; }
 
@@ -21,7 +21,7 @@ namespace DevUp.Domain.Identity.ValueObjects
             Value = token;
         }
 
-        private void Validate(string refreshToken)
+        private static void Validate(string refreshToken)
         {
             if (string.IsNullOrWhiteSpace(refreshToken))
                 throw new EmptyRefreshTokenException();

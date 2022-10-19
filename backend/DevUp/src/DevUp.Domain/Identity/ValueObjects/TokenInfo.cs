@@ -6,7 +6,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.ValueObjects
 {
-    public class TokenInfo : ValueObject
+    public sealed class TokenInfo : ValueObject
     {
         public Token Token { get; }
         public string Jti { get; }

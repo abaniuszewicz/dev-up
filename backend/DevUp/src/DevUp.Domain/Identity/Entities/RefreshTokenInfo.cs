@@ -5,7 +5,7 @@ using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
-    public class RefreshTokenInfo : Entity<RefreshTokenInfoId>
+    public sealed class RefreshTokenInfo : Entity<RefreshTokenInfoId>
     {
         public string Jti { get; }
         public UserId UserId { get; }
