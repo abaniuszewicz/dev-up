@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DevUp.Domain.Identity.ValueObjects;
+﻿using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using NUnit.Framework;
 
@@ -7,15 +6,6 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
 {
     public class TokenTests
     {
-        private class Dummy : Token
-        {
-            public Dummy(string token) : base(token)
-            {
-            }
-
-            public new IEnumerable<object> GetEqualityComponents() => base.GetEqualityComponents();
-        }
-
         [Test]
         [TestCase(null)]
         [TestCase("")]
@@ -43,14 +33,12 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        public void GetEqualityComponents_WhenCalled_ReturnsTokenValue()
+        public void Equality_WhenCompared_ChecksByValue()
         {
-            const string value = "header.payload.signature";
-            var token = new Dummy(value);
+            var token1 = new Token("header.payload.signature");
+            var token2 = new Token("header.payload.signature");
 
-            var result = token.GetEqualityComponents();
-
-            Assert.That(result, Has.One.EqualTo(value));
+            Assert.AreEqual(token1, token2);
         }
     }
 }

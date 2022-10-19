@@ -15,5 +15,19 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
             Assert.AreEqual(token, result.Token);
             Assert.AreEqual(refreshToken, result.RefreshToken);
         }
+
+        [Test]
+        public void Equality_WhenCompared_ChecksByValue()
+        {
+            var token1 = new Token("header.payload.signature");
+            var refreshToken1 = new RefreshToken("--valid_refresh_token--");
+            var tokenPair1 = new TokenPair(token1, refreshToken1);
+
+            var token2 = new Token("header.payload.signature");
+            var refreshToken2 = new RefreshToken("--valid_refresh_token--");
+            var tokenPair2 = new TokenPair(token2, refreshToken2);
+
+            Assert.AreEqual(tokenPair1, tokenPair2);
+        }
     }
 }

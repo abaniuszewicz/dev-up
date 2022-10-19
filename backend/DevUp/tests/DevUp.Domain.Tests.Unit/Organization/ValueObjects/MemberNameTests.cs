@@ -17,9 +17,18 @@ namespace DevUp.Domain.Tests.Unit.Organization.ValueObjects
         [Test]
         public void Constructor_WhenGivenValidMemberName_AssignsValueProperty()
         {
-            const string value = "Member";
+            const string value = "member";
             var memberName = new MemberName(value);
             Assert.AreEqual(memberName.Value, value);
+        }
+
+        [Test]
+        public void Equality_WhenCompared_ChecksByValue()
+        {
+            var memberName1 = new MemberName("member");
+            var memberName2 = new MemberName("member");
+
+            Assert.AreEqual(memberName1, memberName2);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DevUp.Domain.Identity.ValueObjects;
+﻿using DevUp.Domain.Identity.ValueObjects;
 using DevUp.Domain.Identity.ValueObjects.Exceptions;
 using NUnit.Framework;
 
@@ -7,16 +6,6 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
 {
     public class RefreshTokenTests
     {
-        private class Dummy : RefreshToken
-        {
-            public Dummy(string refreshToken) 
-                : base(refreshToken)
-            {
-            }
-
-            public new IEnumerable<object> GetEqualityComponents() => base.GetEqualityComponents();
-        }
-
         [Test]
         [TestCase(null)]
         [TestCase("")]
@@ -35,14 +24,12 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        public void GetEqualityComponents_WhenCalled_ReturnsTokenValue()
+        public void Equality_WhenCompared_ChecksByValue()
         {
-            const string value = "r4nd0mha$h";
-            var refreshToken = new Dummy(value);
+            var refreshToken1 = new RefreshToken("r4nd0mha$h");
+            var refreshToken2 = new RefreshToken("r4nd0mha$h");
 
-            var result = refreshToken.GetEqualityComponents();
-
-            Assert.That(result, Has.One.EqualTo(value));
+            Assert.AreEqual(refreshToken1, refreshToken2);
         }
     }
 }

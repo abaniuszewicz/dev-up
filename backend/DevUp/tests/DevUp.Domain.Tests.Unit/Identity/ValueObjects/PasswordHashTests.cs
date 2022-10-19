@@ -1,20 +1,10 @@
-﻿using System.Collections.Generic;
-using DevUp.Domain.Identity.ValueObjects;
+﻿using DevUp.Domain.Identity.ValueObjects;
 using NUnit.Framework;
 
 namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
 {
     public class PasswordHashTests
     {
-        private class Dummy : PasswordHash
-        {
-            public Dummy(string passwordHash) : base(passwordHash)
-            {
-            }
-
-            public new IEnumerable<object> GetEqualityComponents() => base.GetEqualityComponents();
-        }
-
         [Test]
         public void Constructor_WhenGivenValidPasswordHash_AssignsValueProperty()
         {
@@ -24,14 +14,12 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         }
 
         [Test]
-        public void GetEqualityComponents_WhenCalled_ReturnsHashValue()
+        public void Equality_WhenCompared_ChecksByValue()
         {
-            const string value = "r4nd0m-h4$h";
-            var hash = new Dummy(value);
+            var hash1 = new PasswordHash("r4nd0m-h4$h");
+            var hash2 = new PasswordHash("r4nd0m-h4$h");
 
-            var result = hash.GetEqualityComponents();
-
-            Assert.That(result, Has.One.EqualTo(value));
+            Assert.AreEqual(hash1, hash2);
         }
     }
 }
