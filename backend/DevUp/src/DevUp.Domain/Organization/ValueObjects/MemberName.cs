@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DevUp.Domain.Organization.ValueObjects.Exceptions;
 using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Organization.ValueObjects

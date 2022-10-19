@@ -1,19 +1,20 @@
-﻿using DevUp.Domain.Seedwork;
+﻿using System;
+using DevUp.Domain.Seedwork;
 
 namespace DevUp.Domain.Identity.Entities
 {
     public class DeviceId : EntityId
     {
-        public string Id { get; }
+        public Guid Id { get; }
 
-        public DeviceId(string id)
+        public DeviceId(Guid id)
         {
             Id = id;
         }
 
         public override string ToString()
         {
-            return Id;
+            return Id.ToString();
         }
 
         public override bool Equals(EntityId other)

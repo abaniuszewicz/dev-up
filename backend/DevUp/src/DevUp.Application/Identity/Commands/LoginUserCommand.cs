@@ -6,7 +6,7 @@ namespace DevUp.Application.Identity.Commands
     {
         public string Username { get; init; }
         public string Password { get; init; }
-        public string DeviceId { get; init; }
+        public Guid DeviceId { get; init; }
         public string DeviceName { get; init; }
     }
 }

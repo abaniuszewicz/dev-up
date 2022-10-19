@@ -20,11 +20,14 @@ namespace DevUp.Domain.Tests.Unit.Identity
         public PasswordHash PasswordHash { get; }
         public User User { get; }
         public DeviceId DeviceId { get; }
+        public DeviceName DeviceName { get; }
         public Device Device { get; }
         public Token Token { get; }
         public TokenInfo TokenInfo { get; }
         public RefreshToken RefreshToken { get; }
+        public RefreshTokenInfoId RefreshTokenInfoId { get; }
         public RefreshTokenInfo RefreshTokenInfo { get; }
+        public TokenPair TokenPair { get; }
 
         public IdentityFaker()
         {
@@ -36,12 +39,15 @@ namespace DevUp.Domain.Tests.Unit.Identity
             Password = new Password(Faker.Internet.Password());
             PasswordHash = new PasswordHash(Faker.Random.Hash());
             User = new User(UserId, Username);
-            DeviceId = new DeviceId(Faker.Random.Guid().ToString());
-            Device = new Device(DeviceId, RandomDeviceName());
+            DeviceId = new DeviceId(Faker.Random.Guid());
+            DeviceName = new DeviceName(RandomDeviceName());
+            Device = new Device(DeviceId, DeviceName);
             Token = new Token(Regex.Replace("{header}.{payload}.{signature}", "{.+?}", _ => RandomString()));
-            TokenInfo = new TokenInfo(Token, Faker.Random.Guid().ToString(), UserId, RandomDateRange(now, 1, now));
+            TokenInfo = new TokenInfo(Token, Faker.Random.Guid().ToString(), UserId, DeviceId, RandomDateRange(now, 1, now));
             RefreshToken = new RefreshToken(RandomString());
-            RefreshTokenInfo = new RefreshTokenInfo(RefreshToken, TokenInfo.Jti, UserId, DeviceId, RandomDateRange(now, 5, TokenInfo.Lifespan.End));
+            RefreshTokenInfoId = new RefreshTokenInfoId(RefreshToken);
+            RefreshTokenInfo = new RefreshTokenInfo(RefreshTokenInfoId, TokenInfo.Jti, UserId, DeviceId, RandomDateRange(now, 5, TokenInfo.Lifespan.End));
+            TokenPair = new TokenPair(Token, RefreshToken);
         }
 
         private DateTimeRange RandomDateRange(DateTime now, int days, DateTime refDate)

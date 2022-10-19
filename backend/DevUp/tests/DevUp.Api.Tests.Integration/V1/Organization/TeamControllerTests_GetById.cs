@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using DevUp.Api.Contracts;
-using DevUp.Api.Contracts.V1;
 using DevUp.Api.Contracts.V1.Organization.Responses;
 using FluentAssertions;
 using Xunit;

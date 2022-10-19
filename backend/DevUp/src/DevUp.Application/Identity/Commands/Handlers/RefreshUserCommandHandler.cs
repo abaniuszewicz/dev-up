@@ -8,13 +8,13 @@ namespace DevUp.Application.Identity.Commands.Handlers
 {
     internal sealed class RefreshUserCommandHandler : IRequestHandler<RefreshUserCommand>
     {
-        private readonly IIdentityService _identityService;
+        private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly ITokenStore _tokenStore;
 
-        public RefreshUserCommandHandler(IIdentityService identityService, IMapper mapper, ITokenStore tokenStore)
+        public RefreshUserCommandHandler(ITokenService tokenService, IMapper mapper, ITokenStore tokenStore)
         {
-            _identityService = identityService;
+            _tokenService = tokenService;
             _mapper = mapper;
             _tokenStore = tokenStore;
         }
@@ -23,11 +23,11 @@ namespace DevUp.Application.Identity.Commands.Handlers
         {
             var token = new Token(request.Token);
             var refreshToken = new RefreshToken(request.RefreshToken);
-            var device = new Device(new DeviceId(request.DeviceId), request.DeviceName);
+            var device = new Device(new(request.DeviceId), new(request.DeviceName));
 
-            var identityResult = await _identityService.RefreshAsync(token, refreshToken, device, cancellationToken);
-            var tokenPair = _mapper.Map<TokenPair>(identityResult);
-            _tokenStore.Set(tokenPair);
+            var tokenPair = await _tokenService.RefreshAsync(new(token, refreshToken), device, cancellationToken);
+            var tokenPairToStore = _mapper.Map<TokenPair>(tokenPair);
+            _tokenStore.Set(tokenPairToStore);
             return default;
         }
     }

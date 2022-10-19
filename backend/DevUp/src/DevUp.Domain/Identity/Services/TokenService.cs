@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using DevUp.Domain.Common.Services;
 using DevUp.Domain.Common.Types;
 using DevUp.Domain.Identity.Entities;
+using DevUp.Domain.Identity.Exceptions;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Domain.Identity.Services.Exceptions;
 using DevUp.Domain.Identity.Setup;
@@ -15,14 +15,10 @@ using DevUp.Domain.Identity.ValueObjects;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-using static DevUp.Domain.Identity.Services.Exceptions.TokenValidationException;
-
 namespace DevUp.Domain.Identity.Services
 {
     internal class TokenService : ITokenService
     {
-        private const string SecurityAlghoritm = SecurityAlgorithms.HmacSha256;
-
         private readonly IUserRepository _userRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IDeviceRepository _deviceRepository;
@@ -42,7 +38,7 @@ namespace DevUp.Domain.Identity.Services
             _authenticationOptions = authenticationOptions.Value;
         }
 
-        public async Task<(Token, RefreshToken)> CreateAsync(User user, Device device, CancellationToken cancellationToken)
+        public async Task<TokenPair> CreateAsync(UserId userId, DeviceId deviceId, CancellationToken cancellationToken)
         {
             var now = _dateTimeProvider.Now;
 
@@ -53,79 +49,115 @@ namespace DevUp.Domain.Identity.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("sub", user.Id.ToString()),
-                    new Claim("jti", jti)
+                    new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, jti),
+                    new Claim(JwtCustomClaimNames.DeviceId, deviceId.ToString())
                 }),
                 NotBefore = tokenLifespan.Start,
                 Expires = tokenLifespan.End,
-                SigningCredentials = new SigningCredentials(_authenticationOptions.GetTokenValidationParameters().IssuerSigningKey, SecurityAlghoritm)
+                SigningCredentials = _authenticationOptions.GetSigningCredentials()
             };
 
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
             var jwt = tokenHandler.WriteToken(securityToken);
             var token = new Token(jwt);
-            var tokenInfo = new TokenInfo(token, jti, user.Id, tokenLifespan);
 
             var refreshToken = new RefreshToken();
+            var refreshTokenInfoId = new RefreshTokenInfoId(refreshToken);
             var refreshTokenLifespan = new DateTimeRange(now, now.Add(_authenticationOptions.RefreshTokenExpiry));
-            var refreshTokenInfo = new RefreshTokenInfo(refreshToken, jti, user.Id, device.Id, refreshTokenLifespan);
+            var refreshTokenInfo = new RefreshTokenInfo(refreshTokenInfoId, jti, userId, deviceId, refreshTokenLifespan);
 
-            await _deviceRepository.AddAsync(device, cancellationToken);
             await _refreshTokenRepository.AddAsync(refreshTokenInfo, cancellationToken);
-            return (tokenInfo.Token, refreshTokenInfo.Id);
+            return new TokenPair(token, refreshToken);
         }
 
-        public async Task<TokenInfo> DescribeAsync(Token token, CancellationToken cancellationToken)
+        public async Task<TokenPair> RefreshAsync(TokenPair oldTokenPair, Device device, CancellationToken cancellationToken)
+        {
+            var oldTokenInfo = await DescribeAsync(oldTokenPair.Token, cancellationToken);
+            var oldRefreshTokenInfoId = new RefreshTokenInfoId(oldTokenPair.RefreshToken);
+            var oldRefreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(oldRefreshTokenInfoId, cancellationToken)
+                ?? throw new RefreshTokenInfoIdNotFoundException(oldRefreshTokenInfoId);
+
+            try
+            {
+                await ValidateAsync(oldTokenInfo, oldRefreshTokenInfo, device, cancellationToken);
+            }
+            catch (Exception exception) when (exception is IIdentityException)
+            {
+                await RevokeAsync(oldTokenPair.RefreshToken, cancellationToken);
+                throw;
+            }
+
+            await _refreshTokenRepository.MarkAsUsedAsync(oldRefreshTokenInfo, cancellationToken);
+            var newTokenPair = await CreateAsync(oldTokenInfo.UserId, oldTokenInfo.DeviceId, cancellationToken);
+            var newRefreshTokenInfoId = new RefreshTokenInfoId(newTokenPair.RefreshToken);
+            await _refreshTokenRepository.ChainAsync(oldRefreshTokenInfoId, newRefreshTokenInfoId, cancellationToken);
+
+            return newTokenPair;
+        }
+
+        public async Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
+        {
+            var id = new RefreshTokenInfoId(refreshToken);
+            var refreshTokenInfo = await _refreshTokenRepository.GetByIdAsync(id, cancellationToken);
+            if (refreshTokenInfo is null)
+                throw new RefreshTokenInfoIdNotFoundException(id);
+
+            await _refreshTokenRepository.InvalidateChainAsync(refreshTokenInfo, cancellationToken);
+        }
+
+        private async Task<TokenInfo> DescribeAsync(Token token, CancellationToken cancellationToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var result = await tokenHandler.ValidateTokenAsync(token.Value, _authenticationOptions.GetTokenValidationParameters());
             if (!result.IsValid)
-                return null;
-            
-            if (result.SecurityToken is not JwtSecurityToken jwtSecurityToken)
-                return null;
-            if (!SecurityAlghoritm.Equals(jwtSecurityToken.Header.Alg, StringComparison.InvariantCulture))
-                return null;
-            if (!Guid.TryParse(jwtSecurityToken.Subject, out var userGuid))
-                return null;
+                throw new TokenDescriptionException(token, result.Exception);
 
-            var userId = new UserId(userGuid);
+            var jwtSecurityToken = (JwtSecurityToken)result.SecurityToken;
             var jti = jwtSecurityToken.Id;
             var lifespan = new DateTimeRange(jwtSecurityToken.ValidFrom, jwtSecurityToken.ValidTo);
-            return new TokenInfo(token, jti, userId, lifespan);
+
+            var userIdClaim = jwtSecurityToken.Subject;
+            var userGuid = Guid.Parse(userIdClaim);
+            var userId = new UserId(userGuid);
+
+            var deviceIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == JwtCustomClaimNames.DeviceId)?.Value;
+            var deviceGuid = Guid.Parse(deviceIdClaim);
+            var deviceId = new DeviceId(deviceGuid);
+
+            return new TokenInfo(token, jti, userId, deviceId, lifespan);
         }
 
-        public async Task<RefreshTokenInfo> DescribeAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
+        private async Task ValidateAsync(TokenInfo token, RefreshTokenInfo refreshToken, Device currentDevice, CancellationToken cancellationToken)
         {
-            return await _refreshTokenRepository.GetByIdAsync(refreshToken, cancellationToken);
-        }
+            // should tokens be validated
+            if (!refreshToken.BelongsTo(token))
+                throw new TokenMismatchException(token, refreshToken);
+            if (refreshToken.Invalidated)
+                throw new RefreshTokenInvalidatedException(refreshToken.Id);
+            if (refreshToken.Used)
+                throw new RefreshTokenUsedException(refreshToken.Id);
 
-        public async Task ValidateAsync(TokenInfo token, RefreshTokenInfo refreshToken, Device device, CancellationToken cancellationToken)
-        {
-            var errors = new List<string>();
+            // have tokens expired
+            if (token.IsActive(_dateTimeProvider))
+                throw new TokenNotExpiredException(token, _dateTimeProvider);
+            if (!refreshToken.IsActive(_dateTimeProvider))
+                throw new RefreshTokenExpiredException(refreshToken, _dateTimeProvider);
 
+            // do tokens belong to a valid user
             var user = await _userRepository.GetByIdAsync(token.UserId, cancellationToken);
             if (user is null)
-                errors.Add(TokenInvalidUserIdMessage);
-            if (user is not null && !refreshToken.BelongsTo(user))
-                errors.Add(RefreshTokenWrongUserMessage);
+                throw new UserIdNotFoundException(token.UserId);
+            if (!refreshToken.BelongsTo(user))
+                throw new UserIdMismatchException(token.UserId, refreshToken.UserId);
 
-            if (token.IsActive(_dateTimeProvider))
-                errors.Add(TokenStillActiveMessage);
-
-            if (!refreshToken.IsActive(_dateTimeProvider))
-                errors.Add(RefreshTokenNotActiveMessage);
-            if (refreshToken.Invalidated)
-                errors.Add(RefreshTokenInvalidatedMessage);
-            if (refreshToken.Used)
-                errors.Add(RefreshTokenUsedMessage);
-            if (!refreshToken.BelongsTo(token))
-                errors.Add(RefreshTokenWrongTokenMessage);
-            if (!refreshToken.BelongsTo(device))
-                errors.Add(RefreshTokenWrongDeviceMessage);
-
-            if (errors.Any())
-                throw new TokenValidationException(errors);
+            // do tokens belong to a valid device
+            var device = await _deviceRepository.GetByIdAsync(token.DeviceId, cancellationToken);
+            if (device is null)
+                throw new DeviceIdNotFoundException(token.DeviceId);
+            if (new[] { device, currentDevice }.Any(d => !refreshToken.BelongsTo(d)))
+                throw new DeviceIdMismatchException(token.DeviceId, refreshToken.DeviceId, currentDevice.Id);
         }
+
     }
 }

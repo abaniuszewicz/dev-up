@@ -57,5 +57,13 @@ namespace DevUp.Api.V1.Identity
             var response = _mapper.Map<IdentityResponse>(tokenPair);
             return Ok(response);
         }
+
+        [HttpPost(Route.Api.V1.Identity.Revoke)]
+        public async Task<IActionResult> Revoke([FromBody] RevokeTokenRequest request, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<RevokeTokenCommand>(request);
+            await _mediator.Send(command, cancellationToken);
+            return Ok();
+        }
     }
 }

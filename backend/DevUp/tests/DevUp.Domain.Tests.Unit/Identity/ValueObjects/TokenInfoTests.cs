@@ -12,7 +12,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
     {
         private class Dummy : TokenInfo
         {
-            public Dummy(Token token, string jti, UserId userId, DateTimeRange lifespan) : base(token, jti, userId, lifespan)
+            public Dummy(Token token, string jti, UserId userId, DeviceId deviceId, DateTimeRange lifespan) : base(token, jti, userId, deviceId, lifespan)
             {
             }
 
@@ -30,11 +30,12 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         [Test]
         public void Constructor_WhenCalled_AssignsProperties()
         {
-            var tokenInfo = new TokenInfo(_faker.TokenInfo.Token, _faker.TokenInfo.Jti, _faker.TokenInfo.UserId, _faker.TokenInfo.Lifespan);
+            var tokenInfo = new TokenInfo(_faker.TokenInfo.Token, _faker.TokenInfo.Jti, _faker.TokenInfo.UserId, _faker.TokenInfo.DeviceId, _faker.TokenInfo.Lifespan);
 
             Assert.AreEqual(tokenInfo.Token, _faker.TokenInfo.Token);
             Assert.AreEqual(tokenInfo.Jti, _faker.TokenInfo.Jti);
             Assert.AreEqual(tokenInfo.UserId, _faker.TokenInfo.UserId);
+            Assert.AreEqual(tokenInfo.DeviceId, _faker.TokenInfo.DeviceId);
             Assert.AreEqual(tokenInfo.Lifespan, _faker.TokenInfo.Lifespan);
         }
 
@@ -78,7 +79,7 @@ namespace DevUp.Domain.Tests.Unit.Identity.ValueObjects
         [Test]
         public void GetEqualityComponents_WhenCalled_ReturnsTokenValue()
         {
-            var tokenInfo = new Dummy(_faker.TokenInfo.Token, _faker.TokenInfo.Jti, _faker.TokenInfo.UserId, _faker.TokenInfo.Lifespan);
+            var tokenInfo = new Dummy(_faker.TokenInfo.Token, _faker.TokenInfo.Jti, _faker.TokenInfo.UserId, _faker.TokenInfo.DeviceId, _faker.TokenInfo.Lifespan);
 
             var result = tokenInfo.GetEqualityComponents();
 

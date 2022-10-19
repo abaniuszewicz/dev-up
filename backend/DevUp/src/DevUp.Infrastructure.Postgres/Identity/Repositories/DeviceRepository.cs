@@ -1,9 +1,11 @@
 ﻿using System.Data;
 using AutoMapper;
 using Dapper;
+using DevUp.Domain.Common.Extensions;
 using DevUp.Domain.Identity.Entities;
 using DevUp.Domain.Identity.Repositories;
 using DevUp.Infrastructure.Postgres.Identity.Dtos;
+using DevUp.Infrastructure.Postgres.Identity.Repositories.Exceptions;
 using DevUp.Infrastructure.Postgres.Setup;
 
 namespace DevUp.Infrastructure.Postgres.Identity.Repositories
@@ -19,7 +21,7 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<Device?> AddAsync(Device device, CancellationToken cancellationToken)
+        public async Task AddAsync(Device device, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (device is null)
@@ -38,27 +40,25 @@ namespace DevUp.Infrastructure.Postgres.Identity.Repositories
                         DO UPDATE SET name = @{nameof(DeviceDto.Name)}";
 
             var affectedRows = await _connection.ExecuteAsync(sql, dto);
-            return affectedRows == 0 ? null : device;
+            if (affectedRows == 0)
+                throw new DeviceNotPersistedException(dto);
         }
 
-        public Task DeleteAsync(Device device, CancellationToken cancellationToken)
+        public async Task<Device> GetByIdAsync(DeviceId id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-        }
+            cancellationToken.ThrowIfCancellationRequested();
+            if (id is null)
+                throw new ArgumentNullException(nameof(id));
 
-        public Task<IReadOnlyList<Device>> GetAllAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            var dto = new DeviceDto() { Id = id.Id };
+            var sql = @$"SELECT 
+                            id {nameof(DeviceDto.Id)}, 
+                            name {nameof(DeviceDto.Name)}
+                        FROM devices
+                        WHERE id=@{nameof(DeviceDto.Id)}";
 
-        public Task<Device> GetByIdAsync(DeviceId id, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Device> UpdateAsync(Device device, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
+            dto = await _connection.QuerySingleOrDefaultAsync<DeviceDto>(sql, dto);
+            return _mapper.MapOrNull<Device>(dto);
         }
     }
 }

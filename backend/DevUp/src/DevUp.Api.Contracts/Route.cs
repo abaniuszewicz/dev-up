@@ -22,6 +22,7 @@
                     public const string Register = Url + "/register";
                     public const string Login = Url + "/login";
                     public const string Refresh = Url + "/refresh";
+                    public const string Revoke = Url + "/revoke";
                 }
 
                 public static class Teams
