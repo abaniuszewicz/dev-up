@@ -40,7 +40,7 @@ namespace DevUp.Infrastructure.Http.Documentation
 
             services.ConfigureSwaggerGen(options =>
             {
-                var docName = "DevUp.Api.Contracts.xml";
+                var docName = "DevUp.Api.xml";
                 var docPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, docName);
                 if (!File.Exists(docPath))
                     throw new DocumentationFileNotFoundException(docPath);

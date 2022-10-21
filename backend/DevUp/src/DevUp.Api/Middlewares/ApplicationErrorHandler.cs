@@ -1,10 +1,8 @@
-﻿using System.Threading.Tasks;
-using DevUp.Api.Contracts.V1;
-using DevUp.Application.Exceptions;
+﻿using DevUp.Api.Contracts.V1;
 using DevUp.Application.PipelineBehaviors.Exceptions;
 using Microsoft.AspNetCore.Http;
 
-namespace DevUp.Api.V1.Middlewares
+namespace DevUp.Api.Middlewares
 {
     internal sealed class ApplicationErrorHandler : ErrorHandler
     {
@@ -14,7 +12,7 @@ namespace DevUp.Api.V1.Middlewares
             {
                 await next(context);
             }
-            catch (ApplicationException exception)
+            catch (Application.Exceptions.ApplicationException exception)
             {
                 var code = GetErrorCode(exception);
                 var response = new ErrorResponse(code, exception.Errors);

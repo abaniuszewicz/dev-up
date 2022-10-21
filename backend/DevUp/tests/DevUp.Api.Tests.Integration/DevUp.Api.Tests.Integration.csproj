@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DevUp.Api\DevUp.Api.csproj" />
+    <ProjectReference Include="..\..\src\DevUp.Api.Controllers\DevUp.Api.Controllers.csproj" />
     <ProjectReference Include="..\..\src\DevUp.Infrastructure.Postgres\DevUp.Infrastructure.Postgres.csproj" />
   </ItemGroup>
 

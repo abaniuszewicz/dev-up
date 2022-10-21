@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using DevUp.Api.Contracts.V1;
+﻿using DevUp.Api.Contracts.V1;
 using Humanizer;
 using Microsoft.AspNetCore.Http;
 
-namespace DevUp.Api.V1.Middlewares
+namespace DevUp.Api.Middlewares
 {
     internal abstract class ErrorHandler : IMiddleware
     {

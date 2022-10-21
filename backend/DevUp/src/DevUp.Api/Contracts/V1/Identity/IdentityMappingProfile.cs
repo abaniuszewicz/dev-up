@@ -4,7 +4,7 @@ using DevUp.Api.Contracts.V1.Identity.Responses;
 using DevUp.Application.Identity;
 using DevUp.Application.Identity.Commands;
 
-namespace DevUp.Api.V1.Identity
+namespace DevUp.Api.Contracts.V1.Identity
 {
     internal class IdentityMappingProfile : Profile
     {

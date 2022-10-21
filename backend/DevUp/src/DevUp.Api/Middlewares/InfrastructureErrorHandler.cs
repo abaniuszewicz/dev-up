@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
-using DevUp.Api.Contracts.V1;
+﻿using DevUp.Api.Contracts.V1;
 using DevUp.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace DevUp.Api.V1.Middlewares
+namespace DevUp.Api.Middlewares
 {
     internal sealed class InfrastructureErrorHandler : ErrorHandler
     {

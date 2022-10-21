@@ -14,7 +14,6 @@ namespace DevUp.Domain.Tests.Integration.Common
         {
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddJsonFile("appsettings.Development.json")
                 .Build();
 
             Host = new HostBuilder()
