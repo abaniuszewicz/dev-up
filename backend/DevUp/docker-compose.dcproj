@@ -6,7 +6,7 @@
     <ProjectGuid>a8a1b425-ca50-4290-95fb-8d1bbd5e39b4</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>devup.api</DockerServiceName>
+    <DockerServiceName>devup.api.minimal</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
