@@ -16,10 +16,11 @@ using DevUp.Api.Tests.Integration.Common;
 using DevUp.Domain.Identity.Setup;
 using Bogus;
 using System;
+using DevUp.Api.Controllers;
 
 namespace DevUp.Api.Tests.Integration.V1.Identity
 {
-    public class IdentityApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
+    public class IdentityApiFactory : WebApplicationFactory<IControllersApiMarker>, IAsyncLifetime
     {
         private static readonly Faker<AuthenticationOptions> AuthenticationOptionsFaker = new Faker<AuthenticationOptions>()
                .RuleFor(ao => ao.TokenExpiry, RandomTimespan)

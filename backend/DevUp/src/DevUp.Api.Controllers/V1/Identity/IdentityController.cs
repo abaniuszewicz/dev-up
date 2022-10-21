@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
-using DevUp.Api.Contracts;
+﻿using AutoMapper;
 using DevUp.Api.Contracts.V1.Identity.Requests;
 using DevUp.Api.Contracts.V1.Identity.Responses;
 using DevUp.Application.Identity;
@@ -9,7 +6,7 @@ using DevUp.Application.Identity.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DevUp.Api.V1.Identity
+namespace DevUp.Api.Controllers.V1.Identity
 {
     [ApiController]
     public class IdentityController : ControllerBase
@@ -25,7 +22,7 @@ namespace DevUp.Api.V1.Identity
             _tokenStore = tokenStore;
         }
 
-        [HttpPost(Route.Api.V1.Identity.Register)]
+        [HttpPost(Contracts.Route.Api.V1.Identity.Register)]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<RegisterUserCommand>(request);
@@ -36,7 +33,7 @@ namespace DevUp.Api.V1.Identity
             return Ok(response);
         }
 
-        [HttpPost(Route.Api.V1.Identity.Login)]
+        [HttpPost(Contracts.Route.Api.V1.Identity.Login)]
         public async Task<IActionResult> Login([FromBody] LoginUserRequest request, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<LoginUserCommand>(request);
@@ -47,7 +44,7 @@ namespace DevUp.Api.V1.Identity
             return Ok(response);
         }
 
-        [HttpPost(Route.Api.V1.Identity.Refresh)]
+        [HttpPost(Contracts.Route.Api.V1.Identity.Refresh)]
         public async Task<IActionResult> Refresh([FromBody] RefreshUserRequest request, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<RefreshUserCommand>(request);
@@ -58,7 +55,7 @@ namespace DevUp.Api.V1.Identity
             return Ok(response);
         }
 
-        [HttpPost(Route.Api.V1.Identity.Revoke)]
+        [HttpPost(Contracts.Route.Api.V1.Identity.Revoke)]
         public async Task<IActionResult> Revoke([FromBody] RevokeTokenRequest request, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<RevokeTokenCommand>(request);

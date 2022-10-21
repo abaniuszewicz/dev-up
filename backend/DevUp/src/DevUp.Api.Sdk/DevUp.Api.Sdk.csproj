@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DevUp.Api.Contracts\DevUp.Api.Contracts.csproj" />
+    <ProjectReference Include="..\DevUp.Api\DevUp.Api.csproj" />
   </ItemGroup>
 
 </Project>

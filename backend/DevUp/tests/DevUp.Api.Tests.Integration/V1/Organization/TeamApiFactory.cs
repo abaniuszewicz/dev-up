@@ -13,10 +13,11 @@ using Microsoft.Extensions.Hosting;
 using DevUp.Infrastructure.Postgres.Migrations;
 using DevUp.Api.Tests.Integration.Common;
 using DevUp.Infrastructure.Postgres.Setup;
+using DevUp.Api.Controllers;
 
 namespace DevUp.Api.Tests.Integration.V1.Organization
 {
-    public class TeamApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
+    public class TeamApiFactory : WebApplicationFactory<IControllersApiMarker>, IAsyncLifetime
     {
         private readonly TestcontainerDatabase _dbContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
             .WithDatabase(new PostgreSqlTestcontainerConfiguration("postgres:latest")

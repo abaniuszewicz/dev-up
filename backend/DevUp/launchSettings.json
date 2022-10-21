@@ -1,27 +1,14 @@
 {
   "profiles": {
-    "Docker Compose - DevUp.Api": {
+    "Docker Compose": {
       "commandName": "DockerCompose",
       "composeLaunchAction": "LaunchBrowser",
-      "composeLaunchServiceName": "devup.api",
+      "composeLaunchServiceName": "devup.api.controllers",
       "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
       "commandVersion": "1.0",
       "serviceActions": {
         "adminer": "StartWithoutDebugging",
-        "devup.api": "StartDebugging",
-        "devup.api.minimal": "DoNotStart",
-        "postgres": "StartWithoutDebugging"
-      }
-    },
-    "Docker Compose - DevUp.Api.Minimal": {
-      "commandName": "DockerCompose",
-      "composeLaunchAction": "LaunchBrowser",
-      "composeLaunchServiceName": "devup.api.minimal",
-      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
-      "commandVersion": "1.0",
-      "serviceActions": {
-        "adminer": "StartWithoutDebugging",
-        "devup.api": "DoNotStart",
+        "devup.api.controllers": "StartDebugging",
         "devup.api.minimal": "StartDebugging",
         "postgres": "StartWithoutDebugging"
       }

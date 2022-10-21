@@ -1,11 +1,10 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using DevUp.Api.Contracts.V1.Organization.Requests;
 using DevUp.Api.Contracts.V1.Organization.Responses;
 using DevUp.Application.Organization.Commands;
 using DevUp.Application.Organization.Queries.Results;
 
-namespace DevUp.Api.V1.Organization
+namespace DevUp.Api.Contracts.V1.Organization
 {
     internal class OrganizationMappingProfile : Profile
     {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace DevUp.Api.Configuration
 {
-    internal class SlugifyParameterTransformer : IOutboundParameterTransformer
+    public sealed class SlugifyParameterTransformer : IOutboundParameterTransformer
     {
         public string? TransformOutbound(object? value)
         {

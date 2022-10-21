@@ -1,9 +1,6 @@
 ﻿using DevUp.Infrastructure.Postgres.Migrations;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 
-namespace DevUp.Api
+namespace DevUp.Api.Controllers
 {
     public class Program
     {
