@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,6 +7,7 @@
     <UserSecretsId>a830c049-5b83-4685-88e3-db6ad21acbc8</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <EnablePreviewFeatures>True</EnablePreviewFeatures>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,11 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="V1\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DevUp.Api\DevUp.Api.csproj" />
+    <ProjectReference Include="..\DevUp.Infrastructure.Http\DevUp.Infrastructure.Http.csproj" />
+    <ProjectReference Include="..\DevUp.Infrastructure.Postgres\DevUp.Infrastructure.Postgres.csproj" />
   </ItemGroup>
 
 </Project>

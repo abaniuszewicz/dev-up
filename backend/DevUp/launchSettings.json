@@ -3,7 +3,7 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "composeLaunchAction": "LaunchBrowser",
-      "composeLaunchServiceName": "devup.api.controllers",
+      "composeLaunchServiceName": "devup.api.minimal",
       "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
       "commandVersion": "1.0",
       "serviceActions": {

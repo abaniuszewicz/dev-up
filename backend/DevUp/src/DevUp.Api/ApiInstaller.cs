@@ -1,6 +1,5 @@
 ﻿using DevUp.Api.Middlewares;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +9,7 @@ namespace DevUp.Api
     {
         public static IServiceCollection AddApi(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddEndpointsApiExplorer();
+            services.AddAuthorization();
             services.AddRouting();
             services.AddAutoMapper(typeof(IApiMarker).Assembly);
             services.AddSingleton<ApplicationErrorHandler>();
