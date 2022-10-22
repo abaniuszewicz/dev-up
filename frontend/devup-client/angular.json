@@ -103,5 +103,8 @@
       }
     }
   },
-  "defaultProject": "devup-client"
+  "defaultProject": "devup-client",
+  "cli": {
+    "analytics": "cbe86349-b74a-4cb7-8727-d933e7fee539"
+  }
 }

@@ -12,7 +12,7 @@ describe('AppComponent', () => {
         AppComponent
       ],
     }).compileComponents();
-  });
+  })
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
@@ -30,6 +30,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('devup-client app is running!');
+    expect(compiled.querySelector('h1')?.textContent).toContain('DevUp client is running');
   });
 });
