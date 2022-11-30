@@ -1,4 +1,5 @@
-﻿using App.Metrics;
+﻿using System.Linq;
+using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -10,19 +11,34 @@ namespace DevUp.Infrastructure.Metrics
     {
         public static IServiceCollection AddMetrics(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMetrics();
+            var options = configuration.GetRequiredSection("Metrics").Get<Setup.MetricsOptions>();
+            var metrics = AppMetrics.CreateDefaultBuilder()
+                .OutputMetrics.AsPrometheusPlainText()
+                .OutputMetrics.AsPrometheusProtobuf()
+                .Configuration.Configure(opts =>
+                {
+                    opts.DefaultContextLabel = options.DefaultContextLabel;
+                }).Build();
+
+            services.AddMetrics(metrics);
+            services.AddMetricsTrackingMiddleware();
             services.AddMetricsEndpoints(opts =>
             {
-                opts.MetricsTextEndpointOutputFormatter = new MetricsPrometheusTextOutputFormatter();
-                opts.MetricsEndpointOutputFormatter = new MetricsPrometheusProtobufOutputFormatter();
+                opts.MetricsTextEndpointOutputFormatter = metrics.OutputMetricsFormatters.OfType<MetricsPrometheusTextOutputFormatter>().First();
+                opts.MetricsEndpointOutputFormatter = metrics.OutputMetricsFormatters.OfType<MetricsPrometheusProtobufOutputFormatter>().First();
             });
+            services.AddMetricsReportingHostedService();
+            services.AddAppMetricsCollectors();
+
 
             return services;
         }
 
         public static IApplicationBuilder UseMetrics(this IApplicationBuilder app)
         {
+            app.UseMetricsAllMiddleware();
             app.UseMetricsAllEndpoints();
+
             return app;
         }
     }
