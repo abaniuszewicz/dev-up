@@ -1,4 +1,5 @@
 ﻿using App.Metrics;
+using App.Metrics.Formatters.Prometheus;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +14,9 @@ namespace DevUp.Infrastructure.Metrics
             var metrics = new MetricsBuilder().Configuration.Configure(opts =>
             {
                 opts.DefaultContextLabel = options.DefaultContextLabel;
-            }).Build();
+            })
+            .OutputMetrics.AsPrometheusPlainText()
+            .Build();
 
             services.AddMetricsTrackingMiddleware();
             services.AddMetricsEndpoints();
@@ -25,7 +28,9 @@ namespace DevUp.Infrastructure.Metrics
 
         public static IApplicationBuilder UseMetrics(this IApplicationBuilder app)
         {
-            app.UseMetricsAllEndpoints();
+            var formatter = new MetricsPrometheusTextOutputFormatter();
+            app.UseMetricsTextEndpoint(formatter);
+            app.UseMetricsEndpoint(formatter);
             app.UseMetricsAllMiddleware();
             return app;
         }
