@@ -25,10 +25,10 @@ namespace DevUp.Infrastructure
 
         public static IApplicationBuilder UseHttpInfrastructure(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMetrics();
             if (env.IsDevelopment())
                 app.UseSwaggerDoc();
 
+            app.UseMetrics();
             return app;
         }
     }

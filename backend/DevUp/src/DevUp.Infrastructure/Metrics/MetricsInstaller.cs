@@ -10,28 +10,19 @@ namespace DevUp.Infrastructure.Metrics
     {
         public static IServiceCollection AddMetrics(this IServiceCollection services, IConfiguration configuration)
         {
-            var options = configuration.GetRequiredSection("Metrics").Get<Setup.MetricsOptions>();
-            var metrics = new MetricsBuilder().Configuration.Configure(opts =>
+            services.AddMetrics();
+            services.AddMetricsEndpoints(opts =>
             {
-                opts.DefaultContextLabel = options.DefaultContextLabel;
-            })
-            .OutputMetrics.AsPrometheusPlainText()
-            .Build();
+                opts.MetricsTextEndpointOutputFormatter = new MetricsPrometheusTextOutputFormatter();
+                opts.MetricsEndpointOutputFormatter = new MetricsPrometheusProtobufOutputFormatter();
+            });
 
-            services.AddMetricsTrackingMiddleware();
-            services.AddMetricsEndpoints();
-            services.AddMetricsReportingHostedService();
-            services.AddMetrics(metrics);
             return services;
-
         }
 
         public static IApplicationBuilder UseMetrics(this IApplicationBuilder app)
         {
-            var formatter = new MetricsPrometheusTextOutputFormatter();
-            app.UseMetricsTextEndpoint(formatter);
-            app.UseMetricsEndpoint(formatter);
-            app.UseMetricsAllMiddleware();
+            app.UseMetricsAllEndpoints();
             return app;
         }
     }
