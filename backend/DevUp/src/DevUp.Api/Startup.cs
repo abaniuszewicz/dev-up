@@ -23,7 +23,7 @@ namespace DevUp.Api
             services.AddDomain(Configuration);
             services.AddApplication();
             services.AddApi();
-            services.AddInfrastructure();
+            services.AddInfrastructure(Configuration);
             services.AddPostgresInfrastructure(Configuration);
         }
 
