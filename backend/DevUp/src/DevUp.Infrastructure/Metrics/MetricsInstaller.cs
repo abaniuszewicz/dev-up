@@ -18,6 +18,9 @@ namespace DevUp.Infrastructure.Metrics
                 .Configuration.Configure(opts =>
                 {
                     opts.DefaultContextLabel = options.DefaultContextLabel;
+                    opts.AddAppTag(options.AppTag);
+                    opts.AddEnvTag(options.EnvTag);
+                    opts.AddServerTag(options.ServerTag);
                 }).Build();
 
             services.AddMetrics(metrics);
@@ -29,7 +32,6 @@ namespace DevUp.Infrastructure.Metrics
             });
             services.AddMetricsReportingHostedService();
             services.AddAppMetricsCollectors();
-
 
             return services;
         }

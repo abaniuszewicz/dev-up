@@ -46,7 +46,9 @@ services:
       - 3000:3000
     volumes:
       - ./devops/grafana/datasources.yml:/etc/grafana/provisioning/datasources/all.yaml
+      - ./devops/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/all.yaml
       - ./devops/grafana/config.ini:/etc/grafana/config.ini
+      - ./devops/grafana/dashboards/:/var/lib/grafana/dashboards
     depends_on:
       - prometheus
 

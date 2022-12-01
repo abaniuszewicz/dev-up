@@ -29,8 +29,8 @@ namespace DevUp.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseApi();
             app.UseHttpInfrastructure(env);
+            app.UseApi();
         }
     }
 }
