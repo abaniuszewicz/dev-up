@@ -29,3 +29,28 @@ services:
       - 8080:8080
     depends_on:
       - postgres
+
+  prometheus:
+    image: prom/prometheus:latest
+    restart: always
+    ports:
+      - 9090:9090
+    volumes:
+      - ./devops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ./devops/grafana/datasources.yml:/etc/grafana/provisioning/datasources/all.yaml
+      - ./devops/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/all.yaml
+      - ./devops/grafana/config.ini:/etc/grafana/config.ini
+      - ./devops/grafana/dashboards/:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus_data: {}

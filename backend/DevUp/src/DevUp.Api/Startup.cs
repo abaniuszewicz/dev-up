@@ -1,7 +1,6 @@
 ﻿using DevUp.Application;
 using DevUp.Domain;
 using DevUp.Infrastructure;
-using DevUp.Infrastructure.Http;
 using DevUp.Infrastructure.Postgres;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,15 +23,14 @@ namespace DevUp.Api
             services.AddDomain(Configuration);
             services.AddApplication();
             services.AddApi();
-            services.AddInfrastructure();
-            services.AddHttpInfrastructure();
+            services.AddInfrastructure(Configuration);
             services.AddPostgresInfrastructure(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseApi();
             app.UseHttpInfrastructure(env);
+            app.UseApi();
         }
     }
 }
