@@ -15,7 +15,7 @@ namespace DevUp.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddLogger();
+            services.AddLogger(configuration);
             services.AddHttpContextAccessor();
             services.AddScoped<ITokenStore, HttpContextTokenStore>();
             services.AddSwagger();
