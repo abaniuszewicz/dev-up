@@ -11,6 +11,7 @@ services:
       dockerfile: src/DevUp.Api/Dockerfile
     depends_on:
       - postgres
+      - elasticsearch
 
   postgres:
     image: postgres:latest
@@ -52,5 +53,17 @@ services:
     depends_on:
       - prometheus
 
+  elasticsearch:
+    image: elasticsearch:8.5.2
+    restart: always
+    ports:
+      - 9200:9200
+    environment:
+      discovery.type: 'single-node'
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+
 volumes:
   prometheus_data: {}
+  elasticsearch_data: {}
