@@ -69,6 +69,8 @@ services:
       - 5601:5601
     volumes:
       - ./devops/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    depends_on:
+      - elasticsearch
 
 volumes:
   prometheus_data: {}
